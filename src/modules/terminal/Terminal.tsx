@@ -21,12 +21,23 @@ const TerminalConsole = () => {
         return saved ? JSON.parse(saved) : initialFileSystem;
     });
     const [editor, setEditor] = useState({ active: false, file: null, content: '' });
+    const [sshSession, setSshSession] = useState<{ index: number, domain: string, ip: string, user: string } | null>(null);
     const endRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        localStorage.setItem('cyber_fs', JSON.stringify(files));
+        if (sshSession) {
+            // Save to remote host in captured_hosts
+            const captured = JSON.parse(localStorage.getItem('cyberos_captured_hosts') || '[]');
+            if (captured[sshSession.index]) {
+                captured[sshSession.index].fileSystem = files;
+                localStorage.setItem('cyberos_captured_hosts', JSON.stringify(captured));
+            }
+        } else {
+            // Save to local cyber_fs
+            localStorage.setItem('cyber_fs', JSON.stringify(files));
+        }
         endRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [files, history]);
+    }, [files, history, sshSession]);
 
     const resolvePath = (target: string) => {
         if (target.startsWith('/')) return target;
@@ -38,11 +49,55 @@ const TerminalConsole = () => {
         const command = args[0].toLowerCase();
         const arg = args[1];
 
-        setHistory(h => [...h, `${path}> ${cmd}`]);
+        const prompt = sshSession ? `root@${sshSession.domain}:${path}#` : `${path}>`;
+        setHistory(h => [...h, `${prompt} ${cmd}`]);
 
         switch (command) {
             case 'help':
-                setHistory(h => [...h, 'Commands: ls, cd, cat, mkdir, nano, rm, clear']);
+                setHistory(h => [...h, 'Commands: ls, cd, cat, mkdir, nano, rm, clear, ssh, exit']);
+                break;
+            case 'ssh':
+                if (sshSession) {
+                    setHistory(h => [...h, 'Error: Nested SSH sessions are not supported.']);
+                    return;
+                }
+                if (!arg) {
+                    setHistory(h => [...h, 'Usage: ssh <domain|ip>']);
+                    return;
+                }
+
+                const hosts = JSON.parse(localStorage.getItem('cyberos_captured_hosts') || '[]');
+                const targetHostIndex = hosts.findIndex((h: any) => h.domain === arg || h.ip === arg);
+
+                if (targetHostIndex === -1) {
+                    setHistory(h => [...h, `ssh: Could not resolve hostname ${arg}: Name or service not known`]);
+                    return;
+                }
+
+                const host = hosts[targetHostIndex];
+                setHistory(h => [...h, `Connecting to ${host.domain} (${host.ip})...`]);
+
+                setTimeout(() => {
+                    setHistory(h => [...h, `Authenticating using stored key: ${host.sshKey}...`]);
+                    setTimeout(() => {
+                        setHistory(h => [...h, 'Access Granted.', `Welcome to ${host.systemName || host.domain}`]);
+                        setSshSession({ index: targetHostIndex, domain: host.domain, ip: host.ip, user: 'root' });
+                        setFiles(host.fileSystem || { '/': { type: 'dir', children: [] } });
+                        setPath('/');
+                    }, 800);
+                }, 600);
+                break;
+            case 'exit':
+                if (sshSession) {
+                    setHistory(h => [...h, `Connection to ${sshSession.domain} closed.`]);
+                    setSshSession(null);
+                    // Reload local files
+                    const saved = localStorage.getItem('cyber_fs');
+                    setFiles(saved ? JSON.parse(saved) : initialFileSystem);
+                    setPath('/');
+                } else {
+                    setHistory(h => [...h, 'Logout: Session terminated.']);
+                }
                 break;
             case 'ls':
                 // @ts-ignore
@@ -88,6 +143,40 @@ const TerminalConsole = () => {
                     [path]: { ...prev[path], children: [...prev[path].children, arg] }
                 }));
                 setHistory(h => [...h, `Created directory: ${arg}`]);
+                break;
+            case 'rm':
+                if (!arg) return;
+                const rmPath = resolvePath(arg);
+                // @ts-ignore
+                if (!files[rmPath]) {
+                    setHistory(h => [...h, `File not found: ${arg}`]);
+                    return;
+                }
+                setFiles((prev: any) => {
+                    const newFiles = { ...prev };
+                    delete newFiles[rmPath];
+                    // Remove from parent
+                    const parent = rmPath.substring(0, rmPath.lastIndexOf('/')) || '/';
+                    if (newFiles[parent]) {
+                        newFiles[parent] = {
+                            ...newFiles[parent],
+                            children: newFiles[parent].children.filter((c: string) => c !== arg)
+                        };
+                    }
+                    return newFiles;
+                });
+                setHistory(h => [...h, `Removed: ${arg}`]);
+                break;
+            case 'cat':
+                if (!arg) return;
+                const catPath = resolvePath(arg);
+                // @ts-ignore
+                const catFile = files[catPath];
+                if (catFile && catFile.type === 'file') {
+                    setHistory(h => [...h, catFile.content]);
+                } else {
+                    setHistory(h => [...h, `File not found: ${arg}`]);
+                }
                 break;
             case 'clear':
                 setHistory([]);
@@ -150,7 +239,7 @@ const TerminalConsole = () => {
                 <div ref={endRef} />
             </div>
             <div className="flex items-center mt-2 border-t border-green-900 pt-2">
-                <span className="text-green-600 mr-2">{path}&gt;</span>
+                <span className="text-green-600 mr-2">{sshSession ? `root@${sshSession.domain}:${path}#` : `${path}>`}</span>
                 <input
                     className="bg-transparent border-none outline-none text-green-100 flex-1"
                     value={input}
