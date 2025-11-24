@@ -61,6 +61,39 @@ const calculateCurvedPath = (start: number[], end: number[], numPoints: number =
     return points;
 };
 
+// Calculate noisy path between stops (simulating terrain)
+const calculateNoisyPath = (stops: { name: string, coords: number[] }[], noiseLevel: number = 0.05): number[][] => {
+    const points: number[][] = [];
+
+    for (let i = 0; i < stops.length - 1; i++) {
+        const start = stops[i].coords;
+        const end = stops[i + 1].coords;
+
+        // Add start point
+        points.push(start);
+
+        // Generate intermediate points with noise
+        const segments = 10;
+        for (let j = 1; j < segments; j++) {
+            const t = j / segments;
+            const lat = start[0] + (end[0] - start[0]) * t;
+            const lng = start[1] + (end[1] - start[1]) * t;
+
+            // Add noise perpendicular to direction would be better, but random noise works for "terrain" look
+            // Scale noise by distance to avoid huge jumps on short segments
+            const dist = Math.sqrt(Math.pow(end[0] - start[0], 2) + Math.pow(end[1] - start[1], 2));
+            const noiseLat = (Math.random() - 0.5) * noiseLevel * dist;
+            const noiseLng = (Math.random() - 0.5) * noiseLevel * dist;
+
+            points.push([lat + noiseLat, lng + noiseLng]);
+        }
+    }
+    // Add final point
+    points.push(stops[stops.length - 1].coords);
+
+    return points;
+};
+
 const GeoMap = () => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
@@ -161,9 +194,16 @@ const GeoMap = () => {
             trajectory: calculateCurvedPath(f.startCoords, f.endCoords)
         }));
 
+        const trains = geoData.trains.map(t => ({
+            ...t,
+            category: 'trains',
+            // Generate trajectory from stops
+            trajectory: calculateNoisyPath(t.stops)
+        }));
+
         const allItems = [
             ...flights,
-            ...geoData.trains.map(t => ({ ...t, category: 'trains' })),
+            ...trains,
             ...geoData.storms.map(s => ({ ...s, category: 'weather' }))
         ];
         return allItems.filter(item =>
@@ -179,6 +219,7 @@ const GeoMap = () => {
         if (trajectory.length === 1) return trajectory[0];
 
         const totalPoints = trajectory.length;
+        // Use offset directly if provided (for trains with progressOffset), otherwise use passed offset
         const t = (simTime + offset) % 1;
         const index = Math.floor(t * (totalPoints - 1));
         const nextIndex = (index + 1) % totalPoints;
@@ -209,12 +250,14 @@ const GeoMap = () => {
 
         // Add or Update markers
         filteredItems.forEach((item, i) => {
-            const pos = getPosition(item.trajectory, i * 0.1);
+            // Use item.progressOffset if available (for trains), otherwise fallback to index-based offset
+            const offset = item.progressOffset !== undefined ? item.progressOffset : i * 0.1;
+            const pos = getPosition(item.trajectory, offset);
 
             // Calculate rotation for planes based on direction
             let rotation = 0;
             if (item.category === 'flights' && item.trajectory && item.trajectory.length > 1) {
-                const t = (simTime + i * 0.1) % 1;
+                const t = (simTime + offset) % 1;
                 const index = Math.floor(t * (item.trajectory.length - 1));
                 const nextIndex = Math.min(index + 1, item.trajectory.length - 1);
                 rotation = calculateBearing(item.trajectory[index], item.trajectory[nextIndex]);
@@ -301,7 +344,8 @@ const GeoMap = () => {
         });
 
         // Get current position
-        const currentPos = getPosition(selectedItem.trajectory);
+        const offset = selectedItem.progressOffset !== undefined ? selectedItem.progressOffset : 0;
+        const currentPos = getPosition(selectedItem.trajectory, offset);
 
         // Create popup marker
         const popupMarker = L.marker(currentPos as L.LatLngExpression, {
@@ -325,7 +369,8 @@ const GeoMap = () => {
     useEffect(() => {
         if (!selectedItem || !customPopupRef.current || !mapReady) return;
 
-        const currentPos = getPosition(selectedItem.trajectory);
+        const offset = selectedItem.progressOffset !== undefined ? selectedItem.progressOffset : 0;
+        const currentPos = getPosition(selectedItem.trajectory, offset);
         customPopupRef.current.setLatLng(currentPos as L.LatLngExpression);
 
     }, [selectedItem, simTime, mapReady]);
