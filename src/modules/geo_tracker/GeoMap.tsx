@@ -44,7 +44,7 @@ const GeoMap = () => {
             attributionControl: false
         }).setView([20, 0], 2);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>'
         }).addTo(map);
 
