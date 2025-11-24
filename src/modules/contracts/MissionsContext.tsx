@@ -20,22 +20,34 @@ const STORAGE_KEY = 'cyberos_mission_progress';
 
 export const MissionsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [missions] = useState<Mission[]>(missionsData as Mission[]);
-    const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
-    const [completedMissionIds, setCompletedMissionIds] = useState<string[]>([]);
 
-    // Load progress from localStorage on mount
-    useEffect(() => {
+    // Initialize state from localStorage to avoid race conditions
+    const [activeMissionId, setActiveMissionId] = useState<string | null>(() => {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
             try {
                 const progress: MissionProgress = JSON.parse(saved);
-                setActiveMissionId(progress.activeMissionId);
-                setCompletedMissionIds(progress.completedMissionIds);
+                return progress.activeMissionId;
             } catch (error) {
                 console.error('Failed to load mission progress:', error);
+                return null;
             }
         }
-    }, []);
+        return null;
+    });
+
+    const [completedMissionIds, setCompletedMissionIds] = useState<string[]>(() => {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const progress: MissionProgress = JSON.parse(saved);
+                return progress.completedMissionIds || [];
+            } catch (error) {
+                return [];
+            }
+        }
+        return [];
+    });
 
     // Save progress to localStorage whenever it changes
     useEffect(() => {
