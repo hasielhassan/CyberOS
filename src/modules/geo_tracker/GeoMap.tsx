@@ -5,21 +5,33 @@ import { Plane, Train, CloudRain, Search, Layers, Map as MapIcon, Globe } from '
 import geoData from './geo_data.json';
 
 // Custom Icons
-const createIcon = (svg: string, color: string) => new L.DivIcon({
+const createIcon = (svg: string, color: string, rotation: number = 0) => new L.DivIcon({
     className: 'custom-icon',
-    html: `<div style="color: ${color}; filter: drop-shadow(0 0 5px ${color});">${svg}</div>`,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10]
+    html: `<div style="color: ${color}; filter: drop-shadow(0 0 5px ${color}); transform: rotate(${rotation}deg);"><div>${svg}</div></div>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12]
 });
 
-// SVG Strings for Icons
-const PLANE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M13 2l9 10-9 10"/><path d="M13 2v20"/></svg>';
+// SVG Strings for Icons - Plane pointing up (north) by default
+const PLANE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 39.769 39.769" fill="currentColor"><path d="M36.384,23.28v1.896c0,0.46-0.211,0.896-0.571,1.181c-0.269,0.211-0.597,0.319-0.929,0.319c-0.117,0-0.235-0.014-0.353-0.041l-11.886-2.858v11.457l3.271,2.309c0.266,0.188,0.424,0.492,0.424,0.816v0.41c0,0.291-0.127,0.565-0.346,0.758c-0.185,0.156-0.416,0.242-0.654,0.242c-0.049,0-0.096-0.003-0.144-0.011l-5.314-0.766l-5.317,0.765c-0.285,0.041-0.578-0.045-0.797-0.232c-0.219-0.188-0.345-0.466-0.345-0.757v-0.409c0-0.326,0.157-0.632,0.423-0.817l3.271-2.31V23.774L5.233,26.632c-0.445,0.106-0.918,0.005-1.279-0.277c-0.359-0.285-0.57-0.721-0.57-1.181v-1.896c0-0.545,0.296-1.047,0.771-1.312l12.963-7.207V2.767C17.118,1.242,18.36,0,19.885,0c1.524,0,2.767,1.24,2.767,2.767V14.76l12.964,7.207C36.087,22.233,36.384,22.735,36.384,23.28z"/></svg>';
 const TRAIN_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><path d="M4 10h16"/><path d="M12 4v16"/><path d="M8 20v2"/><path d="M16 20v2"/></svg>';
 const STORM_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/></svg>';
 
-const planeIcon = createIcon(PLANE_SVG, '#00ff41');
 const trainIcon = createIcon(TRAIN_SVG, '#ffff00');
 const stormIcon = createIcon(STORM_SVG, '#ff0000');
+
+// Calculate bearing between two points
+const calculateBearing = (start: number[], end: number[]): number => {
+    const lat1 = start[0] * Math.PI / 180;
+    const lat2 = end[0] * Math.PI / 180;
+    const dLon = (end[1] - start[1]) * Math.PI / 180;
+
+    const y = Math.sin(dLon) * Math.cos(lat2);
+    const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+    const bearing = Math.atan2(y, x) * 180 / Math.PI;
+
+    return (bearing + 360) % 360; // Normalize to 0-360
+};
 
 const GeoMap = () => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -155,12 +167,23 @@ const GeoMap = () => {
         // Add or Update markers
         filteredItems.forEach((item, i) => {
             const pos = getPosition(item.trajectory, i * 0.1);
-            const icon = item.category === 'flights' ? planeIcon :
+
+            // Calculate rotation for planes based on direction
+            let rotation = 0;
+            if (item.category === 'flights' && item.trajectory && item.trajectory.length > 1) {
+                const t = (simTime + i * 0.1) % 1;
+                const index = Math.floor(t * (item.trajectory.length - 1));
+                const nextIndex = Math.min(index + 1, item.trajectory.length - 1);
+                rotation = calculateBearing(item.trajectory[index], item.trajectory[nextIndex]);
+            }
+
+            const icon = item.category === 'flights' ? createIcon(PLANE_SVG, '#00ff41', rotation) :
                 item.category === 'trains' ? trainIcon : stormIcon;
 
             if (markersRef.current[item.id]) {
-                // Update position
+                // Update position and icon (for planes with rotation)
                 markersRef.current[item.id].setLatLng(pos as L.LatLngExpression);
+                markersRef.current[item.id].setIcon(icon);
             } else {
                 // Create new marker
                 const marker = L.marker(pos as L.LatLngExpression, { icon })
