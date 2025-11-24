@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { Plane, Train, CloudRain, Search, Layers, Map as MapIcon } from 'lucide-react';
+import { Plane, Train, CloudRain, Search, Layers, Map as MapIcon, Globe } from 'lucide-react';
 import geoData from './geo_data.json';
 
 // Custom Icons
@@ -24,6 +24,7 @@ const stormIcon = createIcon(STORM_SVG, '#ff0000');
 const GeoMap = () => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
+    const tileLayerRef = useRef<L.TileLayer | null>(null);
     const markersRef = useRef<{ [key: string]: L.Marker }>({});
 
     const [activeLayers, setActiveLayers] = useState({
@@ -34,6 +35,7 @@ const GeoMap = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedItem, setSelectedItem] = useState<any>(null);
     const [simTime, setSimTime] = useState(0);
+    const [mapType, setMapType] = useState<'map' | 'satellite'>('map');
 
     // Initialize Map
     useEffect(() => {
@@ -44,10 +46,6 @@ const GeoMap = () => {
             attributionControl: false
         }).setView([20, 0], 2);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>'
-        }).addTo(map);
-
         mapInstanceRef.current = map;
 
         return () => {
@@ -55,6 +53,30 @@ const GeoMap = () => {
             mapInstanceRef.current = null;
         };
     }, []);
+
+    // Handle Map Tiles (Layer Switching)
+    useEffect(() => {
+        const map = mapInstanceRef.current;
+        if (!map) return;
+
+        // Remove old layer
+        if (tileLayerRef.current) {
+            map.removeLayer(tileLayerRef.current);
+        }
+
+        // Add new layer
+        const url = mapType === 'map'
+            ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+            : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+
+        const attribution = mapType === 'map'
+            ? '&copy; <a href="https://carto.com/attributions">CARTO</a>'
+            : 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+
+        const newLayer = L.tileLayer(url, { attribution }).addTo(map);
+        tileLayerRef.current = newLayer;
+
+    }, [mapType]);
 
     // Animation Loop
     useEffect(() => {
@@ -156,6 +178,24 @@ const GeoMap = () => {
                 {/* Overlay Text */}
                 <div className="absolute top-4 left-4 text-green-500 text-xs font-bold bg-black/80 p-1 border border-green-700 flex items-center gap-2 z-[400] pointer-events-none">
                     <MapIcon size={12} /> GLOBAL TRACKING // LIVE
+                </div>
+
+                {/* Map Type Toggle */}
+                <div className="absolute top-4 right-4 z-[400] flex gap-1">
+                    <button
+                        onClick={() => setMapType('map')}
+                        className={`p-1.5 border ${mapType === 'map' ? 'bg-green-900/80 border-green-400 text-green-400' : 'bg-black/80 border-green-900 text-green-700 hover:text-green-500'}`}
+                        title="Map View"
+                    >
+                        <MapIcon size={16} />
+                    </button>
+                    <button
+                        onClick={() => setMapType('satellite')}
+                        className={`p-1.5 border ${mapType === 'satellite' ? 'bg-green-900/80 border-green-400 text-green-400' : 'bg-black/80 border-green-900 text-green-700 hover:text-green-500'}`}
+                        title="Satellite View"
+                    >
+                        <Globe size={16} />
+                    </button>
                 </div>
             </div>
 
