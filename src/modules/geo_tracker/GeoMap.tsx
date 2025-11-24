@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { Plane, Train, CloudRain, Search, Layers, Map as MapIcon, Info } from 'lucide-react';
+import { Plane, Train, CloudRain, Search, Layers, Map as MapIcon } from 'lucide-react';
 import geoData from './geo_data.json';
 
 // Custom Icons
