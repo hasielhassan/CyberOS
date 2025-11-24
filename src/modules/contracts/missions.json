@@ -1,0 +1,316 @@
+[
+    {
+        "id": "MSN-001",
+        "title": "Operation Hello World",
+        "difficulty": "EASY",
+        "reward": "500 BTC",
+        "briefing": "Trace a suspicious IP address and identify the location of a data leak.",
+        "fullDescription": "A confidential laptop containing Project Zero blueprints was stolen from our Berlin office. We've managed to trace the thief's IP address to 192.168.1.55. Your mission is to use the Terminal to trace the signal, identify the city, and confirm the location using the Geo Tracker.",
+        "warnings": [
+            "This is a tutorial mission",
+            "No real danger involved",
+            "Perfect for new agents"
+        ],
+        "requiredModules": [
+            "Terminal",
+            "Geo Tracker"
+        ],
+        "estimatedTime": "10-15 min",
+        "target": "Unknown Thief",
+        "location": "Unknown (Trace Required)",
+        "documents": [
+            {
+                "title": "Stolen Laptop Report",
+                "type": "newspaper",
+                "meta": {
+                    "paperName": "TECH DAILY",
+                    "date": "November 20, 2025",
+                    "price": "Free",
+                    "vol": "V.12"
+                },
+                "data": {
+                    "headline": "TECH THEFT IN BERLIN",
+                    "subhead": "Corporate espionage suspected as Project Zero laptop goes missing",
+                    "leadImage": "https://placehold.co/600x300/333/fff?text=STOLEN+DEVICE",
+                    "imageCaption": "The stolen device contained sensitive blueprints",
+                    "columns": [
+                        "Security footage shows an individual in a red hoodie entering the building at 2:47 AM. The suspect bypassed three security checkpoints using what appears to be a cloned access card.",
+                        "Authorities are working with cybersecurity experts to trace the device's last known network connection."
+                    ],
+                    "sidebar": {
+                        "title": "REWARD",
+                        "content": "500 BTC offered for information leading to recovery."
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "MSN-002",
+        "title": "Silent Echo",
+        "difficulty": "MEDIUM",
+        "reward": "2,500 BTC",
+        "briefing": "Intercept Dr. Aris Thorne before he leaks Project Chimera blueprints.",
+        "fullDescription": "Dr. Aris Thorne, a former lead scientist on Project Chimera, has gone rogue. Intelligence suggests he plans to sell the blueprints to a criminal syndicate. Track his location using the Geo Tracker, analyze surveillance feeds to confirm his identity, and use the Terminal to search for any communications he may have left behind.",
+        "warnings": [
+            "Subject is paranoid and may flee",
+            "Heavily guarded compound",
+            "Time-sensitive operation"
+        ],
+        "requiredModules": [
+            "Terminal",
+            "Geo Tracker",
+            "Surveillance"
+        ],
+        "estimatedTime": "20-30 min",
+        "target": "Dr. Aris Thorne",
+        "location": "Berlin, Germany",
+        "documents": [
+            {
+                "title": "Dr. Thorne's Personnel File",
+                "type": "identity",
+                "meta": {
+                    "issueDate": "2020-03-15",
+                    "agency": "CYBER-INT",
+                    "clearance": "LEVEL 4"
+                },
+                "data": {
+                    "surname": "THORNE",
+                    "firstname": "ARIS",
+                    "idNumber": "SCI-042-THR",
+                    "dob": "1978-06-22",
+                    "photoUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Thorne&backgroundColor=e0e0e0",
+                    "sex": "M",
+                    "height": "175cm",
+                    "signature": "A. Thorne"
+                }
+            },
+            {
+                "title": "Project Chimera Brief",
+                "type": "mission",
+                "meta": {
+                    "classification": "TOP SECRET",
+                    "copy": "1 of 3",
+                    "date": "15 NOV 2025"
+                },
+                "data": {
+                    "operation": "CHIMERA",
+                    "target": "Advanced AI Development",
+                    "briefing": "Project Chimera represents our most advanced artificial intelligence initiative. The system is capable of predictive analysis at unprecedented scales. If this technology falls into the wrong hands, global security is at risk.",
+                    "assets": [
+                        "Quantum Processor",
+                        "Neural Network Core",
+                        "Encryption Keys"
+                    ],
+                    "intel_photo": "https://placehold.co/200x200/555/fff?text=AI+CORE"
+                }
+            }
+        ]
+    },
+    {
+        "id": "MSN-003",
+        "title": "Nightfall Protocol",
+        "difficulty": "HARD",
+        "reward": "5,000 BTC",
+        "briefing": "Infiltrate a remote server farm and deploy the Blackout virus.",
+        "fullDescription": "A rogue server farm in Siberia is hosting illegal AI training operations. Your mission is to use the Satellite view to locate the exact coordinates, decrypt their firewall using the Decryptor module, and deploy the Blackout virus via Terminal commands. You have a 15-minute window before backup systems engage.",
+        "warnings": [
+            "EXTREME RISK",
+            "Thermal sensors active",
+            "Automated defenses online",
+            "Strict time limit: 15 minutes"
+        ],
+        "requiredModules": [
+            "Satellite",
+            "Decryption",
+            "Terminal",
+            "Geo Tracker"
+        ],
+        "estimatedTime": "30-45 min",
+        "target": "Server Farm Alpha-7",
+        "location": "Siberia, Russia",
+        "documents": [
+            {
+                "title": "Server Farm Intelligence",
+                "type": "newspaper",
+                "meta": {
+                    "paperName": "INTELLIGENCE BRIEF",
+                    "date": "November 22, 2025",
+                    "price": "CLASSIFIED",
+                    "vol": "SEC-88"
+                },
+                "data": {
+                    "headline": "ROGUE AI OPERATIONS DETECTED",
+                    "subhead": "Siberian server farm linked to illegal neural network training",
+                    "leadImage": "https://placehold.co/600x300/222/fff?text=SERVER+FARM",
+                    "imageCaption": "Satellite imagery of the target facility",
+                    "columns": [
+                        "The facility is located at coordinates 55.7558° N, 37.6173° E. Intelligence suggests it operates on a 15-minute generator cycle, creating a brief vulnerability window.",
+                        "Thermal scans reveal heavy computing activity consistent with large-scale AI training operations. The facility's firewall uses military-grade encryption."
+                    ],
+                    "sidebar": {
+                        "title": "CRITICAL",
+                        "content": "Mission must be completed before generator backup activates."
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "MSN-004",
+        "title": "Ghost Protocol",
+        "difficulty": "MEDIUM",
+        "reward": "3,000 BTC",
+        "briefing": "Track 'The Broker' and identify his government contacts.",
+        "fullDescription": "A high-value intelligence broker known only as 'The Broker' has been selling classified information to foreign governments. Use the Directory to identify potential suspects, track flight patterns in the Geo Tracker to predict his next location, and monitor Surveillance cameras to confirm his identity. He is known to use body doubles.",
+        "warnings": [
+            "Target uses body doubles",
+            "Moves frequently between locations",
+            "Requires pattern recognition"
+        ],
+        "requiredModules": [
+            "Directory",
+            "Geo Tracker",
+            "Surveillance"
+        ],
+        "estimatedTime": "25-35 min",
+        "target": "The Broker",
+        "location": "Macau, China",
+        "documents": [
+            {
+                "title": "Broker Profile",
+                "type": "identity",
+                "meta": {
+                    "issueDate": "UNKNOWN",
+                    "agency": "INTERPOL",
+                    "clearance": "WANTED"
+                },
+                "data": {
+                    "surname": "UNKNOWN",
+                    "firstname": "ALIAS: THE BROKER",
+                    "idNumber": "INT-WANTED-992",
+                    "dob": "ESTIMATED: 1975",
+                    "photoUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Broker&backgroundColor=333",
+                    "sex": "M",
+                    "height": "UNKNOWN",
+                    "signature": "???"
+                }
+            }
+        ]
+    },
+    {
+        "id": "MSN-005",
+        "title": "Orbital Watchdog",
+        "difficulty": "HARD",
+        "reward": "4,500 BTC",
+        "briefing": "Neutralize a rogue satellite jamming communications over Tokyo.",
+        "fullDescription": "An unknown satellite is jamming critical communications over Tokyo. Use the Satellite module to locate the rogue device, decrypt its control systems, and send a shutdown command via the Terminal. The satellite is disguised among legitimate ones, requiring careful visual identification.",
+        "warnings": [
+            "High-stakes operation",
+            "Satellite identification required",
+            "Encryption: SHA-256",
+            "Failure could disrupt global communications"
+        ],
+        "requiredModules": [
+            "Satellite",
+            "Decryption",
+            "Terminal"
+        ],
+        "estimatedTime": "30-40 min",
+        "target": "Rogue Satellite UNKNOWN-7",
+        "location": "Low Earth Orbit (Tokyo Region)",
+        "documents": [
+            {
+                "title": "Satellite Threat Assessment",
+                "type": "mission",
+                "meta": {
+                    "classification": "URGENT",
+                    "copy": "1 of 1",
+                    "date": "23 NOV 2025"
+                },
+                "data": {
+                    "operation": "WATCHDOG",
+                    "target": "Rogue Satellite",
+                    "briefing": "The satellite is transmitting on unauthorized frequencies, disrupting emergency services and military communications. It must be neutralized immediately. Locate coordinates: 35.6° N, 139.7° E and identify the satellite marked UNKNOWN in the orbital tracking system.",
+                    "assets": [
+                        "Decryption Tools",
+                        "Satellite Override Codes",
+                        "Emergency Shutdown Protocol"
+                    ],
+                    "intel_photo": "https://placehold.co/200x200/000/fff?text=SATELLITE"
+                }
+            }
+        ]
+    },
+    {
+        "id": "MSN-006",
+        "title": "Crimson Viper",
+        "difficulty": "EXPERT",
+        "reward": "10,000 BTC",
+        "briefing": "Locate and apprehend the elusive assassin known as 'Crimson Viper'.",
+        "fullDescription": "Crimson Viper is a legendary assassin responsible for eliminating high-profile targets across three continents. Intelligence suggests she's planning her next strike within 48 hours. Use all available modules to piece together her location, identity, and target. This is a multi-stage investigation requiring Terminal searches, Directory profiling, Geo Tracker surveillance, camera analysis, and satellite reconnaissance.",
+        "warnings": [
+            "MAXIMUM THREAT LEVEL",
+            "Subject is highly trained and dangerous",
+            "Requires ALL modules to complete",
+            "Multi-stage investigation",
+            "Expect deception and misdirection"
+        ],
+        "requiredModules": [
+            "Terminal",
+            "Directory",
+            "Geo Tracker",
+            "Surveillance",
+            "Satellite",
+            "Decryption"
+        ],
+        "estimatedTime": "60-90 min",
+        "target": "Crimson Viper (Real identity unknown)",
+        "location": "CLASSIFIED - Investigation Required",
+        "documents": [
+            {
+                "title": "Viper Case File",
+                "type": "newspaper",
+                "meta": {
+                    "paperName": "CLASSIFIED INTELLIGENCE",
+                    "date": "November 24, 2025",
+                    "price": "TOP SECRET",
+                    "vol": "RED-NOTICE"
+                },
+                "data": {
+                    "headline": "CRIMSON VIPER STRIKES AGAIN",
+                    "subhead": "Elite assassin leaves no trace as investigation intensifies",
+                    "leadImage": "https://placehold.co/600x300/8b0000/fff?text=TARGET+UNKNOWN",
+                    "imageCaption": "Artist rendering based on witness descriptions",
+                    "columns": [
+                        "The assassin known as Crimson Viper has been linked to 12 high-profile eliminations across Europe, Asia, and North America. Despite international efforts, her true identity remains unknown.",
+                        "Recent intercepts suggest she communicates using encrypted satellite channels. Her next target is believed to be a government official, but the specific individual and location remain unclear. Agents must utilize all available intelligence tools to prevent the next strike."
+                    ],
+                    "sidebar": {
+                        "title": "REWARD",
+                        "content": "10,000 BTC for capture. Extreme caution advised."
+                    }
+                }
+            },
+            {
+                "title": "Known Associate Alert",
+                "type": "identity",
+                "meta": {
+                    "issueDate": "2024-08-10",
+                    "agency": "CYBER-INT",
+                    "clearance": "LEVEL 5"
+                },
+                "data": {
+                    "surname": "SUSPECT",
+                    "firstname": "UNKNOWN",
+                    "idNumber": "VIP-001-GHOST",
+                    "dob": "UNKNOWN",
+                    "photoUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Viper&backgroundColor=8b0000",
+                    "sex": "F (UNCONFIRMED)",
+                    "height": "ESTIMATED: 168cm",
+                    "signature": "N/A"
+                }
+            }
+        ]
+    }
+]
