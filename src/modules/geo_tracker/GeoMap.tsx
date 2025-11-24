@@ -251,7 +251,7 @@ const GeoMap = () => {
         // Add or Update markers
         filteredItems.forEach((item, i) => {
             // Use item.progressOffset if available (for trains), otherwise fallback to index-based offset
-            const offset = item.progressOffset !== undefined ? item.progressOffset : i * 0.1;
+            const offset = ('progressOffset' in item && item.progressOffset !== undefined) ? item.progressOffset : i * 0.1;
             const pos = getPosition(item.trajectory, offset);
 
             // Calculate rotation for planes based on direction
@@ -427,19 +427,19 @@ const GeoMap = () => {
                     {/* Layer Toggles */}
                     <div className="flex gap-2 mt-2">
                         <button
-                            onClick={() => setActiveLayers(p => ({ ...p, flights: !p.flights }))}
+                            onClick={() => setActiveLayers((p: typeof activeLayers) => ({ ...p, flights: !p.flights }))}
                             className={`flex-1 py-1 text-[10px] border ${activeLayers.flights ? 'bg-green-900/40 border-green-500 text-green-400' : 'border-green-900 text-green-800'}`}
                         >
                             FLIGHTS
                         </button>
                         <button
-                            onClick={() => setActiveLayers(p => ({ ...p, trains: !p.trains }))}
+                            onClick={() => setActiveLayers((p: typeof activeLayers) => ({ ...p, trains: !p.trains }))}
                             className={`flex-1 py-1 text-[10px] border ${activeLayers.trains ? 'bg-yellow-900/40 border-yellow-500 text-yellow-400' : 'border-green-900 text-green-800'}`}
                         >
                             TRAINS
                         </button>
                         <button
-                            onClick={() => setActiveLayers(p => ({ ...p, weather: !p.weather }))}
+                            onClick={() => setActiveLayers((p: typeof activeLayers) => ({ ...p, weather: !p.weather }))}
                             className={`flex-1 py-1 text-[10px] border ${activeLayers.weather ? 'bg-red-900/40 border-red-500 text-red-400' : 'border-green-900 text-green-800'}`}
                         >
                             STORMS
