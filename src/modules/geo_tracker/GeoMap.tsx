@@ -38,6 +38,8 @@ const GeoMap = () => {
     const mapInstanceRef = useRef<L.Map | null>(null);
     const tileLayerRef = useRef<L.TileLayer | null>(null);
     const markersRef = useRef<{ [key: string]: L.Marker }>({});
+    const trajectoryLineRef = useRef<L.Polyline | null>(null);
+    const customPopupRef = useRef<L.Marker | null>(null);
 
     const [activeLayers, setActiveLayers] = useState(() => {
         const saved = localStorage.getItem('geo_tracker_filters');
@@ -52,6 +54,7 @@ const GeoMap = () => {
     });
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedItem, setSelectedItem] = useState<any>(null);
+    const [trajectoryAnimationKey, setTrajectoryAnimationKey] = useState(0);
     const [simTime, setSimTime] = useState(0);
     const [mapType, setMapType] = useState<'map' | 'satellite'>('map');
     const [mapReady, setMapReady] = useState(false);
@@ -195,20 +198,102 @@ const GeoMap = () => {
                         </div>
                     `);
 
-                marker.on('click', () => setSelectedItem(item));
+                marker.on('click', () => {
+                    setSelectedItem((prev: any) => {
+                        // If clicking the same item, increment animation key to retrigger
+                        if (prev?.id === item.id) {
+                            setTrajectoryAnimationKey(k => k + 1);
+                        }
+                        return item;
+                    });
+                });
                 markersRef.current[item.id] = marker;
             }
         });
 
     }, [filteredItems, simTime, mapReady]);
 
-    // Pan to Selected Item
+    // Trajectory Visualization and Custom Popup for Selected Item
     useEffect(() => {
-        if (selectedItem && mapInstanceRef.current) {
-            const pos = getPosition(selectedItem.trajectory); // Approximate pos
-            mapInstanceRef.current.setView(pos as L.LatLngExpression, 5, { animate: true });
+        const map = mapInstanceRef.current;
+        if (!map || !mapReady) return;
+
+        // Clean up previous trajectory and popup
+        if (trajectoryLineRef.current) {
+            map.removeLayer(trajectoryLineRef.current);
+            trajectoryLineRef.current = null;
         }
-    }, [selectedItem]);
+        if (customPopupRef.current) {
+            map.removeLayer(customPopupRef.current);
+            customPopupRef.current = null;
+        }
+
+        if (!selectedItem || !selectedItem.trajectory) return;
+
+        // Draw trajectory line
+        const trajectoryLine = L.polyline(
+            selectedItem.trajectory as L.LatLngExpression[],
+            {
+                color: selectedItem.category === 'flights' ? '#00ff41' :
+                    selectedItem.category === 'trains' ? '#ffff00' : '#ff0000',
+                weight: 2,
+                opacity: 0.6,
+                dashArray: '5, 10',
+                className: 'trajectory-line'
+            }
+        ).addTo(map);
+        trajectoryLineRef.current = trajectoryLine;
+
+        // Create custom popup icon
+        const popupIcon = new L.DivIcon({
+            className: 'custom-popup-marker',
+            html: `
+                <div class="bg-black/95 border-2 border-green-400 p-3 text-green-400 text-xs font-bold shadow-lg backdrop-blur-sm pointer-events-none">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span class="text-sm">${selectedItem.name}</span>
+                    </div>
+                    <div class="text-[10px] text-green-500 mt-1">
+                        ${selectedItem.id} • ${selectedItem.status}
+                    </div>
+                    <div class="text-[9px] text-green-600 mt-1 border-t border-green-800 pt-1">
+                        ${selectedItem.origin} → ${selectedItem.destination}
+                    </div>
+                </div>
+            `,
+            iconSize: [200, 80],
+            iconAnchor: [100, -10] // Position above the marker
+        });
+
+        // Get current position
+        const currentPos = getPosition(selectedItem.trajectory);
+
+        // Create popup marker
+        const popupMarker = L.marker(currentPos as L.LatLngExpression, {
+            icon: popupIcon,
+            interactive: false
+        }).addTo(map);
+        customPopupRef.current = popupMarker;
+
+        // Center map accounting for side panel (320px = 20rem)
+        // Calculate pixel offset: side panel width / 2
+        const sidebarOffset = 160; // 320px / 2
+        const point = map.project(currentPos as L.LatLngExpression, 5);
+        point.x -= sidebarOffset;
+        const adjustedCenter = map.unproject(point, 5);
+
+        map.setView(adjustedCenter, 5, { animate: true });
+
+    }, [selectedItem, mapReady, trajectoryAnimationKey]);
+
+    // Update custom popup position as marker moves
+    useEffect(() => {
+        if (!selectedItem || !customPopupRef.current || !mapReady) return;
+
+        const currentPos = getPosition(selectedItem.trajectory);
+        customPopupRef.current.setLatLng(currentPos as L.LatLngExpression);
+
+    }, [selectedItem, simTime, mapReady]);
 
     return (
         <div className="h-full flex relative bg-[#050a05]">
@@ -287,7 +372,15 @@ const GeoMap = () => {
                     {filteredItems.map((item: any) => (
                         <div
                             key={item.id}
-                            onClick={() => setSelectedItem(item)}
+                            onClick={() => {
+                                setSelectedItem((prev: any) => {
+                                    // If clicking the same item, increment animation key to retrigger
+                                    if (prev?.id === item.id) {
+                                        setTrajectoryAnimationKey(k => k + 1);
+                                    }
+                                    return item;
+                                });
+                            }}
                             className={`p-2 border cursor-pointer transition-all hover:bg-green-900/30 flex items-center justify-between
                                 ${selectedItem?.id === item.id ? 'border-green-400 bg-green-900/40' : 'border-green-900/50'}
                             `}
