@@ -27,15 +27,22 @@ const GeoMap = () => {
     const tileLayerRef = useRef<L.TileLayer | null>(null);
     const markersRef = useRef<{ [key: string]: L.Marker }>({});
 
-    const [activeLayers, setActiveLayers] = useState({
-        flights: true,
-        trains: true,
-        weather: true
+    const [activeLayers, setActiveLayers] = useState(() => {
+        const saved = localStorage.getItem('geo_tracker_filters');
+        if (saved) {
+            try {
+                return JSON.parse(saved);
+            } catch {
+                return { flights: true, trains: true, weather: true };
+            }
+        }
+        return { flights: true, trains: true, weather: true };
     });
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedItem, setSelectedItem] = useState<any>(null);
     const [simTime, setSimTime] = useState(0);
     const [mapType, setMapType] = useState<'map' | 'satellite'>('map');
+    const [mapReady, setMapReady] = useState(false);
 
     // Initialize Map
     useEffect(() => {
@@ -48,9 +55,15 @@ const GeoMap = () => {
 
         mapInstanceRef.current = map;
 
+        // Mark map as ready after a brief delay to ensure it's fully initialized
+        setTimeout(() => {
+            setMapReady(true);
+        }, 100);
+
         return () => {
             map.remove();
             mapInstanceRef.current = null;
+            setMapReady(false);
         };
     }, []);
 
@@ -77,6 +90,11 @@ const GeoMap = () => {
         tileLayerRef.current = newLayer;
 
     }, [mapType]);
+
+    // Persist filter state to localStorage
+    useEffect(() => {
+        localStorage.setItem('geo_tracker_filters', JSON.stringify(activeLayers));
+    }, [activeLayers]);
 
     // Animation Loop
     useEffect(() => {
@@ -123,7 +141,7 @@ const GeoMap = () => {
     // Update Markers
     useEffect(() => {
         const map = mapInstanceRef.current;
-        if (!map) return;
+        if (!map || !mapReady) return;
 
         // Remove markers that are no longer in filteredItems
         const currentIds = new Set(filteredItems.map(i => i.id));
@@ -159,7 +177,7 @@ const GeoMap = () => {
             }
         });
 
-    }, [filteredItems, simTime]);
+    }, [filteredItems, simTime, mapReady]);
 
     // Pan to Selected Item
     useEffect(() => {
