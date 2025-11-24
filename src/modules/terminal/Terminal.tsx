@@ -68,10 +68,40 @@ const TerminalConsole = () => {
                     'rm      - Delete a file forever',
                     'cat     - Read a file',
                     'nano    - Write in a file',
+                    'search  - Find files by name or text',
                     'clear   - Clean up this screen',
                     'ssh     - Connect to another computer',
                     'exit    - Leave the other computer'
                 ]);
+                break;
+            case 'search':
+                if (!arg) { setHistory(h => [...h, 'Usage: search <term>']); return; }
+                const term = arg.toLowerCase();
+                const results: string[] = [];
+
+                Object.entries(files).forEach(([filePath, data]: [string, any]) => {
+                    const nameMatch = filePath.toLowerCase().includes(term);
+                    const contentMatch = data.type === 'file' && data.content.toLowerCase().includes(term);
+
+                    if (nameMatch) {
+                        results.push(`[${data.type === 'dir' ? 'DIR' : 'FILE'}] ${filePath}`);
+                    }
+
+                    if (contentMatch) {
+                        const lines = data.content.split('\n');
+                        lines.forEach((line: string) => {
+                            if (line.toLowerCase().includes(term)) {
+                                results.push(`[MATCH] ${filePath}: ...${line.trim()}...`);
+                            }
+                        });
+                    }
+                });
+
+                if (results.length === 0) {
+                    setHistory(h => [...h, `No matches found for "${arg}"`]);
+                } else {
+                    setHistory(h => [...h, `Search results for "${arg}":`, ...results]);
+                }
                 break;
             case 'pwd':
                 setHistory(h => [...h, path]);
