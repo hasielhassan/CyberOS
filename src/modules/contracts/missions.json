@@ -5,7 +5,7 @@
         "difficulty": "EASY",
         "reward": "500 BTC",
         "briefing": "Trace a suspicious IP address and identify the location of a data leak.",
-        "fullDescription": "A confidential laptop containing Project Zero blueprints was stolen from our Berlin office. We've managed to trace the thief's IP address to 192.168.1.55. Your mission is to use the Terminal to trace the signal, identify the city, and confirm the location using the Geo Tracker.",
+        "fullDescription": "A confidential laptop containing Project Zero blueprints was stolen from our Amsterdam office. We've managed to trace the thief's IP address to 85.214.132.117. Your mission is to use the Terminal to trace the signal, identify the city, and confirm the location using the Geo Tracker.",
         "warnings": [
             "This is a tutorial mission",
             "No real danger involved",
@@ -29,9 +29,9 @@
                     "vol": "V.12"
                 },
                 "data": {
-                    "headline": "TECH THEFT IN BERLIN",
+                    "headline": "TECH THEFT IN AMSTERDAM",
                     "subhead": "Corporate espionage suspected as Project Zero laptop goes missing",
-                    "leadImage": "https://placehold.co/600x300/333/fff?text=STOLEN+DEVICE",
+                    "leadImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Military_laptop_%286835270402%29.jpg/330px-Military_laptop_%286835270402%29.jpg",
                     "imageCaption": "The stolen device contained sensitive blueprints",
                     "columns": [
                         "Security footage shows an individual in a red hoodie entering the building at 2:47 AM. The suspect bypassed three security checkpoints using what appears to be a cloned access card.",

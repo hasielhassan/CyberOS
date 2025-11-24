@@ -3,6 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Plane, Train, CloudRain, Search, Layers, Map as MapIcon, Globe } from 'lucide-react';
 import geoData from './geo_data.json';
+import placesData from './places.json';
 
 // Custom Icons
 const createIcon = (svg: string, color: string, rotation: number = 0) => new L.DivIcon({
@@ -101,6 +102,7 @@ const GeoMap = () => {
     const markersRef = useRef<{ [key: string]: L.Marker }>({});
     const trajectoryLineRef = useRef<L.Polyline | null>(null);
     const customPopupRef = useRef<L.Marker | null>(null);
+    const placeMarkerRef = useRef<L.Marker | null>(null);
 
     const [activeLayers, setActiveLayers] = useState(() => {
         const saved = localStorage.getItem('geo_tracker_filters');
@@ -115,6 +117,8 @@ const GeoMap = () => {
     });
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedItem, setSelectedItem] = useState<any>(null);
+    const [placesSearchTerm, setPlacesSearchTerm] = useState('');
+    const [selectedPlace, setSelectedPlace] = useState<any>(null);
     const [trajectoryAnimationKey, setTrajectoryAnimationKey] = useState(0);
     const [simTime, setSimTime] = useState(0);
     const [mapType, setMapType] = useState<'map' | 'satellite'>('map');
@@ -139,6 +143,7 @@ const GeoMap = () => {
         // Add click handler to deselect when clicking map background
         map.on('click', () => {
             setSelectedItem(null);
+            setSelectedPlace(null);
         });
 
         return () => {
@@ -212,6 +217,17 @@ const GeoMap = () => {
                 item.id.toLowerCase().includes(searchTerm.toLowerCase()))
         );
     }, [activeLayers, searchTerm]);
+
+    // Filter Places
+    const filteredPlaces = useMemo(() => {
+        if (!placesSearchTerm) return [];
+        const lowerTerm = placesSearchTerm.toLowerCase();
+        return placesData.filter(place =>
+            place.name.toLowerCase().includes(lowerTerm) ||
+            place.description.toLowerCase().includes(lowerTerm) ||
+            place.coordinates.includes(lowerTerm)
+        );
+    }, [placesSearchTerm]);
 
     // Calculate Position
     const getPosition = (trajectory: number[][], offset: number = 0) => {
@@ -375,6 +391,61 @@ const GeoMap = () => {
 
     }, [selectedItem, simTime, mapReady]);
 
+    // Handle Selected Place (Static Marker & Popup)
+    useEffect(() => {
+        const map = mapInstanceRef.current;
+        if (!map || !mapReady) return;
+
+        // Clean up previous place marker
+        if (placeMarkerRef.current) {
+            map.removeLayer(placeMarkerRef.current);
+            placeMarkerRef.current = null;
+        }
+
+        if (!selectedPlace) return;
+
+        const [lat, lng] = selectedPlace.coordinates.split(',').map(Number);
+        const pos = [lat, lng] as L.LatLngExpression;
+
+        // Create popup icon for place
+        const popupIcon = new L.DivIcon({
+            className: 'custom-place-popup',
+            html: `
+                <div class="bg-black/95 border-2 border-cyan-400 p-3 text-cyan-400 text-xs font-bold shadow-lg backdrop-blur-sm pointer-events-none max-w-[250px]">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                        <span class="text-sm uppercase">${selectedPlace.name}</span>
+                    </div>
+                    ${selectedPlace.image ? `<img src="${selectedPlace.image}" class="w-full h-24 object-cover mb-2 border border-cyan-900" />` : ''}
+                    <div class="text-[10px] text-cyan-300 mb-2 leading-tight">
+                        ${selectedPlace.description}
+                    </div>
+                     <div class="text-[9px] text-cyan-600 border-t border-cyan-900 pt-1 italic">
+                        ${selectedPlace.insights}
+                    </div>
+                </div>
+            `,
+            iconSize: [250, 200],
+            iconAnchor: [125, -10] // Position above
+        });
+
+        // Create marker
+        const marker = L.marker(pos, {
+            icon: popupIcon,
+            interactive: false
+        }).addTo(map);
+        placeMarkerRef.current = marker;
+
+        // Center map
+        const sidebarOffset = 160;
+        const point = map.project(pos, 6); // Zoom level 6 for places
+        point.x -= sidebarOffset;
+        const adjustedCenter = map.unproject(point, 6);
+
+        map.setView(adjustedCenter, 6, { animate: true });
+
+    }, [selectedPlace, mapReady]);
+
     return (
         <div className="h-full flex relative bg-[#050a05]">
             {/* Map Area */}
@@ -412,6 +483,36 @@ const GeoMap = () => {
                         <Layers size={18} /> TRACKING DATA
                     </h2>
 
+                    {/* Places Search */}
+                    <div className="mt-4 relative">
+                        <input
+                            type="text"
+                            placeholder="SEARCH PLACES..."
+                            value={placesSearchTerm}
+                            onChange={e => setPlacesSearchTerm(e.target.value)}
+                            className="w-full bg-cyan-900/20 border border-cyan-700 p-2 pl-8 text-xs text-cyan-400 focus:outline-none focus:border-cyan-400 placeholder-cyan-800"
+                        />
+                        <Search size={14} className="absolute left-2 top-2.5 text-cyan-700" />
+                    </div>
+                    {filteredPlaces.length > 0 && (
+                        <div className="mt-1 max-h-40 overflow-y-auto border border-cyan-900 bg-black/80">
+                            {filteredPlaces.map((place, idx) => (
+                                <div
+                                    key={idx}
+                                    onClick={() => {
+                                        setSelectedPlace(place);
+                                        setSelectedItem(null); // Clear other selection
+                                        setPlacesSearchTerm(''); // Optional: clear search after selection
+                                    }}
+                                    className="p-2 text-xs text-cyan-500 hover:bg-cyan-900/30 cursor-pointer border-b border-cyan-900/50 last:border-0"
+                                >
+                                    <div className="font-bold">{place.name}</div>
+                                    <div className="text-[10px] opacity-70 truncate">{place.description}</div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                     {/* Search */}
                     <div className="mt-4 relative">
                         <input
@@ -419,7 +520,7 @@ const GeoMap = () => {
                             placeholder="SEARCH ID OR NAME..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full bg-green-900/20 border border-green-700 p-2 pl-8 text-xs text-green-400 focus:outline-none focus:border-green-400"
+                            className="w-full bg-green-900/20 border border-green-700 p-2 pl-8 text-xs text-green-400 focus:outline-none focus:border-green-400 placeholder-green-800"
                         />
                         <Search size={14} className="absolute left-2 top-2.5 text-green-700" />
                     </div>
@@ -453,6 +554,7 @@ const GeoMap = () => {
                         <div
                             key={item.id}
                             onClick={() => {
+                                setSelectedPlace(null); // Clear place selection
                                 setSelectedItem((prev: any) => {
                                     // If clicking the same item, increment animation key to retrigger
                                     if (prev?.id === item.id) {
