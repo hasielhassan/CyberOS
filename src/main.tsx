@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import './index.css';
 import { PluginProvider, LanguageProvider, usePlugins } from './core/registry';
 import { AuthProvider, useAuth } from './core/AuthContext';
@@ -45,7 +45,7 @@ const App = () => {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <HashRouter>
             <AuthProvider>
                 <LanguageProvider initialLanguages={[en, es]}>
                     <PluginProvider>
@@ -53,6 +53,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     </PluginProvider>
                 </LanguageProvider>
             </AuthProvider>
-        </BrowserRouter>
+        </HashRouter>
     </React.StrictMode>,
 );
