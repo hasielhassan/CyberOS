@@ -75,6 +75,11 @@ const GeoMap = () => {
             setMapReady(true);
         }, 100);
 
+        // Add click handler to deselect when clicking map background
+        map.on('click', () => {
+            setSelectedItem(null);
+        });
+
         return () => {
             map.remove();
             mapInstanceRef.current = null;
@@ -188,17 +193,12 @@ const GeoMap = () => {
                 markersRef.current[item.id].setLatLng(pos as L.LatLngExpression);
                 markersRef.current[item.id].setIcon(icon);
             } else {
-                // Create new marker
+                // Create new marker (no bindPopup - using custom popup instead)
                 const marker = L.marker(pos as L.LatLngExpression, { icon })
-                    .addTo(map)
-                    .bindPopup(`
-                        <div class="text-xs font-bold text-black">
-                            ${item.name}<br/>
-                            <span class="text-[10px] opacity-70">${item.status}</span>
-                        </div>
-                    `);
+                    .addTo(map);
 
-                marker.on('click', () => {
+                marker.on('click', (e) => {
+                    L.DomEvent.stopPropagation(e.originalEvent);
                     setSelectedItem((prev: any) => {
                         // If clicking the same item, increment animation key to retrigger
                         if (prev?.id === item.id) {
