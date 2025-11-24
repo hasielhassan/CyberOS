@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { getIpInfo, simulateTraceroute, formatIpInfo, generateRandomCloudIp } from '../../utils/ipUtils';
 
 const initialFileSystem = {
     '/': { type: 'dir', children: ['home', 'bin', 'var', 'missions'] },
@@ -69,6 +70,8 @@ const TerminalConsole = () => {
                     'cat     - Read a file',
                     'nano    - Write in a file',
                     'search  - Find files by name or text',
+                    'ipinfo  - Get info about an IP address',
+                    'trace   - Trace route to an IP address',
                     'clear   - Clean up this screen',
                     'ssh     - Connect to another computer',
                     'exit    - Leave the other computer'
@@ -343,6 +346,65 @@ const TerminalConsole = () => {
                 } else {
                     setHistory(h => [...h, 'Logout: Session terminated.']);
                 }
+                break;
+            case 'ipinfo':
+                if (!arg) {
+                    setHistory(h => [...h, 'Usage: ipinfo <ip_address>']);
+                    setHistory(h => [...h, 'Example: ipinfo 8.8.8.8']);
+                    return;
+                }
+                // Show loading message
+                setHistory(h => [...h, `Querying information for ${arg}...`]);
+
+                // Fetch IP info asynchronously
+                getIpInfo(arg).then(info => {
+                    const formattedInfo = formatIpInfo(info, true);
+                    setHistory(h => {
+                        // Remove the "Querying..." message and add the results
+                        const newHistory = [...h];
+                        newHistory.pop(); // Remove loading message
+                        return [...newHistory, ...formattedInfo];
+                    });
+                }).catch(error => {
+                    setHistory(h => {
+                        const newHistory = [...h];
+                        newHistory.pop();
+                        return [...newHistory, `Error: Failed to get IP info - ${error.message}`];
+                    });
+                });
+                break;
+            case 'trace':
+                if (!arg) {
+                    setHistory(h => [...h, 'Usage: trace <ip_address>']);
+                    setHistory(h => [...h, 'Example: trace 8.8.8.8']);
+                    return;
+                }
+                // Show loading message
+                setHistory(h => [...h, `Tracing route to ${arg}...`]);
+
+                // Simulate traceroute asynchronously
+                simulateTraceroute(arg, 8).then(route => {
+                    const traceOutput: string[] = [`\nTraceroute to ${arg}:`];
+                    route.forEach((hop, index) => {
+                        const hopNum = (index + 1).toString().padStart(2, ' ');
+                        const location = `${hop.city || 'Unknown'}, ${hop.country || '??'}`;
+                        const org = hop.org ? ` (${hop.org.split(' ')[0]})` : '';
+                        traceOutput.push(`${hopNum}. ${hop.ip.padEnd(15)} - ${location}${org}`);
+                    });
+
+                    setHistory(h => {
+                        // Remove the "Tracing..." message and add the results
+                        const newHistory = [...h];
+                        newHistory.pop(); // Remove loading message
+                        return [...newHistory, ...traceOutput];
+                    });
+                }).catch(error => {
+                    setHistory(h => {
+                        const newHistory = [...h];
+                        newHistory.pop();
+                        return [...newHistory, `Error: Failed to trace route - ${error.message}`];
+                    });
+                });
                 break;
             case 'clear':
                 setHistory([]);
