@@ -12,5 +12,6 @@ export const en: Language = {
         'Decryption': 'Decryption',
         'Contracts': 'Contracts',
         'Surveillance': 'Surveillance',
+        'directory.title': 'Directory',
     }
 };

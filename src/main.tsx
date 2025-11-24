@@ -18,6 +18,7 @@ import { ContractsPlugin } from './modules/contracts';
 import { SurveillancePlugin } from './modules/surveillance';
 import { BioLabPlugin } from './modules/bio_lab';
 import { HealthMonitorPlugin } from './modules/health_monitor';
+import { DirectoryPlugin } from './modules/directory';
 
 import { en } from './locales/en';
 import { es } from './locales/es';
@@ -38,6 +39,7 @@ const App = () => {
         registerPlugin(SurveillancePlugin);
         registerPlugin(BioLabPlugin);
         registerPlugin(HealthMonitorPlugin);
+        registerPlugin(DirectoryPlugin);
     }, []);
 
     return isAuthenticated ? <Layout /> : <Login />;

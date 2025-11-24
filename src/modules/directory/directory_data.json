@@ -1,0 +1,148 @@
+[
+    {
+        "id": "AGT-001",
+        "name": "Viper",
+        "role": "AGENT",
+        "status": "ACTIVE",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Viper&backgroundColor=b6e3f4",
+        "details": {
+            "age": 29,
+            "occupation": "Field Operative",
+            "location": "Sector 7",
+            "nationality": "Unknown"
+        },
+        "hiddenInfo": {
+            "realName": "Natasha V.",
+            "clearanceLevel": "LEVEL 5",
+            "notes": "Highly skilled in infiltration and CQC. Suspected double agent in 2023 (Cleared).",
+            "knownAssociates": [
+                "The Baron (Target)",
+                "Agent 004"
+            ]
+        },
+        "documents": [
+            {
+                "title": "Service Record",
+                "type": "identity",
+                "meta": {
+                    "issueDate": "2024-01-15",
+                    "agency": "CYBER-INT",
+                    "clearance": "LEVEL 5"
+                },
+                "data": {
+                    "surname": "V.",
+                    "firstname": "NATASHA",
+                    "idNumber": "AGT-001",
+                    "dob": "1995-03-12",
+                    "photoUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Viper&backgroundColor=b6e3f4",
+                    "sex": "F",
+                    "height": "170cm",
+                    "signature": "N. Viper"
+                }
+            },
+            {
+                "title": "Mission: Nightfall",
+                "type": "mission",
+                "meta": {
+                    "classification": "TOP SECRET",
+                    "copy": "1 of 1",
+                    "date": "24 NOV 2025"
+                },
+                "data": {
+                    "operation": "NIGHTFALL",
+                    "target": "Embassy of Val Verde",
+                    "briefing": "Intelligence indicates the target is holding the encryption keys in a hardened safe within the basement level. Security is heavy. Stealth is mandatory.",
+                    "assets": [
+                        "Suppressed Pistol",
+                        "Lockpick Kit",
+                        "Miniature Camera"
+                    ],
+                    "intel_photo": "https://placehold.co/200x200/555/fff?text=TARGET+BLDG"
+                }
+            }
+        ]
+    },
+    {
+        "id": "CRM-992",
+        "name": "The Baron",
+        "role": "CRIMINAL",
+        "status": "WANTED",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Baron&backgroundColor=ffdfbf",
+        "details": {
+            "age": 45,
+            "occupation": "Arms Dealer",
+            "location": "Unknown (Last seen in Eastern Europe)",
+            "nationality": "Latverian"
+        },
+        "hiddenInfo": {
+            "realName": "Victor D.",
+            "clearanceLevel": "NONE",
+            "notes": "Leader of the 'Red Syndicate'. Dangerous. Do not approach without backup.",
+            "knownAssociates": [
+                "Viper (Surveillance Target)"
+            ]
+        },
+        "documents": [
+            {
+                "title": "Wanted Poster",
+                "type": "newspaper",
+                "meta": {
+                    "paperName": "GLOBAL TIMES",
+                    "date": "October 15, 2024",
+                    "price": "5.00",
+                    "vol": "CDXLII"
+                },
+                "data": {
+                    "headline": "ARMS DEALER AT LARGE",
+                    "subhead": "Authorities offer reward for information leading to capture",
+                    "leadImage": "https://placehold.co/600x300/333/fff?text=WANTED",
+                    "imageCaption": "Surveillance footage of 'The Baron'",
+                    "columns": [
+                        "Interpol has issued a Red Notice for the individual known as 'The Baron'. He is suspected of orchestrating major arms deals across three continents.",
+                        "Sources say he operates from a mobile command center."
+                    ],
+                    "sidebar": {
+                        "title": "REWARD",
+                        "content": "5,000,000 BTC for verified intel."
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "SCI-042",
+        "name": "Dr. Ada Love",
+        "role": "SCIENTIST",
+        "status": "RESEARCH",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Ada&backgroundColor=c0aede",
+        "details": {
+            "age": 32,
+            "occupation": "Cryptographer",
+            "location": "CyberOS R&D Lab",
+            "nationality": "British"
+        },
+        "hiddenInfo": {
+            "realName": "Ada L.",
+            "clearanceLevel": "LEVEL 4",
+            "notes": "Currently working on the 'Enigma' project. Essential personnel.",
+            "knownAssociates": []
+        },
+        "documents": [
+            {
+                "title": "PhD Certificate",
+                "type": "certificate",
+                "meta": {
+                    "id": "UNI-OX-22",
+                    "issued": "2018-06-20",
+                    "colorTheme": "#4c1d95"
+                },
+                "data": {
+                    "header": "Doctor of Philosophy",
+                    "recipient": "Ada Love",
+                    "body": "For groundbreaking research in Quantum Cryptography and Artificial Intelligence alignment.",
+                    "signature": "Chancellor H."
+                }
+            }
+        ]
+    }
+]
