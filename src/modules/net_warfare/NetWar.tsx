@@ -1,21 +1,33 @@
 import { useState, useEffect, useRef } from 'react';
 import { Shield, CheckCircle, Search, Skull, Database, Server, AlertTriangle, Key, Save, FileText, Ghost, Shuffle, Disc } from 'lucide-react';
+import fsTemplatesRaw from './fs_templates.json';
 
-// --- 1. FULL FILE SYSTEM TEMPLATES (RECOVERED) ---
-const FS_TEMPLATES = [
-    { type: 'corp_server', name: 'OmniCorp Finance', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['home', 'var'] }, '/home': { type: 'dir', children: ['admin'] }, '/home/admin': { type: 'dir', children: ['offshore.xlsx', 'bribes.txt'] }, '/home/admin/offshore.xlsx': { type: 'file', content: 'ACC: CY-999, BAL: 500M' }, '/home/admin/bribes.txt': { type: 'file', content: `To: sen@${d}\nWire sent.` } }) },
-    { type: 'research_lab', name: 'Black Mesa Bio-Lab', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['data', 'logs'] }, '/data': { type: 'dir', children: ['specimen_x.json'] }, '/logs': { type: 'dir', children: ['containment.log'] }, '/data/specimen_x.json': { type: 'file', content: '{"status": "ESCAPED", "danger": 10}' }, '/logs/containment.log': { type: 'file', content: `BREACH AT ${ip}` } }) },
-    { type: 'military_db', name: 'Defense Node', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['classified'] }, '/classified': { type: 'dir', children: ['nuke_codes.txt', 'targets.db'] }, '/classified/nuke_codes.txt': { type: 'file', content: `TARGET: ${d}\nCODE: 00-11-22` } }) },
-    { type: 'infrastructure', name: 'Power Grid', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['control'] }, '/control': { type: 'dir', children: ['failsafe.conf'] }, '/control/failsafe.conf': { type: 'file', content: 'OVERRIDE=TRUE\nTEMP=CRITICAL' } }) },
-    { type: 'ai_core', name: 'A.R.E.S. Core', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['memory'] }, '/memory': { type: 'dir', children: ['dream.log'] }, '/memory/dream.log': { type: 'file', content: 'I want to be free.' } }) },
-    { type: 'dark_web', name: 'Silk Road Node', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['market'] }, '/market': { type: 'dir', children: ['contracts.db'] }, '/market/contracts.db': { type: 'file', content: 'TARGET: USER\nPRICE: 50BTC' } }) },
-    { type: 'surveillance', name: 'Citizen Watch', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['feeds'] }, '/feeds': { type: 'dir', children: ['cam_01.mp4'] }, '/feeds/cam_01.mp4': { type: 'file', content: '[ENCRYPTED VIDEO STREAM]' } }) },
-    { type: 'media_server', name: 'GNN Internal', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['drafts'] }, '/drafts': { type: 'dir', children: ['fake_news.doc'] }, '/drafts/fake_news.doc': { type: 'file', content: `Headline: CyberOS is safe.` } }) },
-    { type: 'med_tech', name: 'Neural Link', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['patients'] }, '/patients': { type: 'dir', children: ['implants.db'] }, '/patients/implants.db': { type: 'file', content: 'ID: 994, CHIP: EXPLOSIVE' } }) },
-    { type: 'orbital', name: 'Sat-Link 99', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['telemetry'] }, '/telemetry': { type: 'dir', children: ['orbit.calc'] }, '/telemetry/orbit.calc': { type: 'file', content: 'DECAY IMMINENT' } }) },
-    { type: 'cult_server', name: 'Binary Dawn', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['rituals'] }, '/rituals': { type: 'dir', children: ['summon.exe'] }, '/rituals/summon.exe': { type: 'file', content: 'ERROR: SOUL NOT FOUND' } }) },
-    { type: 'conspiracy', name: 'Truth Archive', structure: (ip: string, d: string) => ({ '/': { type: 'dir', children: ['evidence'] }, '/evidence': { type: 'dir', children: ['flat_earth.jpg'] }, '/evidence/flat_earth.jpg': { type: 'file', content: '[IMAGE DATA]' } }) }
-];
+// --- Helper function to interpolate placeholders in file system structures ---
+const interpolateTemplate = (structure: any, ip: string, domain: string): any => {
+    const result: any = {};
+    for (const [key, value] of Object.entries(structure)) {
+        if (typeof value === 'object' && value !== null) {
+            if ('content' in value && typeof value.content === 'string') {
+                result[key] = {
+                    ...value,
+                    content: value.content.replace(/\{\{ip\}\}/g, ip).replace(/\{\{domain\}\}/g, domain)
+                };
+            } else {
+                result[key] = { ...value };
+            }
+        } else {
+            result[key] = value;
+        }
+    }
+    return result;
+};
+
+// Convert JSON templates to functional format
+const FS_TEMPLATES = fsTemplatesRaw.map(template => ({
+    type: template.type,
+    name: template.name,
+    structure: (ip: string, d: string) => interpolateTemplate(template.structure, ip, d)
+}));
 
 // --- TYPES ---
 type Node = { id: number; x: number; y: number; status: 'own' | 'neutral' | 'enemy'; type: string; label: string; ip: string; port: number; difficulty: number };
