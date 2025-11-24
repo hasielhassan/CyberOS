@@ -48,13 +48,228 @@ const TerminalConsole = () => {
         const args = cmd.split(' ');
         const command = args[0].toLowerCase();
         const arg = args[1];
+        const arg2 = args[2];
 
         const prompt = sshSession ? `root@${sshSession.domain}:${path}#` : `${path}>`;
         setHistory(h => [...h, `${prompt} ${cmd}`]);
 
         switch (command) {
             case 'help':
-                setHistory(h => [...h, 'Commands: ls, cd, cat, mkdir, nano, rm, clear, ssh, exit']);
+                setHistory(h => [
+                    ...h,
+                    '--- CyberOS Terminal Help ---',
+                    'ls      - See what files are here',
+                    'cd      - Go to another folder',
+                    'pwd     - Show where I am right now',
+                    'mkdir   - Make a new folder',
+                    'rmdir   - Remove an empty folder',
+                    'touch   - Create a new empty file',
+                    'mv      - Move or rename a file',
+                    'rm      - Delete a file forever',
+                    'cat     - Read a file',
+                    'nano    - Write in a file',
+                    'clear   - Clean up this screen',
+                    'ssh     - Connect to another computer',
+                    'exit    - Leave the other computer'
+                ]);
+                break;
+            case 'pwd':
+                setHistory(h => [...h, path]);
+                break;
+            case 'ls':
+                // @ts-ignore
+                const dir = files[path];
+                if (dir && dir.type === 'dir') {
+                    setHistory(h => [...h, dir.children.length > 0 ? dir.children.join('  ') : '(empty)']);
+                }
+                break;
+            case 'cd':
+                if (!arg || arg === '/') { setPath('/'); return; }
+                if (arg === '..') {
+                    const parts = path.split('/');
+                    parts.pop();
+                    setPath(parts.length === 1 ? '/' : parts.join('/'));
+                    return;
+                }
+                const newPath = resolvePath(arg);
+                // @ts-ignore
+                if (files[newPath] && files[newPath].type === 'dir') {
+                    setPath(newPath);
+                } else {
+                    setHistory(h => [...h, `Directory not found: ${arg}`]);
+                }
+                break;
+            case 'touch':
+                if (!arg) { setHistory(h => [...h, 'Usage: touch <filename>']); return; }
+                const touchPath = resolvePath(arg);
+                // @ts-ignore
+                if (files[touchPath]) {
+                    setHistory(h => [...h, `Updated timestamp for ${arg}`]);
+                } else {
+                    setFiles((prev: any) => {
+                        const parentDir = touchPath.substring(0, touchPath.lastIndexOf('/')) || '/';
+                        const fileName = touchPath.split('/').pop();
+                        if (!prev[parentDir]) return prev;
+
+                        const newFiles = { ...prev, [touchPath]: { type: 'file', content: '' } };
+                        newFiles[parentDir] = { ...prev[parentDir], children: [...prev[parentDir].children, fileName] };
+                        return newFiles;
+                    });
+                    setHistory(h => [...h, `Created file: ${arg}`]);
+                }
+                break;
+            case 'mkdir':
+                if (!arg) { setHistory(h => [...h, 'Usage: mkdir <foldername>']); return; }
+                const mkPath = resolvePath(arg);
+                // @ts-ignore
+                if (files[mkPath]) {
+                    setHistory(h => [...h, `Error: ${arg} already exists`]);
+                    return;
+                }
+                setFiles((prev: any) => ({
+                    ...prev,
+                    [mkPath]: { type: 'dir', children: [] },
+                    [path]: { ...prev[path], children: [...prev[path].children, arg] }
+                }));
+                setHistory(h => [...h, `Created directory: ${arg}`]);
+                break;
+            case 'rmdir':
+                if (!arg) { setHistory(h => [...h, 'Usage: rmdir <foldername>']); return; }
+                const rmdirPath = resolvePath(arg);
+                // @ts-ignore
+                const targetDir = files[rmdirPath];
+                if (!targetDir) {
+                    setHistory(h => [...h, `Directory not found: ${arg}`]);
+                } else if (targetDir.type !== 'dir') {
+                    setHistory(h => [...h, `Not a directory: ${arg}`]);
+                } else if (targetDir.children.length > 0) {
+                    setHistory(h => [...h, `Directory not empty: ${arg}`]);
+                } else {
+                    setFiles((prev: any) => {
+                        const newFiles = { ...prev };
+                        delete newFiles[rmdirPath];
+                        const parent = rmdirPath.substring(0, rmdirPath.lastIndexOf('/')) || '/';
+                        if (newFiles[parent]) {
+                            newFiles[parent] = {
+                                ...newFiles[parent],
+                                children: newFiles[parent].children.filter((c: string) => c !== arg)
+                            };
+                        }
+                        return newFiles;
+                    });
+                    setHistory(h => [...h, `Removed directory: ${arg}`]);
+                }
+                break;
+            case 'mv':
+                if (!arg || !arg2) { setHistory(h => [...h, 'Usage: mv <source> <destination>']); return; }
+                const sourcePath = resolvePath(arg);
+                let destPath = resolvePath(arg2);
+
+                // @ts-ignore
+                if (!files[sourcePath]) {
+                    setHistory(h => [...h, `Source not found: ${arg}`]);
+                    return;
+                }
+
+                // Check if dest is a directory, if so, append filename
+                // @ts-ignore
+                if (files[destPath] && files[destPath].type === 'dir') {
+                    destPath = `${destPath === '/' ? '' : destPath}/${arg.split('/').pop()}`;
+                }
+
+                setFiles((prev: any) => {
+                    const newFiles = { ...prev };
+                    const isDir = newFiles[sourcePath].type === 'dir';
+
+                    // Move the item itself
+                    newFiles[destPath] = newFiles[sourcePath];
+                    delete newFiles[sourcePath];
+
+                    // Update parent of source
+                    const srcParent = sourcePath.substring(0, sourcePath.lastIndexOf('/')) || '/';
+                    const srcFileName = sourcePath.split('/').pop();
+                    if (newFiles[srcParent]) {
+                        newFiles[srcParent] = {
+                            ...newFiles[srcParent],
+                            children: newFiles[srcParent].children.filter((c: string) => c !== srcFileName)
+                        };
+                    }
+
+                    // Update parent of dest
+                    const dstParent = destPath.substring(0, destPath.lastIndexOf('/')) || '/';
+                    const dstFileName = destPath.split('/').pop();
+                    if (newFiles[dstParent]) {
+                        newFiles[dstParent] = {
+                            ...newFiles[dstParent],
+                            children: [...newFiles[dstParent].children, dstFileName]
+                        };
+                    }
+
+                    // If directory, move all children (recursive in flat structure)
+                    if (isDir) {
+                        Object.keys(newFiles).forEach(key => {
+                            if (key.startsWith(sourcePath + '/')) {
+                                const newKey = destPath + key.substring(sourcePath.length);
+                                newFiles[newKey] = newFiles[key];
+                                delete newFiles[key];
+                            }
+                        });
+                    }
+
+                    return newFiles;
+                });
+                setHistory(h => [...h, `Moved ${arg} to ${arg2}`]);
+                break;
+            case 'rm':
+                if (!arg) { setHistory(h => [...h, 'Usage: rm <filename>']); return; }
+                const rmPath = resolvePath(arg);
+                // @ts-ignore
+                if (!files[rmPath]) {
+                    setHistory(h => [...h, `File not found: ${arg}`]);
+                    return;
+                }
+                // @ts-ignore
+                if (files[rmPath].type === 'dir') {
+                    setHistory(h => [...h, `Cannot rm a directory. Use rmdir.`]);
+                    return;
+                }
+                setFiles((prev: any) => {
+                    const newFiles = { ...prev };
+                    delete newFiles[rmPath];
+                    // Remove from parent
+                    const parent = rmPath.substring(0, rmPath.lastIndexOf('/')) || '/';
+                    if (newFiles[parent]) {
+                        newFiles[parent] = {
+                            ...newFiles[parent],
+                            children: newFiles[parent].children.filter((c: string) => c !== arg)
+                        };
+                    }
+                    return newFiles;
+                });
+                setHistory(h => [...h, `Removed: ${arg}`]);
+                break;
+            case 'nano':
+                if (!arg) { setHistory(h => [...h, 'Usage: nano <filename>']); return; }
+                const filePath = resolvePath(arg);
+                // @ts-ignore
+                const file = files[filePath];
+                if (file && file.type === 'dir') {
+                    setHistory(h => [...h, `Cannot edit directory: ${arg}`]);
+                } else {
+                    // @ts-ignore
+                    setEditor({ active: true, file: filePath, content: file ? file.content : '' });
+                }
+                break;
+            case 'cat':
+                if (!arg) { setHistory(h => [...h, 'Usage: cat <filename>']); return; }
+                const catPath = resolvePath(arg);
+                // @ts-ignore
+                const catFile = files[catPath];
+                if (catFile && catFile.type === 'file') {
+                    setHistory(h => [...h, catFile.content]);
+                } else {
+                    setHistory(h => [...h, `File not found: ${arg}`]);
+                }
                 break;
             case 'ssh':
                 if (sshSession) {
@@ -97,85 +312,6 @@ const TerminalConsole = () => {
                     setPath('/');
                 } else {
                     setHistory(h => [...h, 'Logout: Session terminated.']);
-                }
-                break;
-            case 'ls':
-                // @ts-ignore
-                const dir = files[path];
-                if (dir && dir.type === 'dir') {
-                    setHistory(h => [...h, dir.children.join('  ')]);
-                }
-                break;
-            case 'cd':
-                if (!arg || arg === '/') { setPath('/'); return; }
-                if (arg === '..') {
-                    const parts = path.split('/');
-                    parts.pop();
-                    setPath(parts.length === 1 ? '/' : parts.join('/'));
-                    return;
-                }
-                const newPath = resolvePath(arg);
-                // @ts-ignore
-                if (files[newPath] && files[newPath].type === 'dir') {
-                    setPath(newPath);
-                } else {
-                    setHistory(h => [...h, `Directory not found: ${arg}`]);
-                }
-                break;
-            case 'nano':
-                if (!arg) { setHistory(h => [...h, 'Usage: nano <filename>']); return; }
-                const filePath = resolvePath(arg);
-                // @ts-ignore
-                const file = files[filePath];
-                if (file && file.type === 'dir') {
-                    setHistory(h => [...h, `Cannot edit directory: ${arg}`]);
-                } else {
-                    // @ts-ignore
-                    setEditor({ active: true, file: filePath, content: file ? file.content : '' });
-                }
-                break;
-            case 'mkdir':
-                if (!arg) return;
-                const mkPath = resolvePath(arg);
-                setFiles((prev: any) => ({
-                    ...prev,
-                    [mkPath]: { type: 'dir', children: [] },
-                    [path]: { ...prev[path], children: [...prev[path].children, arg] }
-                }));
-                setHistory(h => [...h, `Created directory: ${arg}`]);
-                break;
-            case 'rm':
-                if (!arg) return;
-                const rmPath = resolvePath(arg);
-                // @ts-ignore
-                if (!files[rmPath]) {
-                    setHistory(h => [...h, `File not found: ${arg}`]);
-                    return;
-                }
-                setFiles((prev: any) => {
-                    const newFiles = { ...prev };
-                    delete newFiles[rmPath];
-                    // Remove from parent
-                    const parent = rmPath.substring(0, rmPath.lastIndexOf('/')) || '/';
-                    if (newFiles[parent]) {
-                        newFiles[parent] = {
-                            ...newFiles[parent],
-                            children: newFiles[parent].children.filter((c: string) => c !== arg)
-                        };
-                    }
-                    return newFiles;
-                });
-                setHistory(h => [...h, `Removed: ${arg}`]);
-                break;
-            case 'cat':
-                if (!arg) return;
-                const catPath = resolvePath(arg);
-                // @ts-ignore
-                const catFile = files[catPath];
-                if (catFile && catFile.type === 'file') {
-                    setHistory(h => [...h, catFile.content]);
-                } else {
-                    setHistory(h => [...h, `File not found: ${arg}`]);
                 }
                 break;
             case 'clear':
