@@ -1,169 +1,237 @@
 {
   "flights": [
     {
-      "id": "FLT-2000",
-      "name": "Flight SYD-ICN 2000",
+      "id": "FLT-3000",
+      "name": "Flight LHR-MIA 3000",
       "type": "FLIGHT",
-      "origin": "SYD",
-      "destination": "ICN",
+      "origin": "LHR",
+      "destination": "MIA",
       "status": "DELAYED",
-      "details": "Altitude: 36816ft, Speed: 463mph",
+      "details": "Altitude: 39095ft, Speed: 503mph",
       "startCoords": [
-        -7.736457316299833,
-        141.58595415203692
-      ],
-      "endCoords": [
-        37.4602,
-        126.4407
-      ]
-    },
-    {
-      "id": "FLT-2001",
-      "name": "Flight HKG-CPT 2001",
-      "type": "FLIGHT",
-      "origin": "HKG",
-      "destination": "CPT",
-      "status": "ON TIME",
-      "details": "Altitude: 29299ft, Speed: 579mph",
-      "startCoords": [
-        -2.5244052905994097,
-        72.25281881699254
-      ],
-      "endCoords": [
-        -33.9715,
-        18.6021
-      ]
-    },
-    {
-      "id": "FLT-2002",
-      "name": "Flight FRA-MAD 2002",
-      "type": "FLIGHT",
-      "origin": "FRA",
-      "destination": "MAD",
-      "status": "ON TIME",
-      "details": "Altitude: 32150ft, Speed: 517mph",
-      "startCoords": [
-        48.12726238935578,
-        5.964131493693615
-      ],
-      "endCoords": [
-        40.4839,
-        -3.5679
-      ]
-    },
-    {
-      "id": "FLT-2003",
-      "name": "Flight IST-HND 2003",
-      "type": "FLIGHT",
-      "origin": "IST",
-      "destination": "HND",
-      "status": "DELAYED",
-      "details": "Altitude: 40810ft, Speed: 547mph",
-      "startCoords": [
-        38.11623612788658,
-        87.96407593122343
-      ],
-      "endCoords": [
-        35.5494,
-        139.7798
-      ]
-    },
-    {
-      "id": "FLT-2004",
-      "name": "Flight IST-HKG 2004",
-      "type": "FLIGHT",
-      "origin": "IST",
-      "destination": "HKG",
-      "status": "ON TIME",
-      "details": "Altitude: 34237ft, Speed: 471mph",
-      "startCoords": [
-        32.59009562854165,
-        65.55426049267867
-      ],
-      "endCoords": [
-        22.308,
-        113.9185
-      ]
-    },
-    {
-      "id": "FLT-2005",
-      "name": "Flight NBO-CPT 2005",
-      "type": "FLIGHT",
-      "origin": "NBO",
-      "destination": "CPT",
-      "status": "ON TIME",
-      "details": "Altitude: 32021ft, Speed: 550mph",
-      "startCoords": [
-        -30.01671732287719,
-        21.269946972692615
-      ],
-      "endCoords": [
-        -33.9715,
-        18.6021
-      ]
-    },
-    {
-      "id": "FLT-2006",
-      "name": "Flight CDG-EZE 2006",
-      "type": "FLIGHT",
-      "origin": "CDG",
-      "destination": "EZE",
-      "status": "ON TIME",
-      "details": "Altitude: 35849ft, Speed: 485mph",
-      "startCoords": [
-        35.282494593120525,
-        -6.804915952234274
-      ],
-      "endCoords": [
-        -34.815,
-        -58.5348
-      ]
-    },
-    {
-      "id": "FLT-2007",
-      "name": "Flight SVO-CAI 2007",
-      "type": "FLIGHT",
-      "origin": "SVO",
-      "destination": "CAI",
-      "status": "ON TIME",
-      "details": "Altitude: 37616ft, Speed: 478mph",
-      "startCoords": [
-        51.131112630146774,
-        36.42177260293681
-      ],
-      "endCoords": [
-        30.1156,
-        31.4095
-      ]
-    },
-    {
-      "id": "FLT-2008",
-      "name": "Flight CAI-LHR 2008",
-      "type": "FLIGHT",
-      "origin": "CAI",
-      "destination": "LHR",
-      "status": "ON TIME",
-      "details": "Altitude: 35844ft, Speed: 541mph",
-      "startCoords": [
-        34.34779656831666,
-        24.243563064054406
-      ],
-      "endCoords": [
         51.47,
         -0.4543
+      ],
+      "endCoords": [
+        25.7959,
+        -80.287
       ]
     },
     {
-      "id": "FLT-2009",
-      "name": "Flight HKG-CAI 2009",
+      "id": "FLT-3001",
+      "name": "Flight LHR-SFO 3001",
       "type": "FLIGHT",
-      "origin": "HKG",
-      "destination": "CAI",
+      "origin": "LHR",
+      "destination": "SFO",
       "status": "ON TIME",
-      "details": "Altitude: 31841ft, Speed: 578mph",
+      "details": "Altitude: 31960ft, Speed: 527mph",
       "startCoords": [
-        23.846278662020964,
-        93.52662614823727
+        51.47,
+        -0.4543
+      ],
+      "endCoords": [
+        37.6213,
+        -122.379
+      ]
+    },
+    {
+      "id": "FLT-3002",
+      "name": "Flight LHR-DOH 3002",
+      "type": "FLIGHT",
+      "origin": "LHR",
+      "destination": "DOH",
+      "status": "IN AIR",
+      "details": "Altitude: 33423ft, Speed: 499mph",
+      "startCoords": [
+        51.47,
+        -0.4543
+      ],
+      "endCoords": [
+        25.2731,
+        51.608
+      ]
+    },
+    {
+      "id": "FLT-3003",
+      "name": "Flight JFK-MIA 3003",
+      "type": "FLIGHT",
+      "origin": "JFK",
+      "destination": "MIA",
+      "status": "ON TIME",
+      "details": "Altitude: 39061ft, Speed: 545mph",
+      "startCoords": [
+        40.6413,
+        -73.7781
+      ],
+      "endCoords": [
+        25.7959,
+        -80.287
+      ]
+    },
+    {
+      "id": "FLT-3004",
+      "name": "Flight JFK-BKK 3004",
+      "type": "FLIGHT",
+      "origin": "JFK",
+      "destination": "BKK",
+      "status": "IN AIR",
+      "details": "Altitude: 40720ft, Speed: 582mph",
+      "startCoords": [
+        40.6413,
+        -73.7781
+      ],
+      "endCoords": [
+        13.69,
+        100.7501
+      ]
+    },
+    {
+      "id": "FLT-3005",
+      "name": "Flight JFK-AMS 3005",
+      "type": "FLIGHT",
+      "origin": "JFK",
+      "destination": "AMS",
+      "status": "ON TIME",
+      "details": "Altitude: 39756ft, Speed: 563mph",
+      "startCoords": [
+        40.6413,
+        -73.7781
+      ],
+      "endCoords": [
+        52.3105,
+        4.7683
+      ]
+    },
+    {
+      "id": "FLT-3006",
+      "name": "Flight LAX-CDG 3006",
+      "type": "FLIGHT",
+      "origin": "LAX",
+      "destination": "CDG",
+      "status": "ON TIME",
+      "details": "Altitude: 29269ft, Speed: 507mph",
+      "startCoords": [
+        33.9416,
+        -118.4085
+      ],
+      "endCoords": [
+        49.0097,
+        2.5479
+      ]
+    },
+    {
+      "id": "FLT-3007",
+      "name": "Flight LAX-YVR 3007",
+      "type": "FLIGHT",
+      "origin": "LAX",
+      "destination": "YVR",
+      "status": "DELAYED",
+      "details": "Altitude: 37839ft, Speed: 524mph",
+      "startCoords": [
+        33.9416,
+        -118.4085
+      ],
+      "endCoords": [
+        49.1947,
+        -123.1762
+      ]
+    },
+    {
+      "id": "FLT-3008",
+      "name": "Flight LAX-YYZ 3008",
+      "type": "FLIGHT",
+      "origin": "LAX",
+      "destination": "YYZ",
+      "status": "IN AIR",
+      "details": "Altitude: 34511ft, Speed: 560mph",
+      "startCoords": [
+        33.9416,
+        -118.4085
+      ],
+      "endCoords": [
+        43.6777,
+        -79.6248
+      ]
+    },
+    {
+      "id": "FLT-3009",
+      "name": "Flight HND-CPT 3009",
+      "type": "FLIGHT",
+      "origin": "HND",
+      "destination": "CPT",
+      "status": "ON TIME",
+      "details": "Altitude: 30600ft, Speed: 556mph",
+      "startCoords": [
+        35.5494,
+        139.7798
+      ],
+      "endCoords": [
+        -33.9715,
+        18.6021
+      ]
+    },
+    {
+      "id": "FLT-3010",
+      "name": "Flight HND-ORD 3010",
+      "type": "FLIGHT",
+      "origin": "HND",
+      "destination": "ORD",
+      "status": "ON TIME",
+      "details": "Altitude: 39944ft, Speed: 508mph",
+      "startCoords": [
+        35.5494,
+        139.7798
+      ],
+      "endCoords": [
+        41.9742,
+        -87.9073
+      ]
+    },
+    {
+      "id": "FLT-3011",
+      "name": "Flight HND-CDG 3011",
+      "type": "FLIGHT",
+      "origin": "HND",
+      "destination": "CDG",
+      "status": "ON TIME",
+      "details": "Altitude: 28265ft, Speed: 599mph",
+      "startCoords": [
+        35.5494,
+        139.7798
+      ],
+      "endCoords": [
+        49.0097,
+        2.5479
+      ]
+    },
+    {
+      "id": "FLT-3012",
+      "name": "Flight DXB-CPT 3012",
+      "type": "FLIGHT",
+      "origin": "DXB",
+      "destination": "CPT",
+      "status": "ON TIME",
+      "details": "Altitude: 34112ft, Speed: 586mph",
+      "startCoords": [
+        25.2532,
+        55.3657
+      ],
+      "endCoords": [
+        -33.9715,
+        18.6021
+      ]
+    },
+    {
+      "id": "FLT-3013",
+      "name": "Flight DXB-CAI 3013",
+      "type": "FLIGHT",
+      "origin": "DXB",
+      "destination": "CAI",
+      "status": "IN AIR",
+      "details": "Altitude: 38537ft, Speed: 598mph",
+      "startCoords": [
+        25.2532,
+        55.3657
       ],
       "endCoords": [
         30.1156,
@@ -171,33 +239,50 @@
       ]
     },
     {
-      "id": "FLT-2010",
-      "name": "Flight MAD-JNB 2010",
+      "id": "FLT-3014",
+      "name": "Flight DXB-CDG 3014",
       "type": "FLIGHT",
-      "origin": "MAD",
-      "destination": "JNB",
-      "status": "ON TIME",
-      "details": "Altitude: 37395ft, Speed: 499mph",
+      "origin": "DXB",
+      "destination": "CDG",
+      "status": "IN AIR",
+      "details": "Altitude: 34818ft, Speed: 545mph",
       "startCoords": [
-        6.907829236023152,
-        12.221176926153415
+        25.2532,
+        55.3657
       ],
       "endCoords": [
-        -26.1367,
-        28.2411
+        49.0097,
+        2.5479
       ]
     },
     {
-      "id": "FLT-2011",
-      "name": "Flight GRU-SYD 2011",
+      "id": "FLT-3015",
+      "name": "Flight DXB-IST 3015",
       "type": "FLIGHT",
-      "origin": "GRU",
+      "origin": "DXB",
+      "destination": "IST",
+      "status": "ON TIME",
+      "details": "Altitude: 30323ft, Speed: 517mph",
+      "startCoords": [
+        25.2532,
+        55.3657
+      ],
+      "endCoords": [
+        41.2753,
+        28.7519
+      ]
+    },
+    {
+      "id": "FLT-3016",
+      "name": "Flight CDG-SYD 3016",
+      "type": "FLIGHT",
+      "origin": "CDG",
       "destination": "SYD",
       "status": "ON TIME",
-      "details": "Altitude: 34318ft, Speed: 497mph",
+      "details": "Altitude: 36386ft, Speed: 529mph",
       "startCoords": [
-        -25.72304136993608,
-        -12.68582147841635
+        49.0097,
+        2.5479
       ],
       "endCoords": [
         -33.9399,
@@ -205,203 +290,16 @@
       ]
     },
     {
-      "id": "FLT-2012",
-      "name": "Flight ICN-DEL 2012",
+      "id": "FLT-3017",
+      "name": "Flight CDG-IST 3017",
       "type": "FLIGHT",
-      "origin": "ICN",
-      "destination": "DEL",
-      "status": "ON TIME",
-      "details": "Altitude: 30793ft, Speed: 476mph",
-      "startCoords": [
-        33.078461190277665,
-        100.19129240943329
-      ],
-      "endCoords": [
-        28.5562,
-        77.1
-      ]
-    },
-    {
-      "id": "FLT-2013",
-      "name": "Flight ICN-YYZ 2013",
-      "type": "FLIGHT",
-      "origin": "ICN",
-      "destination": "YYZ",
-      "status": "DELAYED",
-      "details": "Altitude: 28080ft, Speed: 579mph",
-      "startCoords": [
-        41.35279862511836,
-        -1.3323927189018867
-      ],
-      "endCoords": [
-        43.6777,
-        -79.6248
-      ]
-    },
-    {
-      "id": "FLT-2014",
-      "name": "Flight JFK-CPT 2014",
-      "type": "FLIGHT",
-      "origin": "JFK",
-      "destination": "CPT",
-      "status": "DELAYED",
-      "details": "Altitude: 32944ft, Speed: 472mph",
-      "startCoords": [
-        -19.451239797322287,
-        0.6646110660423602
-      ],
-      "endCoords": [
-        -33.9715,
-        18.6021
-      ]
-    },
-    {
-      "id": "FLT-2015",
-      "name": "Flight HKG-EZE 2015",
-      "type": "FLIGHT",
-      "origin": "HKG",
-      "destination": "EZE",
-      "status": "ON TIME",
-      "details": "Altitude: 28301ft, Speed: 481mph",
-      "startCoords": [
-        6.353632567535755,
-        66.53225453314839
-      ],
-      "endCoords": [
-        -34.815,
-        -58.5348
-      ]
-    },
-    {
-      "id": "FLT-2016",
-      "name": "Flight CAI-MAD 2016",
-      "type": "FLIGHT",
-      "origin": "CAI",
-      "destination": "MAD",
-      "status": "ON TIME",
-      "details": "Altitude: 31967ft, Speed: 600mph",
-      "startCoords": [
-        36.78585534431034,
-        8.322400601060421
-      ],
-      "endCoords": [
-        40.4839,
-        -3.5679
-      ]
-    },
-    {
-      "id": "FLT-2017",
-      "name": "Flight EZE-CAI 2017",
-      "type": "FLIGHT",
-      "origin": "EZE",
-      "destination": "CAI",
-      "status": "ON TIME",
-      "details": "Altitude: 30978ft, Speed: 558mph",
-      "startCoords": [
-        -7.34516116419171,
-        -20.532671624511874
-      ],
-      "endCoords": [
-        30.1156,
-        31.4095
-      ]
-    },
-    {
-      "id": "FLT-2018",
-      "name": "Flight PEK-HND 2018",
-      "type": "FLIGHT",
-      "origin": "PEK",
-      "destination": "HND",
-      "status": "ON TIME",
-      "details": "Altitude: 28556ft, Speed: 493mph",
-      "startCoords": [
-        39.00603984838547,
-        122.21211400032061
-      ],
-      "endCoords": [
-        35.5494,
-        139.7798
-      ]
-    },
-    {
-      "id": "FLT-2019",
-      "name": "Flight YYZ-EZE 2019",
-      "type": "FLIGHT",
-      "origin": "YYZ",
-      "destination": "EZE",
-      "status": "ON TIME",
-      "details": "Altitude: 36350ft, Speed: 585mph",
-      "startCoords": [
-        29.971522043088466,
-        -76.28252776448986
-      ],
-      "endCoords": [
-        -34.815,
-        -58.5348
-      ]
-    },
-    {
-      "id": "FLT-2020",
-      "name": "Flight SYD-CPT 2020",
-      "type": "FLIGHT",
-      "origin": "SYD",
-      "destination": "CPT",
-      "status": "ON TIME",
-      "details": "Altitude: 31498ft, Speed: 459mph",
-      "startCoords": [
-        -33.57305204813487,
-        127.90726566970746
-      ],
-      "endCoords": [
-        -33.9715,
-        18.6021
-      ]
-    },
-    {
-      "id": "FLT-2021",
-      "name": "Flight EZE-SIN 2021",
-      "type": "FLIGHT",
-      "origin": "EZE",
-      "destination": "SIN",
-      "status": "ON TIME",
-      "details": "Altitude: 34842ft, Speed: 507mph",
-      "startCoords": [
-        -13.625450529245992,
-        36.706125560380535
-      ],
-      "endCoords": [
-        1.3644,
-        103.9915
-      ]
-    },
-    {
-      "id": "FLT-2022",
-      "name": "Flight LAX-EZE 2022",
-      "type": "FLIGHT",
-      "origin": "LAX",
-      "destination": "EZE",
-      "status": "ON TIME",
-      "details": "Altitude: 35226ft, Speed: 485mph",
-      "startCoords": [
-        -17.525935432914682,
-        -73.3145246248126
-      ],
-      "endCoords": [
-        -34.815,
-        -58.5348
-      ]
-    },
-    {
-      "id": "FLT-2023",
-      "name": "Flight BKK-IST 2023",
-      "type": "FLIGHT",
-      "origin": "BKK",
+      "origin": "CDG",
       "destination": "IST",
-      "status": "ON TIME",
-      "details": "Altitude: 29781ft, Speed: 554mph",
+      "status": "IN AIR",
+      "details": "Altitude: 40429ft, Speed: 520mph",
       "startCoords": [
-        18.418788939304417,
-        88.06578425435288
+        49.0097,
+        2.5479
       ],
       "endCoords": [
         41.2753,
@@ -409,288 +307,169 @@
       ]
     },
     {
-      "id": "FLT-2024",
-      "name": "Flight SCL-JNB 2024",
+      "id": "FLT-3018",
+      "name": "Flight CDG-EZE 3018",
       "type": "FLIGHT",
-      "origin": "SCL",
-      "destination": "JNB",
-      "status": "ON TIME",
-      "details": "Altitude: 35199ft, Speed: 469mph",
+      "origin": "CDG",
+      "destination": "EZE",
+      "status": "IN AIR",
+      "details": "Altitude: 35943ft, Speed: 495mph",
       "startCoords": [
-        -28.711108919620422,
-        -8.173483032502634
+        49.0097,
+        2.5479
       ],
       "endCoords": [
-        -26.1367,
-        28.2411
+        -34.815,
+        -58.5348
       ]
     },
     {
-      "id": "FLT-2025",
-      "name": "Flight BOM-NBO 2025",
+      "id": "FLT-3019",
+      "name": "Flight CDG-ORD 3019",
       "type": "FLIGHT",
-      "origin": "BOM",
-      "destination": "NBO",
-      "status": "ON TIME",
-      "details": "Altitude: 33860ft, Speed: 589mph",
+      "origin": "CDG",
+      "destination": "ORD",
+      "status": "IN AIR",
+      "details": "Altitude: 29983ft, Speed: 555mph",
       "startCoords": [
-        11.945305502491863,
-        60.28649498097916
+        49.0097,
+        2.5479
       ],
       "endCoords": [
-        -1.3192,
-        36.9275
+        41.9742,
+        -87.9073
       ]
     },
     {
-      "id": "FLT-2026",
-      "name": "Flight IST-AKL 2026",
+      "id": "FLT-3020",
+      "name": "Flight AMS-FRA 3020",
       "type": "FLIGHT",
-      "origin": "IST",
-      "destination": "AKL",
+      "origin": "AMS",
+      "destination": "FRA",
       "status": "ON TIME",
-      "details": "Altitude: 36352ft, Speed: 523mph",
+      "details": "Altitude: 36023ft, Speed: 487mph",
       "startCoords": [
-        -7.6082272737892644,
-        120.9115541384111
+        52.3105,
+        4.7683
       ],
       "endCoords": [
-        -37.0082,
-        174.785
+        50.0379,
+        8.5622
       ]
     },
     {
-      "id": "FLT-2027",
-      "name": "Flight MEL-AKL 2027",
+      "id": "FLT-3021",
+      "name": "Flight AMS-EZE 3021",
       "type": "FLIGHT",
-      "origin": "MEL",
-      "destination": "AKL",
+      "origin": "AMS",
+      "destination": "EZE",
       "status": "ON TIME",
-      "details": "Altitude: 28656ft, Speed: 462mph",
+      "details": "Altitude: 40639ft, Speed: 485mph",
       "startCoords": [
-        -37.41447921167299,
-        169.2742226959178
+        52.3105,
+        4.7683
       ],
       "endCoords": [
-        -37.0082,
-        174.785
+        -34.815,
+        -58.5348
       ]
     },
     {
-      "id": "FLT-2028",
-      "name": "Flight MEL-HKG 2028",
+      "id": "FLT-3022",
+      "name": "Flight AMS-LHR 3022",
       "type": "FLIGHT",
-      "origin": "MEL",
-      "destination": "HKG",
-      "status": "ON TIME",
-      "details": "Altitude: 35798ft, Speed: 536mph",
-      "startCoords": [
-        6.302362710352314,
-        121.91497888630101
-      ],
-      "endCoords": [
-        22.308,
-        113.9185
-      ]
-    },
-    {
-      "id": "FLT-2029",
-      "name": "Flight SCL-BKK 2029",
-      "type": "FLIGHT",
-      "origin": "SCL",
-      "destination": "BKK",
-      "status": "ON TIME",
-      "details": "Altitude: 29763ft, Speed: 460mph",
-      "startCoords": [
-        -22.588767269049423,
-        -30.97029547374859
-      ],
-      "endCoords": [
-        13.69,
-        100.7501
-      ]
-    },
-    {
-      "id": "FLT-2030",
-      "name": "Flight HKG-GRU 2030",
-      "type": "FLIGHT",
-      "origin": "HKG",
-      "destination": "GRU",
-      "status": "ON TIME",
-      "details": "Altitude: 29737ft, Speed: 465mph",
-      "startCoords": [
-        14.721233433669825,
-        88.07298550425854
-      ],
-      "endCoords": [
-        -23.4356,
-        -46.4731
-      ]
-    },
-    {
-      "id": "FLT-2031",
-      "name": "Flight EZE-GRU 2031",
-      "type": "FLIGHT",
-      "origin": "EZE",
-      "destination": "GRU",
-      "status": "ON TIME",
-      "details": "Altitude: 39263ft, Speed: 499mph",
-      "startCoords": [
-        -29.695172500199337,
-        -52.69217310789548
-      ],
-      "endCoords": [
-        -23.4356,
-        -46.4731
-      ]
-    },
-    {
-      "id": "FLT-2032",
-      "name": "Flight CAI-IST 2032",
-      "type": "FLIGHT",
-      "origin": "CAI",
-      "destination": "IST",
-      "status": "ON TIME",
-      "details": "Altitude: 40561ft, Speed: 575mph",
-      "startCoords": [
-        32.77588445256904,
-        31.17653939901916
-      ],
-      "endCoords": [
-        41.2753,
-        28.7519
-      ]
-    },
-    {
-      "id": "FLT-2033",
-      "name": "Flight BKK-HKG 2033",
-      "type": "FLIGHT",
-      "origin": "BKK",
-      "destination": "HKG",
-      "status": "ON TIME",
-      "details": "Altitude: 31552ft, Speed: 462mph",
-      "startCoords": [
-        15.051960973942005,
-        102.37113823059917
-      ],
-      "endCoords": [
-        22.308,
-        113.9185
-      ]
-    },
-    {
-      "id": "FLT-2034",
-      "name": "Flight DEL-PEK 2034",
-      "type": "FLIGHT",
-      "origin": "DEL",
-      "destination": "PEK",
-      "status": "ON TIME",
-      "details": "Altitude: 32389ft, Speed: 524mph",
-      "startCoords": [
-        39.09289435175676,
-        111.91096420931325
-      ],
-      "endCoords": [
-        40.0799,
-        116.6031
-      ]
-    },
-    {
-      "id": "FLT-2035",
-      "name": "Flight ICN-JNB 2035",
-      "type": "FLIGHT",
-      "origin": "ICN",
-      "destination": "JNB",
-      "status": "ON TIME",
-      "details": "Altitude: 38515ft, Speed: 515mph",
-      "startCoords": [
-        8.134309184544465,
-        80.9652377800242
-      ],
-      "endCoords": [
-        -26.1367,
-        28.2411
-      ]
-    },
-    {
-      "id": "FLT-2036",
-      "name": "Flight JNB-BKK 2036",
-      "type": "FLIGHT",
-      "origin": "JNB",
-      "destination": "BKK",
-      "status": "ON TIME",
-      "details": "Altitude: 35855ft, Speed: 488mph",
-      "startCoords": [
-        7.005107703065311,
-        88.91207649259972
-      ],
-      "endCoords": [
-        13.69,
-        100.7501
-      ]
-    },
-    {
-      "id": "FLT-2037",
-      "name": "Flight HND-PEK 2037",
-      "type": "FLIGHT",
-      "origin": "HND",
-      "destination": "PEK",
-      "status": "ON TIME",
-      "details": "Altitude: 34389ft, Speed: 526mph",
-      "startCoords": [
-        36.89070256721019,
-        132.1931310133224
-      ],
-      "endCoords": [
-        40.0799,
-        116.6031
-      ]
-    },
-    {
-      "id": "FLT-2038",
-      "name": "Flight JFK-SCL 2038",
-      "type": "FLIGHT",
-      "origin": "JFK",
-      "destination": "SCL",
+      "origin": "AMS",
+      "destination": "LHR",
       "status": "DELAYED",
-      "details": "Altitude: 38396ft, Speed: 537mph",
+      "details": "Altitude: 39127ft, Speed: 546mph",
       "startCoords": [
-        -11.635381360563931,
-        -71.24870289659869
+        52.3105,
+        4.7683
       ],
       "endCoords": [
-        -33.3898,
-        -70.7945
+        51.47,
+        -0.4543
       ]
     },
     {
-      "id": "FLT-2039",
-      "name": "Flight SIN-CPT 2039",
+      "id": "FLT-3023",
+      "name": "Flight FRA-GRU 3023",
+      "type": "FLIGHT",
+      "origin": "FRA",
+      "destination": "GRU",
+      "status": "IN AIR",
+      "details": "Altitude: 39891ft, Speed: 580mph",
+      "startCoords": [
+        50.0379,
+        8.5622
+      ],
+      "endCoords": [
+        -23.4356,
+        -46.4731
+      ]
+    },
+    {
+      "id": "FLT-3024",
+      "name": "Flight FRA-JFK 3024",
+      "type": "FLIGHT",
+      "origin": "FRA",
+      "destination": "JFK",
+      "status": "IN AIR",
+      "details": "Altitude: 32476ft, Speed: 483mph",
+      "startCoords": [
+        50.0379,
+        8.5622
+      ],
+      "endCoords": [
+        40.6413,
+        -73.7781
+      ]
+    },
+    {
+      "id": "FLT-3025",
+      "name": "Flight FRA-BKK 3025",
+      "type": "FLIGHT",
+      "origin": "FRA",
+      "destination": "BKK",
+      "status": "IN AIR",
+      "details": "Altitude: 29803ft, Speed: 528mph",
+      "startCoords": [
+        50.0379,
+        8.5622
+      ],
+      "endCoords": [
+        13.69,
+        100.7501
+      ]
+    },
+    {
+      "id": "FLT-3026",
+      "name": "Flight SIN-BOM 3026",
       "type": "FLIGHT",
       "origin": "SIN",
-      "destination": "CPT",
+      "destination": "BOM",
       "status": "ON TIME",
-      "details": "Altitude: 30182ft, Speed: 595mph",
+      "details": "Altitude: 38288ft, Speed: 497mph",
       "startCoords": [
-        -4.564217796267872,
-        88.81796260427045
+        1.3644,
+        103.9915
       ],
       "endCoords": [
-        -33.9715,
-        18.6021
+        19.0896,
+        72.8656
       ]
     },
     {
-      "id": "FLT-2040",
-      "name": "Flight JNB-CDG 2040",
+      "id": "FLT-3027",
+      "name": "Flight SIN-CDG 3027",
       "type": "FLIGHT",
-      "origin": "JNB",
+      "origin": "SIN",
       "destination": "CDG",
       "status": "ON TIME",
-      "details": "Altitude: 28056ft, Speed: 584mph",
+      "details": "Altitude: 31673ft, Speed: 561mph",
       "startCoords": [
-        3.049754193793774,
-        18.237061465375564
+        1.3644,
+        103.9915
       ],
       "endCoords": [
         49.0097,
@@ -698,135 +477,152 @@
       ]
     },
     {
-      "id": "FLT-2041",
-      "name": "Flight SYD-YYZ 2041",
+      "id": "FLT-3028",
+      "name": "Flight SIN-JNB 3028",
       "type": "FLIGHT",
-      "origin": "SYD",
-      "destination": "YYZ",
+      "origin": "SIN",
+      "destination": "JNB",
+      "status": "IN AIR",
+      "details": "Altitude: 34735ft, Speed: 536mph",
+      "startCoords": [
+        1.3644,
+        103.9915
+      ],
+      "endCoords": [
+        -26.1367,
+        28.2411
+      ]
+    },
+    {
+      "id": "FLT-3029",
+      "name": "Flight SIN-SYD 3029",
+      "type": "FLIGHT",
+      "origin": "SIN",
+      "destination": "SYD",
       "status": "ON TIME",
-      "details": "Altitude: 36288ft, Speed: 542mph",
+      "details": "Altitude: 36034ft, Speed: 488mph",
       "startCoords": [
-        -1.1546396963049175,
-        54.11715837351556
+        1.3644,
+        103.9915
       ],
       "endCoords": [
-        43.6777,
-        -79.6248
+        -33.9399,
+        151.1753
       ]
     },
     {
-      "id": "FLT-2042",
-      "name": "Flight GRU-BKK 2042",
+      "id": "FLT-3030",
+      "name": "Flight HKG-ICN 3030",
       "type": "FLIGHT",
-      "origin": "GRU",
-      "destination": "BKK",
-      "status": "DELAYED",
-      "details": "Altitude: 33986ft, Speed: 543mph",
-      "startCoords": [
-        1.0425567073372484,
-        51.412250938921574
-      ],
-      "endCoords": [
-        13.69,
-        100.7501
-      ]
-    },
-    {
-      "id": "FLT-2043",
-      "name": "Flight SVO-MAD 2043",
-      "type": "FLIGHT",
-      "origin": "SVO",
-      "destination": "MAD",
+      "origin": "HKG",
+      "destination": "ICN",
       "status": "ON TIME",
-      "details": "Altitude: 29739ft, Speed: 576mph",
+      "details": "Altitude: 28920ft, Speed: 530mph",
       "startCoords": [
-        52.701897138633804,
-        28.848553574763127
+        22.308,
+        113.9185
       ],
       "endCoords": [
-        40.4839,
-        -3.5679
+        37.4602,
+        126.4407
       ]
     },
     {
-      "id": "FLT-2044",
-      "name": "Flight SVO-GRU 2044",
+      "id": "FLT-3031",
+      "name": "Flight HKG-YVR 3031",
       "type": "FLIGHT",
-      "origin": "SVO",
-      "destination": "GRU",
+      "origin": "HKG",
+      "destination": "YVR",
       "status": "ON TIME",
-      "details": "Altitude: 38760ft, Speed: 492mph",
+      "details": "Altitude: 36935ft, Speed: 489mph",
       "startCoords": [
-        27.76194704643931,
-        7.541790375933957
+        22.308,
+        113.9185
       ],
       "endCoords": [
-        -23.4356,
-        -46.4731
+        49.1947,
+        -123.1762
       ]
     },
     {
-      "id": "FLT-2045",
-      "name": "Flight BKK-CPT 2045",
+      "id": "FLT-3032",
+      "name": "Flight HKG-ORD 3032",
+      "type": "FLIGHT",
+      "origin": "HKG",
+      "destination": "ORD",
+      "status": "ON TIME",
+      "details": "Altitude: 34555ft, Speed: 596mph",
+      "startCoords": [
+        22.308,
+        113.9185
+      ],
+      "endCoords": [
+        41.9742,
+        -87.9073
+      ]
+    },
+    {
+      "id": "FLT-3033",
+      "name": "Flight ICN-AMS 3033",
+      "type": "FLIGHT",
+      "origin": "ICN",
+      "destination": "AMS",
+      "status": "ON TIME",
+      "details": "Altitude: 31342ft, Speed: 543mph",
+      "startCoords": [
+        37.4602,
+        126.4407
+      ],
+      "endCoords": [
+        52.3105,
+        4.7683
+      ]
+    },
+    {
+      "id": "FLT-3034",
+      "name": "Flight ICN-DXB 3034",
+      "type": "FLIGHT",
+      "origin": "ICN",
+      "destination": "DXB",
+      "status": "IN AIR",
+      "details": "Altitude: 32815ft, Speed: 525mph",
+      "startCoords": [
+        37.4602,
+        126.4407
+      ],
+      "endCoords": [
+        25.2532,
+        55.3657
+      ]
+    },
+    {
+      "id": "FLT-3035",
+      "name": "Flight BKK-SYD 3035",
       "type": "FLIGHT",
       "origin": "BKK",
-      "destination": "CPT",
-      "status": "ON TIME",
-      "details": "Altitude: 36734ft, Speed: 540mph",
+      "destination": "SYD",
+      "status": "IN AIR",
+      "details": "Altitude: 40747ft, Speed: 495mph",
       "startCoords": [
-        -6.594847943825511,
-        65.6407473729028
+        13.69,
+        100.7501
       ],
       "endCoords": [
-        -33.9715,
-        18.6021
+        -33.9399,
+        151.1753
       ]
     },
     {
-      "id": "FLT-2046",
-      "name": "Flight LAX-EZE 2046",
+      "id": "FLT-3036",
+      "name": "Flight BKK-LAX 3036",
       "type": "FLIGHT",
-      "origin": "LAX",
-      "destination": "EZE",
-      "status": "ON TIME",
-      "details": "Altitude: 38779ft, Speed: 591mph",
-      "startCoords": [
-        22.292704342074614,
-        -108.75440904997785
-      ],
-      "endCoords": [
-        -34.815,
-        -58.5348
-      ]
-    },
-    {
-      "id": "FLT-2047",
-      "name": "Flight YYZ-CDG 2047",
-      "type": "FLIGHT",
-      "origin": "YYZ",
-      "destination": "CDG",
-      "status": "ON TIME",
-      "details": "Altitude: 31747ft, Speed: 518mph",
-      "startCoords": [
-        47.17171203302936,
-        -29.897993559581792
-      ],
-      "endCoords": [
-        49.0097,
-        2.5479
-      ]
-    },
-    {
-      "id": "FLT-2048",
-      "name": "Flight HND-LAX 2048",
-      "type": "FLIGHT",
-      "origin": "HND",
+      "origin": "BKK",
       "destination": "LAX",
       "status": "ON TIME",
-      "details": "Altitude: 31567ft, Speed: 533mph",
+      "details": "Altitude: 34217ft, Speed: 543mph",
       "startCoords": [
-        35.48654989169321,
-        79.6360138578901
+        13.69,
+        100.7501
       ],
       "endCoords": [
         33.9416,
@@ -834,20 +630,955 @@
       ]
     },
     {
-      "id": "FLT-2049",
-      "name": "Flight MAD-DEL 2049",
+      "id": "FLT-3037",
+      "name": "Flight BKK-JNB 3037",
       "type": "FLIGHT",
-      "origin": "MAD",
-      "destination": "DEL",
+      "origin": "BKK",
+      "destination": "JNB",
       "status": "ON TIME",
-      "details": "Altitude: 29765ft, Speed: 575mph",
+      "details": "Altitude: 30942ft, Speed: 524mph",
       "startCoords": [
-        39.62765885933731,
-        5.109627138450918
+        13.69,
+        100.7501
       ],
       "endCoords": [
+        -26.1367,
+        28.2411
+      ]
+    },
+    {
+      "id": "FLT-3038",
+      "name": "Flight SYD-HND 3038",
+      "type": "FLIGHT",
+      "origin": "SYD",
+      "destination": "HND",
+      "status": "IN AIR",
+      "details": "Altitude: 29893ft, Speed: 572mph",
+      "startCoords": [
+        -33.9399,
+        151.1753
+      ],
+      "endCoords": [
+        35.5494,
+        139.7798
+      ]
+    },
+    {
+      "id": "FLT-3039",
+      "name": "Flight SYD-BOM 3039",
+      "type": "FLIGHT",
+      "origin": "SYD",
+      "destination": "BOM",
+      "status": "ON TIME",
+      "details": "Altitude: 28921ft, Speed: 529mph",
+      "startCoords": [
+        -33.9399,
+        151.1753
+      ],
+      "endCoords": [
+        19.0896,
+        72.8656
+      ]
+    },
+    {
+      "id": "FLT-3040",
+      "name": "Flight MEL-SFO 3040",
+      "type": "FLIGHT",
+      "origin": "MEL",
+      "destination": "SFO",
+      "status": "ON TIME",
+      "details": "Altitude: 40018ft, Speed: 562mph",
+      "startCoords": [
+        -37.669,
+        144.841
+      ],
+      "endCoords": [
+        37.6213,
+        -122.379
+      ]
+    },
+    {
+      "id": "FLT-3041",
+      "name": "Flight MEL-DOH 3041",
+      "type": "FLIGHT",
+      "origin": "MEL",
+      "destination": "DOH",
+      "status": "ON TIME",
+      "details": "Altitude: 32533ft, Speed: 541mph",
+      "startCoords": [
+        -37.669,
+        144.841
+      ],
+      "endCoords": [
+        25.2731,
+        51.608
+      ]
+    },
+    {
+      "id": "FLT-3042",
+      "name": "Flight MEL-DXB 3042",
+      "type": "FLIGHT",
+      "origin": "MEL",
+      "destination": "DXB",
+      "status": "ON TIME",
+      "details": "Altitude: 36380ft, Speed: 481mph",
+      "startCoords": [
+        -37.669,
+        144.841
+      ],
+      "endCoords": [
+        25.2532,
+        55.3657
+      ]
+    },
+    {
+      "id": "FLT-3043",
+      "name": "Flight AKL-HKG 3043",
+      "type": "FLIGHT",
+      "origin": "AKL",
+      "destination": "HKG",
+      "status": "ON TIME",
+      "details": "Altitude: 36917ft, Speed: 534mph",
+      "startCoords": [
+        -37.0082,
+        174.785
+      ],
+      "endCoords": [
+        22.308,
+        113.9185
+      ]
+    },
+    {
+      "id": "FLT-3044",
+      "name": "Flight AKL-CDG 3044",
+      "type": "FLIGHT",
+      "origin": "AKL",
+      "destination": "CDG",
+      "status": "ON TIME",
+      "details": "Altitude: 38665ft, Speed: 520mph",
+      "startCoords": [
+        -37.0082,
+        174.785
+      ],
+      "endCoords": [
+        49.0097,
+        2.5479
+      ]
+    },
+    {
+      "id": "FLT-3045",
+      "name": "Flight AKL-DXB 3045",
+      "type": "FLIGHT",
+      "origin": "AKL",
+      "destination": "DXB",
+      "status": "ON TIME",
+      "details": "Altitude: 39008ft, Speed: 516mph",
+      "startCoords": [
+        -37.0082,
+        174.785
+      ],
+      "endCoords": [
+        25.2532,
+        55.3657
+      ]
+    },
+    {
+      "id": "FLT-3046",
+      "name": "Flight AKL-SFO 3046",
+      "type": "FLIGHT",
+      "origin": "AKL",
+      "destination": "SFO",
+      "status": "ON TIME",
+      "details": "Altitude: 30967ft, Speed: 594mph",
+      "startCoords": [
+        -37.0082,
+        174.785
+      ],
+      "endCoords": [
+        37.6213,
+        -122.379
+      ]
+    },
+    {
+      "id": "FLT-3047",
+      "name": "Flight JNB-YVR 3047",
+      "type": "FLIGHT",
+      "origin": "JNB",
+      "destination": "YVR",
+      "status": "ON TIME",
+      "details": "Altitude: 34052ft, Speed: 517mph",
+      "startCoords": [
+        -26.1367,
+        28.2411
+      ],
+      "endCoords": [
+        49.1947,
+        -123.1762
+      ]
+    },
+    {
+      "id": "FLT-3048",
+      "name": "Flight JNB-CPT 3048",
+      "type": "FLIGHT",
+      "origin": "JNB",
+      "destination": "CPT",
+      "status": "ON TIME",
+      "details": "Altitude: 34355ft, Speed: 516mph",
+      "startCoords": [
+        -26.1367,
+        28.2411
+      ],
+      "endCoords": [
+        -33.9715,
+        18.6021
+      ]
+    },
+    {
+      "id": "FLT-3049",
+      "name": "Flight JNB-AMS 3049",
+      "type": "FLIGHT",
+      "origin": "JNB",
+      "destination": "AMS",
+      "status": "ON TIME",
+      "details": "Altitude: 36893ft, Speed: 522mph",
+      "startCoords": [
+        -26.1367,
+        28.2411
+      ],
+      "endCoords": [
+        52.3105,
+        4.7683
+      ]
+    },
+    {
+      "id": "FLT-3050",
+      "name": "Flight JNB-FRA 3050",
+      "type": "FLIGHT",
+      "origin": "JNB",
+      "destination": "FRA",
+      "status": "ON TIME",
+      "details": "Altitude: 35759ft, Speed: 487mph",
+      "startCoords": [
+        -26.1367,
+        28.2411
+      ],
+      "endCoords": [
+        50.0379,
+        8.5622
+      ]
+    },
+    {
+      "id": "FLT-3051",
+      "name": "Flight CPT-JNB 3051",
+      "type": "FLIGHT",
+      "origin": "CPT",
+      "destination": "JNB",
+      "status": "ON TIME",
+      "details": "Altitude: 33416ft, Speed: 529mph",
+      "startCoords": [
+        -33.9715,
+        18.6021
+      ],
+      "endCoords": [
+        -26.1367,
+        28.2411
+      ]
+    },
+    {
+      "id": "FLT-3052",
+      "name": "Flight CPT-SFO 3052",
+      "type": "FLIGHT",
+      "origin": "CPT",
+      "destination": "SFO",
+      "status": "ON TIME",
+      "details": "Altitude: 36084ft, Speed: 514mph",
+      "startCoords": [
+        -33.9715,
+        18.6021
+      ],
+      "endCoords": [
+        37.6213,
+        -122.379
+      ]
+    },
+    {
+      "id": "FLT-3053",
+      "name": "Flight CPT-IST 3053",
+      "type": "FLIGHT",
+      "origin": "CPT",
+      "destination": "IST",
+      "status": "ON TIME",
+      "details": "Altitude: 34066ft, Speed: 559mph",
+      "startCoords": [
+        -33.9715,
+        18.6021
+      ],
+      "endCoords": [
+        41.2753,
+        28.7519
+      ]
+    },
+    {
+      "id": "FLT-3054",
+      "name": "Flight CAI-LHR 3054",
+      "type": "FLIGHT",
+      "origin": "CAI",
+      "destination": "LHR",
+      "status": "ON TIME",
+      "details": "Altitude: 39193ft, Speed: 510mph",
+      "startCoords": [
+        30.1156,
+        31.4095
+      ],
+      "endCoords": [
+        51.47,
+        -0.4543
+      ]
+    },
+    {
+      "id": "FLT-3055",
+      "name": "Flight CAI-DOH 3055",
+      "type": "FLIGHT",
+      "origin": "CAI",
+      "destination": "DOH",
+      "status": "ON TIME",
+      "details": "Altitude: 29080ft, Speed: 505mph",
+      "startCoords": [
+        30.1156,
+        31.4095
+      ],
+      "endCoords": [
+        25.2731,
+        51.608
+      ]
+    },
+    {
+      "id": "FLT-3056",
+      "name": "Flight CAI-YVR 3056",
+      "type": "FLIGHT",
+      "origin": "CAI",
+      "destination": "YVR",
+      "status": "ON TIME",
+      "details": "Altitude: 40357ft, Speed: 520mph",
+      "startCoords": [
+        30.1156,
+        31.4095
+      ],
+      "endCoords": [
+        49.1947,
+        -123.1762
+      ]
+    },
+    {
+      "id": "FLT-3057",
+      "name": "Flight GRU-MIA 3057",
+      "type": "FLIGHT",
+      "origin": "GRU",
+      "destination": "MIA",
+      "status": "ON TIME",
+      "details": "Altitude: 31315ft, Speed: 498mph",
+      "startCoords": [
+        -23.4356,
+        -46.4731
+      ],
+      "endCoords": [
+        25.7959,
+        -80.287
+      ]
+    },
+    {
+      "id": "FLT-3058",
+      "name": "Flight GRU-ORD 3058",
+      "type": "FLIGHT",
+      "origin": "GRU",
+      "destination": "ORD",
+      "status": "ON TIME",
+      "details": "Altitude: 28507ft, Speed: 592mph",
+      "startCoords": [
+        -23.4356,
+        -46.4731
+      ],
+      "endCoords": [
+        41.9742,
+        -87.9073
+      ]
+    },
+    {
+      "id": "FLT-3059",
+      "name": "Flight GRU-SFO 3059",
+      "type": "FLIGHT",
+      "origin": "GRU",
+      "destination": "SFO",
+      "status": "ON TIME",
+      "details": "Altitude: 38124ft, Speed: 575mph",
+      "startCoords": [
+        -23.4356,
+        -46.4731
+      ],
+      "endCoords": [
+        37.6213,
+        -122.379
+      ]
+    },
+    {
+      "id": "FLT-3060",
+      "name": "Flight GRU-CDG 3060",
+      "type": "FLIGHT",
+      "origin": "GRU",
+      "destination": "CDG",
+      "status": "ON TIME",
+      "details": "Altitude: 36232ft, Speed: 489mph",
+      "startCoords": [
+        -23.4356,
+        -46.4731
+      ],
+      "endCoords": [
+        49.0097,
+        2.5479
+      ]
+    },
+    {
+      "id": "FLT-3061",
+      "name": "Flight EZE-LAX 3061",
+      "type": "FLIGHT",
+      "origin": "EZE",
+      "destination": "LAX",
+      "status": "ON TIME",
+      "details": "Altitude: 38398ft, Speed: 584mph",
+      "startCoords": [
+        -34.815,
+        -58.5348
+      ],
+      "endCoords": [
+        33.9416,
+        -118.4085
+      ]
+    },
+    {
+      "id": "FLT-3062",
+      "name": "Flight EZE-SYD 3062",
+      "type": "FLIGHT",
+      "origin": "EZE",
+      "destination": "SYD",
+      "status": "ON TIME",
+      "details": "Altitude: 40875ft, Speed: 517mph",
+      "startCoords": [
+        -34.815,
+        -58.5348
+      ],
+      "endCoords": [
+        -33.9399,
+        151.1753
+      ]
+    },
+    {
+      "id": "FLT-3063",
+      "name": "Flight EZE-YYZ 3063",
+      "type": "FLIGHT",
+      "origin": "EZE",
+      "destination": "YYZ",
+      "status": "ON TIME",
+      "details": "Altitude: 33368ft, Speed: 554mph",
+      "startCoords": [
+        -34.815,
+        -58.5348
+      ],
+      "endCoords": [
+        43.6777,
+        -79.6248
+      ]
+    },
+    {
+      "id": "FLT-3064",
+      "name": "Flight EZE-JNB 3064",
+      "type": "FLIGHT",
+      "origin": "EZE",
+      "destination": "JNB",
+      "status": "ON TIME",
+      "details": "Altitude: 33249ft, Speed: 517mph",
+      "startCoords": [
+        -34.815,
+        -58.5348
+      ],
+      "endCoords": [
+        -26.1367,
+        28.2411
+      ]
+    },
+    {
+      "id": "FLT-3065",
+      "name": "Flight BOG-MIA 3065",
+      "type": "FLIGHT",
+      "origin": "BOG",
+      "destination": "MIA",
+      "status": "IN AIR",
+      "details": "Altitude: 34463ft, Speed: 560mph",
+      "startCoords": [
+        4.7016,
+        -74.1469
+      ],
+      "endCoords": [
+        25.7959,
+        -80.287
+      ]
+    },
+    {
+      "id": "FLT-3066",
+      "name": "Flight BOG-YVR 3066",
+      "type": "FLIGHT",
+      "origin": "BOG",
+      "destination": "YVR",
+      "status": "IN AIR",
+      "details": "Altitude: 39598ft, Speed: 504mph",
+      "startCoords": [
+        4.7016,
+        -74.1469
+      ],
+      "endCoords": [
+        49.1947,
+        -123.1762
+      ]
+    },
+    {
+      "id": "FLT-3067",
+      "name": "Flight MEX-DOH 3067",
+      "type": "FLIGHT",
+      "origin": "MEX",
+      "destination": "DOH",
+      "status": "ON TIME",
+      "details": "Altitude: 39352ft, Speed: 494mph",
+      "startCoords": [
+        19.4361,
+        -99.0719
+      ],
+      "endCoords": [
+        25.2731,
+        51.608
+      ]
+    },
+    {
+      "id": "FLT-3068",
+      "name": "Flight MEX-BOG 3068",
+      "type": "FLIGHT",
+      "origin": "MEX",
+      "destination": "BOG",
+      "status": "ON TIME",
+      "details": "Altitude: 32665ft, Speed: 504mph",
+      "startCoords": [
+        19.4361,
+        -99.0719
+      ],
+      "endCoords": [
+        4.7016,
+        -74.1469
+      ]
+    },
+    {
+      "id": "FLT-3069",
+      "name": "Flight MEX-FRA 3069",
+      "type": "FLIGHT",
+      "origin": "MEX",
+      "destination": "FRA",
+      "status": "DELAYED",
+      "details": "Altitude: 29775ft, Speed: 509mph",
+      "startCoords": [
+        19.4361,
+        -99.0719
+      ],
+      "endCoords": [
+        50.0379,
+        8.5622
+      ]
+    },
+    {
+      "id": "FLT-3070",
+      "name": "Flight YYZ-MEL 3070",
+      "type": "FLIGHT",
+      "origin": "YYZ",
+      "destination": "MEL",
+      "status": "ON TIME",
+      "details": "Altitude: 34185ft, Speed: 480mph",
+      "startCoords": [
+        43.6777,
+        -79.6248
+      ],
+      "endCoords": [
+        -37.669,
+        144.841
+      ]
+    },
+    {
+      "id": "FLT-3071",
+      "name": "Flight YYZ-CPT 3071",
+      "type": "FLIGHT",
+      "origin": "YYZ",
+      "destination": "CPT",
+      "status": "DELAYED",
+      "details": "Altitude: 38222ft, Speed: 588mph",
+      "startCoords": [
+        43.6777,
+        -79.6248
+      ],
+      "endCoords": [
+        -33.9715,
+        18.6021
+      ]
+    },
+    {
+      "id": "FLT-3072",
+      "name": "Flight YYZ-SIN 3072",
+      "type": "FLIGHT",
+      "origin": "YYZ",
+      "destination": "SIN",
+      "status": "ON TIME",
+      "details": "Altitude: 39505ft, Speed: 507mph",
+      "startCoords": [
+        43.6777,
+        -79.6248
+      ],
+      "endCoords": [
+        1.3644,
+        103.9915
+      ]
+    },
+    {
+      "id": "FLT-3073",
+      "name": "Flight YYZ-HND 3073",
+      "type": "FLIGHT",
+      "origin": "YYZ",
+      "destination": "HND",
+      "status": "ON TIME",
+      "details": "Altitude: 29770ft, Speed: 580mph",
+      "startCoords": [
+        43.6777,
+        -79.6248
+      ],
+      "endCoords": [
+        35.5494,
+        139.7798
+      ]
+    },
+    {
+      "id": "FLT-3074",
+      "name": "Flight YVR-AMS 3074",
+      "type": "FLIGHT",
+      "origin": "YVR",
+      "destination": "AMS",
+      "status": "ON TIME",
+      "details": "Altitude: 36720ft, Speed: 569mph",
+      "startCoords": [
+        49.1947,
+        -123.1762
+      ],
+      "endCoords": [
+        52.3105,
+        4.7683
+      ]
+    },
+    {
+      "id": "FLT-3075",
+      "name": "Flight YVR-BOM 3075",
+      "type": "FLIGHT",
+      "origin": "YVR",
+      "destination": "BOM",
+      "status": "ON TIME",
+      "details": "Altitude: 36815ft, Speed: 583mph",
+      "startCoords": [
+        49.1947,
+        -123.1762
+      ],
+      "endCoords": [
+        19.0896,
+        72.8656
+      ]
+    },
+    {
+      "id": "FLT-3076",
+      "name": "Flight SFO-BOG 3076",
+      "type": "FLIGHT",
+      "origin": "SFO",
+      "destination": "BOG",
+      "status": "ON TIME",
+      "details": "Altitude: 37953ft, Speed: 559mph",
+      "startCoords": [
+        37.6213,
+        -122.379
+      ],
+      "endCoords": [
+        4.7016,
+        -74.1469
+      ]
+    },
+    {
+      "id": "FLT-3077",
+      "name": "Flight SFO-DXB 3077",
+      "type": "FLIGHT",
+      "origin": "SFO",
+      "destination": "DXB",
+      "status": "ON TIME",
+      "details": "Altitude: 28830ft, Speed: 574mph",
+      "startCoords": [
+        37.6213,
+        -122.379
+      ],
+      "endCoords": [
+        25.2532,
+        55.3657
+      ]
+    },
+    {
+      "id": "FLT-3078",
+      "name": "Flight ORD-YVR 3078",
+      "type": "FLIGHT",
+      "origin": "ORD",
+      "destination": "YVR",
+      "status": "ON TIME",
+      "details": "Altitude: 30456ft, Speed: 494mph",
+      "startCoords": [
+        41.9742,
+        -87.9073
+      ],
+      "endCoords": [
+        49.1947,
+        -123.1762
+      ]
+    },
+    {
+      "id": "FLT-3079",
+      "name": "Flight ORD-IST 3079",
+      "type": "FLIGHT",
+      "origin": "ORD",
+      "destination": "IST",
+      "status": "ON TIME",
+      "details": "Altitude: 35919ft, Speed: 579mph",
+      "startCoords": [
+        41.9742,
+        -87.9073
+      ],
+      "endCoords": [
+        41.2753,
+        28.7519
+      ]
+    },
+    {
+      "id": "FLT-3080",
+      "name": "Flight MIA-CPT 3080",
+      "type": "FLIGHT",
+      "origin": "MIA",
+      "destination": "CPT",
+      "status": "IN AIR",
+      "details": "Altitude: 29707ft, Speed: 529mph",
+      "startCoords": [
+        25.7959,
+        -80.287
+      ],
+      "endCoords": [
+        -33.9715,
+        18.6021
+      ]
+    },
+    {
+      "id": "FLT-3081",
+      "name": "Flight MIA-SYD 3081",
+      "type": "FLIGHT",
+      "origin": "MIA",
+      "destination": "SYD",
+      "status": "ON TIME",
+      "details": "Altitude: 28834ft, Speed: 486mph",
+      "startCoords": [
+        25.7959,
+        -80.287
+      ],
+      "endCoords": [
+        -33.9399,
+        151.1753
+      ]
+    },
+    {
+      "id": "FLT-3082",
+      "name": "Flight MIA-EZE 3082",
+      "type": "FLIGHT",
+      "origin": "MIA",
+      "destination": "EZE",
+      "status": "ON TIME",
+      "details": "Altitude: 31776ft, Speed: 494mph",
+      "startCoords": [
+        25.7959,
+        -80.287
+      ],
+      "endCoords": [
+        -34.815,
+        -58.5348
+      ]
+    },
+    {
+      "id": "FLT-3083",
+      "name": "Flight IST-JNB 3083",
+      "type": "FLIGHT",
+      "origin": "IST",
+      "destination": "JNB",
+      "status": "IN AIR",
+      "details": "Altitude: 34185ft, Speed: 508mph",
+      "startCoords": [
+        41.2753,
+        28.7519
+      ],
+      "endCoords": [
+        -26.1367,
+        28.2411
+      ]
+    },
+    {
+      "id": "FLT-3084",
+      "name": "Flight IST-YYZ 3084",
+      "type": "FLIGHT",
+      "origin": "IST",
+      "destination": "YYZ",
+      "status": "ON TIME",
+      "details": "Altitude: 28546ft, Speed: 524mph",
+      "startCoords": [
+        41.2753,
+        28.7519
+      ],
+      "endCoords": [
+        43.6777,
+        -79.6248
+      ]
+    },
+    {
+      "id": "FLT-3085",
+      "name": "Flight IST-FRA 3085",
+      "type": "FLIGHT",
+      "origin": "IST",
+      "destination": "FRA",
+      "status": "DELAYED",
+      "details": "Altitude: 33794ft, Speed: 526mph",
+      "startCoords": [
+        41.2753,
+        28.7519
+      ],
+      "endCoords": [
+        50.0379,
+        8.5622
+      ]
+    },
+    {
+      "id": "FLT-3086",
+      "name": "Flight DEL-SYD 3086",
+      "type": "FLIGHT",
+      "origin": "DEL",
+      "destination": "SYD",
+      "status": "ON TIME",
+      "details": "Altitude: 38289ft, Speed: 549mph",
+      "startCoords": [
         28.5562,
         77.1
+      ],
+      "endCoords": [
+        -33.9399,
+        151.1753
+      ]
+    },
+    {
+      "id": "FLT-3087",
+      "name": "Flight DEL-CDG 3087",
+      "type": "FLIGHT",
+      "origin": "DEL",
+      "destination": "CDG",
+      "status": "DELAYED",
+      "details": "Altitude: 40997ft, Speed: 524mph",
+      "startCoords": [
+        28.5562,
+        77.1
+      ],
+      "endCoords": [
+        49.0097,
+        2.5479
+      ]
+    },
+    {
+      "id": "FLT-3088",
+      "name": "Flight BOM-AMS 3088",
+      "type": "FLIGHT",
+      "origin": "BOM",
+      "destination": "AMS",
+      "status": "ON TIME",
+      "details": "Altitude: 38161ft, Speed: 555mph",
+      "startCoords": [
+        19.0896,
+        72.8656
+      ],
+      "endCoords": [
+        52.3105,
+        4.7683
+      ]
+    },
+    {
+      "id": "FLT-3089",
+      "name": "Flight BOM-CAI 3089",
+      "type": "FLIGHT",
+      "origin": "BOM",
+      "destination": "CAI",
+      "status": "ON TIME",
+      "details": "Altitude: 29007ft, Speed: 529mph",
+      "startCoords": [
+        19.0896,
+        72.8656
+      ],
+      "endCoords": [
+        30.1156,
+        31.4095
+      ]
+    },
+    {
+      "id": "FLT-3090",
+      "name": "Flight DOH-MIA 3090",
+      "type": "FLIGHT",
+      "origin": "DOH",
+      "destination": "MIA",
+      "status": "ON TIME",
+      "details": "Altitude: 33170ft, Speed: 494mph",
+      "startCoords": [
+        25.2731,
+        51.608
+      ],
+      "endCoords": [
+        25.7959,
+        -80.287
+      ]
+    },
+    {
+      "id": "FLT-3091",
+      "name": "Flight DOH-BOG 3091",
+      "type": "FLIGHT",
+      "origin": "DOH",
+      "destination": "BOG",
+      "status": "ON TIME",
+      "details": "Altitude: 35467ft, Speed: 535mph",
+      "startCoords": [
+        25.2731,
+        51.608
+      ],
+      "endCoords": [
+        4.7016,
+        -74.1469
+      ]
+    },
+    {
+      "id": "FLT-3092",
+      "name": "Flight DOH-HKG 3092",
+      "type": "FLIGHT",
+      "origin": "DOH",
+      "destination": "HKG",
+      "status": "ON TIME",
+      "details": "Altitude: 33742ft, Speed: 541mph",
+      "startCoords": [
+        25.2731,
+        51.608
+      ],
+      "endCoords": [
+        22.308,
+        113.9185
       ]
     }
   ],
