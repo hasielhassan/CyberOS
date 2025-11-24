@@ -33,6 +33,34 @@ const calculateBearing = (start: number[], end: number[]): number => {
     return (bearing + 360) % 360; // Normalize to 0-360
 };
 
+// Calculate curved path points (Quadratic Bezier)
+const calculateCurvedPath = (start: number[], end: number[], numPoints: number = 100): number[][] => {
+    const points: number[][] = [];
+
+    // Control point offset to create curve
+    // We calculate a point perpendicular to the midpoint
+    const midLat = (start[0] + end[0]) / 2;
+    const midLng = (start[1] + end[1]) / 2;
+
+    // Simple offset based on distance to create arc
+    const dist = Math.sqrt(Math.pow(end[0] - start[0], 2) + Math.pow(end[1] - start[1], 2));
+    const offset = dist * 0.2; // 20% of distance as arc height
+
+    // Add some randomness or fixed direction for the curve based on bearing
+    const controlLat = midLat + offset;
+    const controlLng = midLng;
+
+    for (let i = 0; i <= numPoints; i++) {
+        const t = i / numPoints;
+        // Quadratic Bezier formula: (1-t)^2 * P0 + 2(1-t)t * P1 + t^2 * P2
+        const lat = Math.pow(1 - t, 2) * start[0] + 2 * (1 - t) * t * controlLat + Math.pow(t, 2) * end[0];
+        const lng = Math.pow(1 - t, 2) * start[1] + 2 * (1 - t) * t * controlLng + Math.pow(t, 2) * end[1];
+        points.push([lat, lng]);
+    }
+
+    return points;
+};
+
 const GeoMap = () => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
@@ -124,10 +152,17 @@ const GeoMap = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // Filter Items
+    // Filter Items and Generate Trajectories
     const filteredItems = useMemo(() => {
+        const flights = geoData.flights.map(f => ({
+            ...f,
+            category: 'flights',
+            // Generate trajectory if not present (for flights)
+            trajectory: calculateCurvedPath(f.startCoords, f.endCoords)
+        }));
+
         const allItems = [
-            ...geoData.flights.map(f => ({ ...f, category: 'flights' })),
+            ...flights,
             ...geoData.trains.map(t => ({ ...t, category: 'trains' })),
             ...geoData.storms.map(s => ({ ...s, category: 'weather' }))
         ];
