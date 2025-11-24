@@ -13,28 +13,30 @@ const MissionVerificationDialog: React.FC<MissionVerificationDialogProps> = ({ m
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
+    const [incorrectFields, setIncorrectFields] = useState<string[]>([]);
+
     const questions = mission.questions || {};
     const questionKeys = Object.keys(questions);
 
     const handleSubmit = () => {
-        let allCorrect = true;
+        const wrong: string[] = [];
 
         for (const question of questionKeys) {
-            const userAnswer = answers[question]?.trim().toLowerCase();
-            const correctAnswer = questions[question].toLowerCase();
+            const userAnswer = (answers[question] || '').trim().toLowerCase();
+            const correctAnswer = (questions[question] || '').toLowerCase();
 
             if (userAnswer !== correctAnswer) {
-                allCorrect = false;
-                break;
+                wrong.push(question);
             }
         }
 
-        if (allCorrect) {
+        if (wrong.length === 0) {
             setSuccess(true);
             setTimeout(() => {
                 onComplete();
             }, 1500);
         } else {
+            setIncorrectFields(wrong);
             setError("Incorrect answers. Review your intel and try again.");
         }
     };
@@ -77,23 +79,39 @@ const MissionVerificationDialog: React.FC<MissionVerificationDialogProps> = ({ m
                     </div>
 
                     <div className="space-y-6">
-                        {questionKeys.map((question, idx) => (
-                            <div key={idx} className="space-y-2">
-                                <label className="block text-sm font-bold text-green-500">
-                                    {idx + 1}. {question}
-                                </label>
-                                <input
-                                    type="text"
-                                    value={answers[question] || ''}
-                                    onChange={(e) => {
-                                        setAnswers(prev => ({ ...prev, [question]: e.target.value }));
-                                        setError(null);
-                                    }}
-                                    className="w-full bg-green-900/10 border border-green-700 p-3 text-green-100 focus:border-green-400 focus:outline-none focus:bg-green-900/20 transition-colors"
-                                    placeholder="Enter answer..."
-                                />
-                            </div>
-                        ))}
+                        {questionKeys.map((question, idx) => {
+                            const isWrong = incorrectFields.includes(question);
+                            return (
+                                <div key={idx} className="space-y-2">
+                                    <label className={`block text-sm font-bold ${isWrong ? 'text-red-500' : 'text-green-500'}`}>
+                                        {idx + 1}. {question}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={answers[question] || ''}
+                                        onChange={(e) => {
+                                            setAnswers(prev => ({ ...prev, [question]: e.target.value }));
+                                            if (incorrectFields.includes(question)) {
+                                                setIncorrectFields(prev => prev.filter(q => q !== question));
+                                            }
+                                            setError(null);
+                                        }}
+                                        className={`w-full bg-green-900/10 border p-3 text-green-100 focus:outline-none transition-colors
+                                            ${isWrong
+                                                ? 'border-red-500 focus:border-red-400 focus:bg-red-900/10'
+                                                : 'border-green-700 focus:border-green-400 focus:bg-green-900/20'
+                                            }
+                                        `}
+                                        placeholder="Enter answer..."
+                                    />
+                                    {isWrong && (
+                                        <div className="text-xs text-red-400 flex items-center gap-1">
+                                            <XCircle size={12} /> Incorrect
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
 
                     {error && (
