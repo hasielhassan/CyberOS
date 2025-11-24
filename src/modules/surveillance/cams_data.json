@@ -1,0 +1,163 @@
+[
+    {
+        "url": "https://media1.tenor.com/m/w2qc-3lve3UAAAAC/shop-lift-security-camera.gif",
+        "name": "CAM_STORE_04",
+        "location": "Retail Interior - Aisle 4",
+        "category": "Suspicious Activity",
+        "description": "Subject attempting rapid exit (reverse playback)"
+    },
+    {
+        "url": "https://media1.tenor.com/m/9hqxk0fMO3cAAAAC/cat-dancing-cat-dance.gif",
+        "name": "CAM_HOME_EXT_02",
+        "location": "Residential Driveway",
+        "category": "Glitch/Anomaly",
+        "description": "Feline entity exhibiting unusual movement patterns"
+    },
+    {
+        "url": "https://media1.tenor.com/m/up1aDbuxa6MAAAAC/grogu.gif",
+        "name": "CAM_SECURE_01",
+        "location": "Restricted Access Zone",
+        "category": "Unknown Entity",
+        "description": "Small unidentified subject detected in shadow"
+    },
+    {
+        "url": "https://media1.tenor.com/m/63aucgyNkbkAAAAC/dancing-security-camera.gif",
+        "name": "CAM_POLICE_EXT",
+        "location": "Precinct Entrance",
+        "category": "Distraction",
+        "description": "Subject performing dance routine at security checkpoint"
+    },
+    {
+        "url": "https://media1.tenor.com/m/OcrHksk3CKIAAAAC/fire-extinguisher-cover-up-camera.gif",
+        "name": "CAM_CORRIDOR_05",
+        "location": "Office Hallway",
+        "category": "Sabotage",
+        "description": "Visuals obscured by chemical suppressant"
+    },
+    {
+        "url": "https://media1.tenor.com/m/hvUN7Qk9jFcAAAAC/kevin-james-tv-land.gif",
+        "name": "CAM_MALL_03",
+        "location": "Mall Atrium",
+        "category": "Intruder Alert",
+        "description": "Subject screaming directly into sensor"
+    },
+    {
+        "url": "https://media1.tenor.com/m/CvE3kg4hidcAAAAC/metal-gear-solid4-old-snake.gif",
+        "name": "CAM_MIL_09",
+        "location": "Shadow Moses Facility",
+        "category": "Military",
+        "description": "Tactical espionage action detected"
+    },
+    {
+        "url": "https://media1.tenor.com/m/a5P3zMxPb7QAAAAC/security-camera-ostrich.gif",
+        "name": "CAM_STORE_01",
+        "location": "Convenience Store",
+        "category": "Animal Intrusion",
+        "description": "Large avian subject colliding with infrastructure"
+    },
+    {
+        "url": "https://media1.tenor.com/m/qM78qT2Ons0AAAAC/felxingsecurity-buff.gif",
+        "name": "CAM_MARKET_07",
+        "location": "Supermarket Aisle",
+        "category": "Narcissism",
+        "description": "Security personnel flexing musculature"
+    },
+    {
+        "url": "https://media1.tenor.com/m/9aZyycVie30AAAAC/kermie-jailbreak-kermit.gif",
+        "name": "CAM_STUDIO_01",
+        "location": "Production Set",
+        "category": "Meme",
+        "description": "Amphibian subject initiating escape sequence"
+    },
+    {
+        "url": "https://media1.tenor.com/m/ewv4uveM53UAAAAC/camera-thedefenders.gif",
+        "name": "CAM_ELEV_07",
+        "location": "Midland Circle Elevator",
+        "category": "Surveillance",
+        "description": "Multiple subjects monitoring feed"
+    },
+    {
+        "url": "https://media1.tenor.com/m/HlHyNg72ZHMAAAAC/fight-cctv.gif",
+        "name": "CAM_BACKROOM_02",
+        "location": "Staff Quarters",
+        "category": "Violence",
+        "description": "Altercation in progress"
+    },
+    {
+        "url": "https://media1.tenor.com/m/VppYZFbqyckAAAAC/cazzu-error93.gif",
+        "name": "CAM_STREET_02",
+        "location": "Urban Sector 4",
+        "category": "Hacking",
+        "description": "Signal interference detected (Error 93)"
+    },
+    {
+        "url": "https://media1.tenor.com/m/82EdWb74OBoAAAAC/groceries-cctv.gif",
+        "name": "CAM_SHOP_08",
+        "location": "Grocery Store",
+        "category": "Theft",
+        "description": "Subject removing human asset from premises"
+    },
+    {
+        "url": "https://media.giphy.com/media/P9iws4imseYNg5KkhQ/giphy.gif",
+        "name": "CAM_FEED_FOB",
+        "location": "Unknown Location",
+        "category": "Music Video",
+        "description": "Signal intercepted: Fall Out Boy feed"
+    },
+    {
+        "url": "https://media.giphy.com/media/AH9Qv6ATylJACaq2UB/giphy.gif",
+        "name": "CAM_SYS_EYE",
+        "location": "System Core",
+        "category": "Overwatch",
+        "description": "Big Brother surveillance eye active"
+    },
+    {
+        "url": "https://media.giphy.com/media/PEULEFYxr1f0mZKCeB/giphy.gif",
+        "name": "CAM_BCAST_01",
+        "location": "RTP Broadcast Center",
+        "category": "Signal",
+        "description": "Standard test pattern/ID"
+    },
+    {
+        "url": "https://media.giphy.com/media/3otPoDhYB9VnrZCHQY/giphy.gif",
+        "name": "CAM_VIP_01",
+        "location": "Main Stage",
+        "category": "Entertainment",
+        "description": "VIP Subject Tracking (Gaga)"
+    },
+    {
+        "url": "https://media.giphy.com/media/l2YWeHtOKqoaiEcG4/giphy.gif",
+        "name": "CAM_VIP_02",
+        "location": "Backstage",
+        "category": "Entertainment",
+        "description": "VIP Subject Tracking (Gaga)"
+    },
+    {
+        "url": "https://media.giphy.com/media/3otPopNSKDaFMxzrXi/giphy.gif",
+        "name": "CAM_VIP_03",
+        "location": "Green Room",
+        "category": "Entertainment",
+        "description": "VIP Subject Tracking (Gaga)"
+    },
+    {
+        "url": "https://media.giphy.com/media/SwuP4hyvh8vXr9dy83/giphy.gif",
+        "name": "CAM_WX_01",
+        "location": "Exterior Station",
+        "category": "Weather",
+        "description": "Severe icing conditions detected"
+    },
+    {
+        "url": "https://media.giphy.com/media/k6G9SWbsMpk0U/giphy.gif",
+        "name": "CAM_AERIAL_01",
+        "location": "Forest Sector",
+        "category": "Disaster",
+        "description": "Aerial view of wildfire suppression"
+    },
+    {
+        "url": "https://media.giphy.com/media/fj7eI14xYaYSI/giphy.gif",
+        "name": "CAM_AERIAL_02",
+        "location": "Forest Sector",
+        "category": "Disaster",
+        "description": "Helicopter telemetry lost"
+    }
+]

@@ -5,4 +5,13 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/CyberOS', // Root base path for custom domain
+  server: {
+    proxy: {
+      '/api/windy': {
+        target: 'https://api.windy.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/windy/, ''),
+      },
+    },
+  },
 })
