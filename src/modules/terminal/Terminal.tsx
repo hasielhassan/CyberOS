@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { getIpInfo, simulateTraceroute, formatIpInfo, generateRandomCloudIp } from '../../utils/ipUtils';
+import { getIpInfo, simulateTraceroute, formatIpInfo } from '../../utils/ipUtils';
 import { useMissions } from '../contracts/MissionsContext';
 
 const initialFileSystem = {
