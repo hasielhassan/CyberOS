@@ -28,7 +28,7 @@ const CamGrid = () => {
     const [apiKey, setApiKey] = useState(localStorage.getItem('windy_api_key') || '');
     const [showSettings, setShowSettings] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [useLive, setUseLive] = useState(false);
+    const [useLive, setUseLive] = useState(localStorage.getItem('surveillance_use_live') === 'true');
     const [liveCams, setLiveCams] = useState<CamFeed[]>([]);
     const [liveError, setLiveError] = useState<string | null>(null);
     const [selectedCam, setSelectedCam] = useState<CamFeed | null>(null);
@@ -55,6 +55,11 @@ const CamGrid = () => {
         description: cam.description,
         isLive: false
     })), []);
+
+    // Persist useLive state
+    useEffect(() => {
+        localStorage.setItem('surveillance_use_live', String(useLive));
+    }, [useLive]);
 
     // Fetch Filter Options on Init (if API key exists)
     useEffect(() => {

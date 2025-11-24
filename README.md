@@ -106,6 +106,17 @@ Built with modern web technologies for speed and scalability:
     ```
     Open `http://localhost:5173` to hack the planet.
 
+### 🔑 API Configuration
+
+#### Surveillance Module (Windy API)
+The **Surveillance** module uses the [Windy.com Webcams API v3](https://api.windy.com/webcams) to display real-time webcam feeds.
+1.  **Get an API Key**: Register at [api.windy.com](https://api.windy.com/webcams) to get a free API key.
+2.  **Configure**:
+    - Open the **Surveillance** module in CyberOS.
+    - Click the **Settings** (gear icon) in the top right.
+    - Paste your API key into the input field.
+    - The key is stored locally in your browser.
+
 ### Deployment
 To deploy to GitHub Pages:
 ```bash
