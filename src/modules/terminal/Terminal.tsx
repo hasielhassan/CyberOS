@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { getIpInfo, simulateTraceroute, formatIpInfo, generateRandomCloudIp } from '../../utils/ipUtils';
+import { useMissions } from '../contracts/MissionsContext';
 
 const initialFileSystem = {
     '/': { type: 'dir', children: ['home', 'bin', 'var', 'missions'] },
@@ -14,6 +15,7 @@ const initialFileSystem = {
 };
 
 const TerminalConsole = () => {
+    const { activeMission } = useMissions();
     const [history, setHistory] = useState(['Welcome to CyberOS v9.0', 'Type "help" for commands.']);
     const [input, setInput] = useState('');
     const [path, setPath] = useState('/');
@@ -356,6 +358,20 @@ const TerminalConsole = () => {
                 // Show loading message
                 setHistory(h => [...h, `Querying information for ${arg}...`]);
 
+                // Check for mission-specific data
+                if (activeMission && activeMission.moduleData?.Terminal?.ipdata?.[arg]) {
+                    const missionIpData = activeMission.moduleData.Terminal.ipdata[arg].info;
+                    const formattedInfo = formatIpInfo(missionIpData, true);
+                    setTimeout(() => {
+                        setHistory(h => {
+                            const newHistory = [...h];
+                            newHistory.pop();
+                            return [...newHistory, ...formattedInfo];
+                        });
+                    }, 800); // Fake delay for realism
+                    return;
+                }
+
                 // Fetch IP info asynchronously
                 getIpInfo(arg).then(info => {
                     const formattedInfo = formatIpInfo(info, true);
@@ -381,6 +397,20 @@ const TerminalConsole = () => {
                 }
                 // Show loading message
                 setHistory(h => [...h, `Tracing route to ${arg}...`]);
+
+                // Check for mission-specific data
+                if (activeMission && activeMission.moduleData?.Terminal?.ipdata?.[arg]?.trace) {
+                    const missionTrace = activeMission.moduleData.Terminal.ipdata[arg].trace;
+                    setTimeout(() => {
+                        setHistory(h => {
+                            const newHistory = [...h];
+                            newHistory.pop();
+                            const traceOutput = [`\nTraceroute to ${arg}:`, ...missionTrace];
+                            return [...newHistory, ...traceOutput];
+                        });
+                    }, 1500); // Fake delay
+                    return;
+                }
 
                 // Simulate traceroute asynchronously
                 simulateTraceroute(arg, 8).then(route => {

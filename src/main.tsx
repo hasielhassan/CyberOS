@@ -19,6 +19,7 @@ import { SurveillancePlugin } from './modules/surveillance';
 import { BioLabPlugin } from './modules/bio_lab';
 import { HealthMonitorPlugin } from './modules/health_monitor';
 import { DirectoryPlugin } from './modules/directory';
+import { MissionsProvider } from './modules/contracts/MissionsContext';
 
 import { en } from './locales/en';
 import { es } from './locales/es';
@@ -51,7 +52,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <AuthProvider>
                 <LanguageProvider initialLanguages={[en, es]}>
                     <PluginProvider>
-                        <App />
+                        <MissionsProvider>
+                            <App />
+                        </MissionsProvider>
                     </PluginProvider>
                 </LanguageProvider>
             </AuthProvider>

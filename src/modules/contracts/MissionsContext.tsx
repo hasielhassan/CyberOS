@@ -5,6 +5,7 @@ import missionsData from './missions.json';
 interface MissionsContextType {
     missions: Mission[];
     activeMissionId: string | null;
+    activeMission: Mission | null;
     completedMissionIds: string[];
     acceptMission: (id: string) => void;
     completeMission: (id: string) => void;
@@ -71,10 +72,13 @@ export const MissionsProvider: React.FC<{ children: ReactNode }> = ({ children }
         return completedMissionIds.includes(id);
     };
 
+    const activeMission = getActiveMission();
+
     return (
         <MissionsContext.Provider value={{
             missions,
             activeMissionId,
+            activeMission,
             completedMissionIds,
             acceptMission,
             completeMission,

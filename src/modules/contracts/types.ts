@@ -12,6 +12,8 @@ export interface Mission {
     fullDescription: string; // Detailed briefing after acceptance
     warnings: string[]; // Shown in accept dialog
     requiredModules: string[]; // e.g., ["Terminal", "Geo Tracker"]
+    moduleData?: Record<string, any>; // Clues for modules
+    questions?: Record<string, string>; // Verification questions
     documents: Document[]; // Clues using Directory's Document type
     estimatedTime: string; // e.g., "15-30 min"
     target?: string;

@@ -1,12 +1,9 @@
 import { Briefcase } from 'lucide-react';
 import { Plugin } from '../../core/types';
 import MissionHub from './MissionHub';
-import { MissionsProvider } from './MissionsContext';
 
 const WrappedMissionHub = () => (
-    <MissionsProvider>
-        <MissionHub />
-    </MissionsProvider>
+    <MissionHub />
 );
 
 export const ContractsPlugin: Plugin = {

@@ -4,6 +4,7 @@ import { useMissions } from './MissionsContext';
 import { Mission } from './types';
 import { AcceptMissionDialog } from './components/AcceptMissionDialog';
 import { MissionDetail } from './components/MissionDetail';
+import MissionVerificationDialog from './components/MissionVerificationDialog';
 
 const MissionHub = () => {
     const {
@@ -17,6 +18,7 @@ const MissionHub = () => {
 
     const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
     const [missionToAccept, setMissionToAccept] = useState<Mission | null>(null);
+    const [showVerificationDialog, setShowVerificationDialog] = useState(false);
 
     const getMissionStatus = (mission: Mission): 'AVAILABLE' | 'ACTIVE' | 'COMPLETED' => {
         if (isMissionCompleted(mission.id)) return 'COMPLETED';
@@ -34,7 +36,7 @@ const MissionHub = () => {
 
     const handleCompleteMission = () => {
         if (selectedMission) {
-            completeMission(selectedMission.id);
+            setShowVerificationDialog(true);
         }
     };
 
@@ -138,6 +140,18 @@ const MissionHub = () => {
                     mission={missionToAccept}
                     onAccept={handleAcceptMission}
                     onCancel={() => setMissionToAccept(null)}
+                />
+            )}
+
+            {/* Verification Dialog */}
+            {showVerificationDialog && selectedMission && (
+                <MissionVerificationDialog
+                    mission={selectedMission}
+                    onComplete={() => {
+                        completeMission(selectedMission.id);
+                        setShowVerificationDialog(false);
+                    }}
+                    onClose={() => setShowVerificationDialog(false)}
                 />
             )}
         </div>

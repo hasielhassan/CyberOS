@@ -4,6 +4,7 @@ import L from 'leaflet';
 import { Plane, Train, CloudRain, Search, Layers, Map as MapIcon, Globe } from 'lucide-react';
 import geoData from './geo_data.json';
 import placesData from './places.json';
+import { useMissions } from '../contracts/MissionsContext';
 
 // Custom Icons
 const createIcon = (svg: string, color: string, rotation: number = 0) => new L.DivIcon({
@@ -104,6 +105,8 @@ const GeoMap = () => {
     const customPopupRef = useRef<L.Marker | null>(null);
     const placeMarkerRef = useRef<L.Marker | null>(null);
 
+    const { activeMission } = useMissions();
+
     const [activeLayers, setActiveLayers] = useState(() => {
         const saved = localStorage.getItem('geo_tracker_filters');
         if (saved) {
@@ -192,7 +195,12 @@ const GeoMap = () => {
 
     // Filter Items and Generate Trajectories
     const filteredItems = useMemo(() => {
-        const flights = geoData.flights.map(f => ({
+        let missionFlights: any[] = [];
+        if (activeMission && activeMission.moduleData?.['Geo Tracker']?.flights) {
+            missionFlights = activeMission.moduleData['Geo Tracker'].flights;
+        }
+
+        const flights = [...geoData.flights, ...missionFlights].map(f => ({
             ...f,
             category: 'flights',
             // Generate trajectory if not present (for flights)
@@ -216,18 +224,34 @@ const GeoMap = () => {
             (item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 item.id.toLowerCase().includes(searchTerm.toLowerCase()))
         );
-    }, [activeLayers, searchTerm]);
+    }, [activeLayers, searchTerm, activeMission]);
 
     // Filter Places
     const filteredPlaces = useMemo(() => {
+        let missionPlaces: any[] = [];
+        if (activeMission && activeMission.moduleData?.['Geo Tracker']?.coordinates) {
+            const coords = activeMission.moduleData['Geo Tracker'].coordinates;
+            missionPlaces = Object.keys(coords).map(key => ({
+                ...coords[key],
+                coordinates: key
+            }));
+        }
+
+        const allPlaces = [...placesData, ...missionPlaces];
+
+        if (!placesSearchTerm) return allPlaces.filter(p => missionPlaces.includes(p)); // Only show mission places by default if no search? No, keep behavior.
+        // Actually, let's show all places if no search, or just keep the search logic.
+        // If no search term, user sees nothing in the list currently.
+        // Let's keep it consistent: only show if searching.
+
         if (!placesSearchTerm) return [];
         const lowerTerm = placesSearchTerm.toLowerCase();
-        return placesData.filter(place =>
+        return allPlaces.filter(place =>
             place.name.toLowerCase().includes(lowerTerm) ||
             place.description.toLowerCase().includes(lowerTerm) ||
             place.coordinates.includes(lowerTerm)
         );
-    }, [placesSearchTerm]);
+    }, [placesSearchTerm, activeMission]);
 
     // Calculate Position
     const getPosition = (trajectory: number[][], offset: number = 0) => {

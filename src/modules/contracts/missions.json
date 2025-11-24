@@ -5,7 +5,7 @@
         "difficulty": "EASY",
         "reward": "500 BTC",
         "briefing": "Trace a suspicious IP address and identify the location of a data leak.",
-        "fullDescription": "A confidential laptop containing Project Zero blueprints was stolen from our Amsterdam office. We've managed to trace the thief's IP address to 85.214.132.117. Your mission is to use the Terminal to trace the signal, identify the city, and confirm the location using the Geo Tracker.",
+        "fullDescription": "A confidential laptop containing Project Zero blueprints was stolen from our Amsterdam office. We've managed to trace the thief's IP address to 185.93.180.131. Your mission is to use the Terminal to trace the signal, identify the city, and confirm the location using the Geo Tracker.",
         "warnings": [
             "This is a tutorial mission",
             "No real danger involved",
@@ -15,6 +15,69 @@
             "Terminal",
             "Geo Tracker"
         ],
+        "moduleData": {
+            "Terminal": {
+                "ipdata": {
+                    "185.93.180.131": {
+                        "info": {
+                            "ip": "185.93.180.131",
+                            "hostname": "frankfurt-ns01.cyberghostvpn.com",
+                            "city": "Frankfurt am Main",
+                            "region": "Hesse",
+                            "country": "DE",
+                            "loc": "50.1025,8.6299",
+                            "org": "AS9009 M247 Europe SRL",
+                            "postal": "60326",
+                            "timezone": "Europe/Berlin"
+                        },
+                        "trace": [
+                            "1. 140.238.132.162 - Toronto, CA (AS31898)",
+                            "2. 140.238.95.27 - London, GB (AS31898)",
+                            "3. 40.77.241.36 - Moses Lake, US (AS8075)",
+                            "4. 69.63.183.6 - San Jose, US (AS32934)",
+                            "5. 140.238.167.234 - Mumbai, IN (AS31898)",
+                            "6. 129.213.8.180 - Ashburn, US (AS31898)",
+                            "7. 54.75.41.166 - Dublin, IE (AS16509)",
+                            "8. 185.93.180.131 - Frankfurt, DE (AS6724)"
+                        ]
+                    }
+                }
+            },
+            "Geo Tracker": {
+                "coordinates": {
+                    "50.1025,8.6299": {
+                        "name": "Oberon Dynamics",
+                        "description": "Innovative German engineering firm specializing in high-performance laptops for the corporate and creative sectors",
+                        "insights": "Police Insights & Corporate Espionage Gossip: Rumors circulating suggest possible data breaches and internal conflicts within some major tech companies.",
+                        "image": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Frankfurt_Main_August_2020_1.jpg"
+                    }
+                },
+                "flights": [
+                    {
+                        "id": "FLT-3020",
+                        "name": "Flight AMS-FRA 3020",
+                        "type": "FLIGHT",
+                        "origin": "AMS",
+                        "destination": "FRA",
+                        "status": "ON TIME",
+                        "details": "Altitude: 36023ft, Speed: 487mph",
+                        "startCoords": [
+                            52.3105,
+                            4.7683
+                        ],
+                        "endCoords": [
+                            50.0379,
+                            8.5622
+                        ]
+                    }
+                ]
+            }
+        },
+        "questions": {
+            "Which city is the thief located on?": "Frankfurt",
+            "Which company does the thief work for?": "Oberon Dynamics",
+            "Which transportation did the thief used?": "Plane"
+        },
         "estimatedTime": "10-15 min",
         "target": "Unknown Thief",
         "location": "Unknown (Trace Required)",
