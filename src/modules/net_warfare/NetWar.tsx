@@ -179,11 +179,62 @@ const NetWar = () => {
     };
 
     const startTrace = () => {
-        if (!targetUrl) return; setPhase('tracing'); setTraceLevel(0); setActiveBuffs([]);
+        if (!targetUrl) return;
+        setPhase('tracing');
+        setTraceLevel(0);
+        setActiveBuffs([]);
+
         const { newNodes, newLinks } = generateLevel(level);
-        setNodes([newNodes[0]]); setLinks([]); setScannedNodes([1]);
-        addLog(`RESOLVING HOST: ${targetUrl}...`, 'debug');
-        setTimeout(() => { setNodes(newNodes); setLinks(newLinks); setPhase('active'); addLog('TOPOLOGY MAPPED.', 'info'); }, 1000);
+
+        // Initialize with just localhost
+        setNodes([newNodes[0]]);
+        setLinks([]);
+        setScannedNodes([1]);
+
+        addLog(`Tracing route to ${targetUrl} [${newNodes[newNodes.length - 1].ip}]...`, 'info');
+        addLog(`over a maximum of 30 hops:`, 'info');
+        addLog('', 'raw'); // Spacer
+
+        let currentNodeIndex = 1;
+
+        const revealNextNode = () => {
+            if (currentNodeIndex >= newNodes.length) {
+                setPhase('active');
+                addLog('', 'raw');
+                addLog('Trace complete.', 'success');
+                return;
+            }
+
+            const node = newNodes[currentNodeIndex];
+
+            // Calculate simulated latencies based on "distance" (index)
+            const baseLatency = currentNodeIndex * 10;
+            const rtt1 = baseLatency + Math.floor(Math.random() * 10);
+            const rtt2 = baseLatency + Math.floor(Math.random() * 10);
+            const rtt3 = baseLatency + Math.floor(Math.random() * 10);
+
+            // Format:  1    <1 ms    <1 ms    <1 ms  192.168.1.1
+            const hopNum = currentNodeIndex.toString().padStart(2, ' ');
+            const t1 = rtt1 < 1 ? '<1 ms' : `${rtt1} ms`;
+            const t2 = rtt2 < 1 ? '<1 ms' : `${rtt2} ms`;
+            const t3 = rtt3 < 1 ? '<1 ms' : `${rtt3} ms`;
+
+            addLog(`${hopNum}    ${t1.padEnd(9)} ${t2.padEnd(9)} ${t3.padEnd(9)} ${node.ip} [${node.label}]`, 'trace');
+
+            setNodes(prev => [...prev, node]);
+
+            // Add links connecting to this node
+            const relevantLinks = newLinks.filter(l =>
+                (l.to === node.id && l.from < node.id) ||
+                (l.from === node.id && l.to < node.id)
+            );
+            setLinks(prev => [...prev, ...relevantLinks]);
+
+            currentNodeIndex++;
+            setTimeout(revealNextNode, 400);
+        };
+
+        setTimeout(revealNextNode, 500);
     };
 
     const performAction = (node: Node, type: 'scan' | 'hack') => {
@@ -217,7 +268,12 @@ const NetWar = () => {
         addLog(`CONNECTION SAVED. READY FOR NEXT ASSIGNMENT.`, 'success');
     };
 
-    const addLog = (msg: string, type: string) => setLogs(prev => [...prev, `${type}|[${new Date().toLocaleTimeString().split(' ')[0]}] ${msg}`]);
+    const addLog = (msg: string, type: string) => {
+        const timestamp = new Date().toLocaleTimeString().split(' ')[0];
+        const prefix = type === 'trace' || type === 'raw' ? '' : `[${timestamp}] `;
+        setLogs(prev => [...prev, `${type}|${prefix}${msg}`]);
+    };
+
     const findSourceID = (targetId: number) => {
         const owned = nodes.filter(n => n.status === 'own').map(n => n.id);
         const link = links.find(l => (owned.includes(l.from) && l.to === targetId) || (owned.includes(l.to) && l.from === targetId));
@@ -434,7 +490,7 @@ const NetWar = () => {
                 <div className="flex-1 overflow-y-auto p-2 font-mono bg-black/50 text-xs space-y-1">
                     {logs.map((l, i) => {
                         const [type, msg] = l.split('|');
-                        return <div key={i} className={`${type === 'error' ? 'text-red-500' : type === 'success' ? 'text-green-400' : type === 'warn' ? 'text-yellow-500' : 'text-green-600'}`}>{msg}</div>
+                        return <div key={i} className={`${type === 'error' ? 'text-red-500' : type === 'success' ? 'text-green-400' : type === 'warn' ? 'text-yellow-500' : type === 'trace' ? 'text-gray-400 whitespace-pre' : 'text-green-600'}`}>{msg}</div>
                     })}
                     <div ref={logsEndRef} />
                 </div>
