@@ -239,12 +239,9 @@ const GeoMap = () => {
 
         const allPlaces = [...placesData, ...missionPlaces];
 
-        if (!placesSearchTerm) return allPlaces.filter(p => missionPlaces.includes(p)); // Only show mission places by default if no search? No, keep behavior.
-        // Actually, let's show all places if no search, or just keep the search logic.
-        // If no search term, user sees nothing in the list currently.
-        // Let's keep it consistent: only show if searching.
-
+        // Only show places when user is actively searching
         if (!placesSearchTerm) return [];
+
         const lowerTerm = placesSearchTerm.toLowerCase();
         return allPlaces.filter(place =>
             place.name.toLowerCase().includes(lowerTerm) ||
