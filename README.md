@@ -70,6 +70,56 @@ Personal health monitoring.
 
 ---
 
+## 🧩 Mission Architecture
+
+CyberOS features a data-driven mission system that integrates deeply with the various modules. Missions are defined in JSON and can dynamically inject data into modules to create immersive gameplay.
+
+### Mission Structure
+Each mission is defined by a JSON object with the following key components:
+
+- **`id`**: Unique identifier (e.g., "MSN-001").
+- **`requiredModules`**: List of modules needed to complete the mission (e.g., `["Terminal", "Geo Tracker"]`).
+- **`moduleData`**: A dictionary containing mission-specific data injected into the respective modules.
+- **`questions`**: A set of questions and answers used to verify mission completion.
+
+### Module Integration & Responsibility
+Modules are responsible for checking the active mission context and rendering specific data provided in `moduleData`.
+
+**For Mission Builders:**
+When creating a mission, you must provide data in the format expected by the target modules.
+
+**For Module Developers:**
+Each module must document its expected data schema. For example:
+
+#### Terminal Module Schema
+The Terminal looks for an `ipdata` key to provide mock results for `ipinfo` and `trace` commands.
+```json
+"Terminal": {
+  "ipdata": {
+    "192.168.1.1": {
+      "info": { "city": "Berlin", "org": "Secret Corp" },
+      "trace": ["1. Hop One", "2. Hop Two"]
+    }
+  }
+}
+```
+
+#### Geo Tracker Module Schema
+The Geo Tracker looks for `coordinates` (places) and `flights` to display on the map.
+```json
+"Geo Tracker": {
+  "coordinates": {
+    "50.11,8.68": { "name": "Target Location", "description": "..." }
+  },
+  "flights": [ ... ]
+}
+```
+
+### Verification System
+Missions are completed by answering verification questions. The answers are case-insensitive but must match the expected values defined in the mission file. This ensures players have actually gathered the necessary intelligence from the modules.
+
+---
+
 ## 🛠️ Tech Stack
 
 Built with modern web technologies for speed and scalability:
