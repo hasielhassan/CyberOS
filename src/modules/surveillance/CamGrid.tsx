@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Camera, Settings, MapPin, Loader, Info, Filter, X } from 'lucide-react';
 import camsData from './cams_data.json';
+import { useMissions } from '../contracts/MissionsContext';
 
 // Types
 interface CamFeed {
@@ -45,16 +46,30 @@ const CamGrid = () => {
     const [apiCategories, setApiCategories] = useState<FilterOption[]>([]);
     const [apiCountries, setApiCountries] = useState<FilterOption[]>([]);
 
+    const { activeMission } = useMissions();
+
     // Process Fallback Data
-    const fallbackCams: CamFeed[] = useMemo(() => camsData.map((cam, i) => ({
-        id: `FB_${i}`,
-        url: cam.url,
-        name: cam.name,
-        location: cam.location,
-        category: cam.category,
-        description: cam.description,
-        isLive: false
-    })), []);
+    const fallbackCams: CamFeed[] = useMemo(() => {
+        let missionCams: CamFeed[] = [];
+        if (activeMission && activeMission.moduleData?.Surveillance?.cams) {
+            missionCams = activeMission.moduleData.Surveillance.cams.map((cam: any) => ({
+                ...cam,
+                isLive: false
+            }));
+        }
+
+        const defaultCams = camsData.map((cam, i) => ({
+            id: `FB_${i}`,
+            url: cam.url,
+            name: cam.name,
+            location: cam.location,
+            category: cam.category,
+            description: cam.description,
+            isLive: false
+        }));
+
+        return [...missionCams, ...defaultCams];
+    }, [activeMission]);
 
     // Persist useLive state
     useEffect(() => {
