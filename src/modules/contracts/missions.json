@@ -1,15 +1,118 @@
 [
     {
         "id": "MSN-001",
+        "title": "Training: Signal Trace",
+        "difficulty": "EASY",
+        "reward": "100 BTC",
+        "briefing": "Basic Terminal training. Trace a suspicious IP address.",
+        "fullDescription": "Welcome to CyberOS. Your first task is to learn the basics of the Terminal module. We have detected unauthorized access attempts from IP address 198.51.100.55. Use the 'ipinfo' command to identify the city of origin.",
+        "warnings": [
+            "Training Simulation",
+            "Module: Terminal"
+        ],
+        "requiredModules": [
+            "Terminal"
+        ],
+        "moduleData": {
+            "Terminal": {
+                "ipdata": {
+                    "198.51.100.55": {
+                        "info": {
+                            "ip": "198.51.100.55",
+                            "hostname": "unknown-host.cyberdyne.net",
+                            "city": "Seattle",
+                            "region": "Washington",
+                            "country": "US",
+                            "loc": "47.6062,-122.3321",
+                            "org": "Cyberdyne Systems",
+                            "postal": "98101",
+                            "timezone": "America/Los_Angeles"
+                        },
+                        "trace": [
+                            "1. 10.0.0.1 - Localhost",
+                            "2. 192.168.1.1 - Gateway",
+                            "3. 198.51.100.55 - Seattle, US (Cyberdyne)"
+                        ]
+                    }
+                }
+            }
+        },
+        "questions": {
+            "Which city is the IP located in?": "Seattle"
+        },
+        "estimatedTime": "5 min",
+        "target": "Unknown Source",
+        "location": "Unknown",
+        "documents": []
+    },
+    {
+        "id": "MSN-002",
+        "title": "Training: Geo Location",
+        "difficulty": "EASY",
+        "reward": "250 BTC",
+        "briefing": "Combine Terminal intel with Geo Tracking.",
+        "fullDescription": "Good work on the trace. Now we need to correlate digital signals with physical locations. We've intercepted a signal from IP 212.58.244.23. Trace it to find the coordinates, then use the Geo Tracker to identify the specific facility at that location.",
+        "warnings": [
+            "Training Simulation",
+            "Modules: Terminal, Geo Tracker"
+        ],
+        "requiredModules": [
+            "Terminal",
+            "Geo Tracker"
+        ],
+        "moduleData": {
+            "Terminal": {
+                "ipdata": {
+                    "212.58.244.23": {
+                        "info": {
+                            "ip": "212.58.244.23",
+                            "hostname": "london-gw.finance.net",
+                            "city": "London",
+                            "region": "England",
+                            "country": "GB",
+                            "loc": "51.5045,-0.0183",
+                            "org": "Global Finance Corp",
+                            "postal": "E14",
+                            "timezone": "Europe/London"
+                        },
+                        "trace": [
+                            "1. 10.0.0.1 - Localhost",
+                            "2. 212.58.244.23 - London, GB"
+                        ]
+                    }
+                }
+            },
+            "Geo Tracker": {
+                "coordinates": {
+                    "51.5045,-0.0183": {
+                        "name": "Canary Wharf Financial Hub",
+                        "description": "A dense cluster of banking skyscrapers in London where global capital flows intersect with high-frequency trading algorithms.",
+                        "insights": "Interpol Notice: Tracing a specific crypto-wallet led us here. Someone in the Sterling Tower is washing funds for the Lazarus Group.",
+                        "image": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Canary_Wharf_at_night%2C_from_Shadwell_cropped.jpg"
+                    }
+                }
+            }
+        },
+        "questions": {
+            "Which city is the target in?": "London",
+            "What is the name of the facility?": "Canary Wharf Financial Hub"
+        },
+        "estimatedTime": "10 min",
+        "target": "Financial Node",
+        "location": "London, UK",
+        "documents": []
+    },
+    {
+        "id": "MSN-003",
         "title": "Operation Hello World",
         "difficulty": "EASY",
         "reward": "500 BTC",
-        "briefing": "Trace a suspicious IP address and identify the location of a data leak.",
-        "fullDescription": "A confidential laptop containing Project Zero blueprints was stolen from our Amsterdam office. We've managed to trace the thief's IP address to 185.93.180.131. Your mission is to use the Terminal to trace the signal, identify the city, and confirm the location using the Geo Tracker.",
+        "briefing": "Full spectrum tracking. Trace a thief and identify their transport.",
+        "fullDescription": "A confidential laptop containing Project Zero blueprints was stolen from our Amsterdam office. We've managed to trace the thief's IP address to 185.93.180.131. Your mission is to use the Terminal to trace the signal, identify the city, confirm the location using the Geo Tracker, and identify the flight they are using to escape.",
         "warnings": [
-            "This is a tutorial mission",
-            "No real danger involved",
-            "Perfect for new agents"
+            "Live Operation",
+            "Moving Target",
+            "Time Sensitive"
         ],
         "requiredModules": [
             "Terminal",
@@ -78,7 +181,7 @@
             "Which company does the thief work for?": "Oberon Dynamics",
             "Which transportation did the thief used?": "Plane"
         },
-        "estimatedTime": "10-15 min",
+        "estimatedTime": "15 min",
         "target": "Unknown Thief",
         "location": "Unknown (Trace Required)",
         "documents": [
@@ -109,7 +212,7 @@
         ]
     },
     {
-        "id": "MSN-002",
+        "id": "MSN-004",
         "title": "Silent Echo",
         "difficulty": "MEDIUM",
         "reward": "2,500 BTC",
@@ -171,7 +274,7 @@
         ]
     },
     {
-        "id": "MSN-003",
+        "id": "MSN-005",
         "title": "Nightfall Protocol",
         "difficulty": "HARD",
         "reward": "5,000 BTC",
@@ -220,7 +323,7 @@
         ]
     },
     {
-        "id": "MSN-004",
+        "id": "MSN-006",
         "title": "Ghost Protocol",
         "difficulty": "MEDIUM",
         "reward": "3,000 BTC",
@@ -262,7 +365,7 @@
         ]
     },
     {
-        "id": "MSN-005",
+        "id": "MSN-007",
         "title": "Orbital Watchdog",
         "difficulty": "HARD",
         "reward": "4,500 BTC",
@@ -306,7 +409,7 @@
         ]
     },
     {
-        "id": "MSN-006",
+        "id": "MSN-008",
         "title": "Crimson Viper",
         "difficulty": "EXPERT",
         "reward": "10,000 BTC",
