@@ -1,9 +1,205 @@
 [
     {
-        "name": "Oberon Dynamics",
-        "coordinates": "50.1025,8.6299",
-        "description": "Innovative German engineering firm specializing in high-performance laptops for the corporate and creative sectors",
-        "insights": "Police Insights & Corporate Espionage Gossip: Rumors circulating suggest possible data breaches and internal conflicts within some major tech companies.",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Frankfurt_Main_August_2020_1.jpg"
+        "name": "The Pentagon",
+        "coordinates": "38.8719, -77.0563",
+        "description": "The headquarters of the United States Department of Defense. A massive pentagonal fortress of bureaucracy and war planning.",
+        "insights": "SIGINT Capture: A localized signal jammer was active in the inner courtyard for 4 seconds. Someone was trying to block a specific briefcase from being scanned.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/The_Pentagon_January_2008.jpg/1280px-The_Pentagon_January_2008.jpg"
+    },
+    {
+        "name": "Silicon Valley Zenith Campus",
+        "coordinates": "37.4220, -122.0841",
+        "description": "The sprawling headquarters of a search engine giant, masking a subterranean AI research facility.",
+        "insights": "Dark Web Chatter: A whistleblower claims the cooling systems are drawing 40% more power than publicly reported, suggesting a massive unlisted supercomputer is online.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Googleplex_Welcome_Sign.jpg"
+    },
+    {
+        "name": "Svalbard Global Seed Vault",
+        "coordinates": "78.2359, 15.4914",
+        "description": "A secure backup facility for the world's crop diversity on the Norwegian island of Spitsbergen. Remote and frozen.",
+        "insights": "Surveillance Log: A private jet registered to a bio-tech firm landed off-schedule. They weren't depositing seeds; they were retrieving a canister labelled 'Sample 99'.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/61/Svalbard_Global_Seed_Vault_Top_View.jpg"
+    },
+    {
+        "name": "Canary Wharf Financial Hub",
+        "coordinates": "51.5045, -0.0183",
+        "description": "A dense cluster of banking skyscrapers in London where global capital flows intersect with high-frequency trading algorithms.",
+        "insights": "Interpol Notice: Tracing a specific crypto-wallet led us here. Someone in the Sterling Tower is washing funds for the Lazarus Group.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Canary_Wharf_at_night%2C_from_Shadwell_cropped.jpg"
+    },
+    {
+        "name": "GCHQ 'The Doughnut'",
+        "coordinates": "51.8995, -2.1246",
+        "description": "The UK's Government Communications Headquarters in Cheltenham. A ring-shaped building designed to monitor the world's digital whispers.",
+        "insights": "Leak: A contractor left a USB drive at a local pub. It contains frequency maps for a new underwater cable tap in the Atlantic.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/7/72/GCHQ-aerial.jpg"
+    },
+    {
+        "name": "Huaqiangbei Electronics Market",
+        "coordinates": "22.5431, 114.0579",
+        "description": "Shenzhen's massive hardware bazaar. If a piece of tech exists, it can be cloned, modified, or hacked here.",
+        "insights": "Local Contact: A vendor in Stall 4B is selling USB-C cables with embedded keyloggers. They claim the supply comes from a factory in Dongguan.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/67/Huaqiangbei_walking_street.jpg"
+    },
+    {
+        "name": "Eiffel Tower",
+        "coordinates": "48.8584, 2.2945",
+        "description": "The iron symbol of Paris. Packed with tourists, making it the perfect location for a dead drop in plain sight.",
+        "insights": "Field Report: Our target taped a microSD card to the underside of the rivet on the North Pillar, 2nd floor. It was picked up by a street artist 10 minutes later.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/1280px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg"
+    },
+    {
+        "name": "Ashburn Data Alley",
+        "coordinates": "39.0438, -77.4874",
+        "description": "A nondescript region in Northern Virginia through which 70% of the world's internet traffic flows daily.",
+        "insights": "SIGINT Intercept: Fiber tap installed on the main trunk line near Building 7. Someone is mirroring traffic from the Department of Energy.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/69/Wikimedia_Foundation_Servers-8055_35.jpg"
+    },
+    {
+        "name": "Akihabara Electric Town",
+        "coordinates": "35.6984, 139.7731",
+        "description": "Tokyo's neon-soaked district for otaku culture and rare retro-computing hardware.",
+        "insights": "Yakuza Rumor: The arcade on the corner is a front. The pachinko machines are mining Bitcoin using stolen electricity.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/17/AKIHABARA_New_Radio_Kaikan.jpg"
+    },
+    {
+        "name": "McMurdo Station",
+        "coordinates": "-77.8464, 166.6681",
+        "description": "The largest research station in Antarctica. Isolated, harsh, and legally ambiguous.",
+        "insights": "Satellite Uplink: A bandwidth spike was detected from the ice shelf. Someone is broadcasting encrypted telemetry data directly to a Chinese satellite.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/8/86/Observation_Hill.jpg"
+    },
+    {
+        "name": "Verne Global Data Center",
+        "coordinates": "63.9760, -22.5543",
+        "description": "A high-security data haven in Iceland powered by geothermal energy, used by organizations requiring total discretion.",
+        "insights": "Log Analysis: A dormant account named 'IcePick' just accessed the biometric database. The IP address resolves to a satellite phone in the Atlantic.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/f/f1/NAS_Keflavik_aerial_of_hangars_1982.JPEG"
+    },
+    {
+        "name": "Times Square",
+        "coordinates": "40.7580, -73.9855",
+        "description": "The brightly lit commercial intersection in Midtown Manhattan. A sensory overload that hides subtle digital signals.",
+        "insights": "Visual Decode: The glitch on the massive cola billboard wasn't an error. It was Morse code blinking the coordinates for a safe house in Queens.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/1_times_square_night_2013.jpg/1280px-1_times_square_night_2013.jpg"
+    },
+    {
+        "name": "Unit 8200 Cyber Complex",
+        "coordinates": "32.1093, 34.8555",
+        "description": "Located near Tel Aviv, this area houses some of the world's most advanced cybersecurity startups and intelligence operatives.",
+        "insights": "Leaked Memo: A new zero-day exploit targeting water treatment plants was just sold on the black market. Source traces back to a disgruntled ex-contractor here.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/69/Sarona_CBD_01_%28cropped%29.jpg"
+    },
+    {
+        "name": "Cayman National Offshore",
+        "coordinates": "19.2960, -81.3754",
+        "description": "George Town's banking district, where thousands of shell companies share a single mailbox.",
+        "insights": "Financial Audit: 'Poseidon LLC' just received a transfer of $50M. The company directors are listed as two deceased individuals from 1995.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/a/a4/96-124_S_Church_St%2C_George_Town%2C_Cayman_Islands_-_panoramio_%281%29.jpg"
+    },
+    {
+        "name": "CERN",
+        "coordinates": "46.2330, 6.0557",
+        "description": "The birthplace of the World Wide Web on the Franco-Swiss border, processing petabytes of particle collision data.",
+        "insights": "System Alert: Anomaly detected in the Grid. Someone is hiding encrypted payloads inside the raw Boson data packages.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/54/CERN%2C_Gen%C3%A9ve_%2846877471004%29.jpg"
+    },
+    {
+        "name": "Machu Picchu",
+        "coordinates": "-13.1631, -72.5450",
+        "description": "Ancient Incan citadel set high in the Andes Mountains. Difficult to access and perfect for clandestine meetings away from digital eyes.",
+        "insights": "Drone Recon: Thermal imaging shows two heat signatures in the Temple of the Sun at midnight. They weren't tourists.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/1280px-Machu_Picchu%2C_Peru.jpg"
+    },
+    {
+        "name": "Hsinchu Science Park",
+        "coordinates": "24.7824, 121.0066",
+        "description": "Taiwan's 'Silicon Valley,' home to the world's most critical semiconductor foundries.",
+        "insights": "Corporate Espionage: Blueprints for the 2nm chip architecture were briefly accessible on a public server. Suspect internal sabotage to lower stock prices.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/e/e0/TSMC_Fab_12A_02.jpg"
+    },
+    {
+        "name": "The Pirate Bay Server Site",
+        "coordinates": "59.3293, 18.0686",
+        "description": "Hidden somewhere in the bedrock of Stockholm, a legacy node of digital resistance.",
+        "insights": "IRC Chat Logs: Admin 'Anakata_Ghost' is looking for legacy PDP-11 hardware. They might be trying to revive an old Soviet dead-hand system.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Ahkka_from_Maukojaureh.jpg"
+    },
+    {
+        "name": "Yandex Headquarters",
+        "coordinates": "55.7340, 37.5885",
+        "description": "The tech giant of Moscow, operating search, ride-hailing, and extensive user data aggregation.",
+        "insights": "FSB Leak: A backdoor was hardcoded into the latest map update. It tracks user movement even when the phone is off.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/41/Yandex_Money_Office_Moscow.png"
+    },
+    {
+        "name": "Sydney Opera House",
+        "coordinates": "33.8568, 151.2153",
+        "description": "Australia's multi-venue performing arts centre. Its complex geometry makes for excellent acoustic masking.",
+        "insights": "Audio Analysis: A directional mic picked up a conversation on the western boardwalk. Two diplomats were discussing a coup in the Pacific, hidden by the wind noise.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Sydney_Opera_House_Sails.jpg/1280px-Sydney_Opera_House_Sails.jpg"
+    },
+    {
+        "name": "Large Millimeter Telescope",
+        "coordinates": "18.9862, -97.3148",
+        "description": "The world's largest single-dish steerable millimeter-wavelength telescope, sitting atop an extinct volcano in Mexico.",
+        "insights": "Deep Space Scan: The telescope was briefly repurposed to listen to a frequency band used by military communication satellites, not stars.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/8/8e/GTM_imagen.JPG"
+    },
+    {
+        "name": "Electronic City",
+        "coordinates": "12.8452, 77.6602",
+        "description": "Bangalore's massive IT industrial park, handling outsourced backend support for the Fortune 500.",
+        "insights": "Social Engineering: A call center here is running a 'Tech Support' scam, but it's actually a cover for injecting ransomware into US hospital networks.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/47/BangaloreInfosys.jpg"
+    },
+    {
+        "name": "Pine Gap Signals Station",
+        "coordinates": "-23.7993, 133.7374",
+        "description": "A joint defense facility in central Australia, a vacuum cleaner for satellite signals across the Eastern Hemisphere.",
+        "insights": "Drone Feed: Heat signatures indicate three new server clusters were buried underground last week. They aren't on the official blueprints.",
+        "image": "https://en.wikipedia.org/wiki/Pine_Gap#/media/File:Pine_Gap_by_Skyring.jpg"
+    },
+    {
+        "name": "Lagos Computer Village",
+        "coordinates": "6.5965, 3.3421",
+        "description": "The largest ICT accessory market in Africa. A chaotic hive of repair shops, software pirates, and brilliant coders.",
+        "insights": "Market Gossip: A group of teenagers here cracked the encryption on the new Central Bank digital currency. They are asking for a bounty, not a ransom.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/91/Computer_Village%2C_Ikeja%2C_Lagos.jpg"
+    },
+    {
+        "name": "Gangnam Crypto Hub",
+        "coordinates": "37.4979, 127.0276",
+        "description": "Seoul's upscale district, now teeming with blockchain startups and underground e-sports gambling rings.",
+        "insights": "Transaction Alert: 4000 BTC moved from a dormant wallet to a local exchange. The wallet owner has been in prison for three years.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/46/Teheranno.jpg"
+    },
+    {
+        "name": "Moscow Kremlin",
+        "coordinates": "55.7517, 37.6178",
+        "description": "A fortified complex in the center of Moscow. The heart of political power and old-school espionage.",
+        "insights": "Signal Triangulation: A high-frequency burst transmission originated from the Armory building. It was directed at a sleeper cell in Berlin.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/6f/0034_August_9th%2C_2016_in_Moscow.jpg"
+    },
+    {
+        "name": "Faria Lima Financial Center",
+        "coordinates": "-23.5786, -46.6789",
+        "description": "São Paulo's Wall Street. A fortress of glass where banking trojans are fought daily.",
+        "insights": "Malware Analysis: The 'Boleto' banking virus has mutated. It's no longer stealing money; it's rewriting debt records to zero.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/39/Avenida_Brigadeiro_Faria_Lima_1995.jpg"
+    },
+    {
+        "name": "Dubai Internet City",
+        "coordinates": "25.0942, 55.1517",
+        "description": "A dedicated free trade zone for tech companies in the UAE, heavily monitored by state-of-the-art surveillance.",
+        "insights": "Facial Rec Logs: The cameras tracked a known operative from 'The Syndicate' entering the Oracle building. He was wearing a prosthetic face.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Dubai_Internet_City_Amphitheater.jpg"
+    },
+    {
+        "name": "NSA Utah Data Center",
+        "coordinates": "40.4319, -111.9312",
+        "description": "A massive facility in Bluffdale, Utah, designed to store yottabytes of global surveillance data.",
+        "insights": "Power Grid Report: A massive surge was detected at 0400 hours. They just booted up 'The Prism.'",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/e/ed/EFF_photograph_of_NSA%27s_Utah_Data_Center.jpg"
     }
 ]
