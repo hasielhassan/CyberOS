@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import {
     Settings, List, Crosshair, Eye, Database, ShieldAlert,
-    ChevronLeft, ChevronRight, AlertTriangle
+    ChevronLeft, ChevronRight, AlertTriangle, Activity
 } from 'lucide-react';
 import { useMissions } from '../contracts/MissionsContext';
 import CyberGlobe3D from './components/CyberGlobe3D';
-import { SettingsModal, SensorFeedModal, TelemetryModal, CatalogModal, AuthModal, ProgressModal } from './components/Modals';
+import { SettingsModal, SensorFeedModal, TelemetryModal, CatalogModal, AuthModal, ProgressModal, RestartModal } from './components/Modals';
 import { SatelliteData, NEOData, SpaceWeather, ObjectType } from './types';
 import { CATEGORY_COLORS, DEFAULT_API_KEY, NASA_BASE_URL, EONET_URL } from './constants';
 import fallbackData from './data/fallbackData.json';
@@ -15,7 +15,7 @@ export default function SatUplink() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [selectedNeo, setSelectedNeo] = useState<NEOData | null>(null);
     const [filters, setFilters] = useState<ObjectType[]>(['CIVIL', 'MILITARY', 'DEBRIS', 'STATION', 'TELESCOPE', 'WILDFIRE', 'STORM']);
-    const [modalType, setModalType] = useState<'SENSOR' | 'CATALOG' | 'TELEMETRY' | 'SETTINGS' | 'APOD' | 'JAMMER' | null>(null);
+    const [modalType, setModalType] = useState<'SENSOR' | 'CATALOG' | 'TELEMETRY' | 'SETTINGS' | 'APOD' | 'JAMMER' | 'RESTART' | null>(null);
     const [neos, setNeos] = useState<NEOData[]>([]);
     const [spaceWeather, setSpaceWeather] = useState<SpaceWeather[]>([]);
     const [loadingNeos, setLoadingNeos] = useState(false);
@@ -163,6 +163,7 @@ export default function SatUplink() {
 
     const [jammedSats, setJammedSats] = useState<string[]>([]);
     const [jammingStep, setJammingStep] = useState<'AUTH' | 'PROGRESS' | 'COMPLETE'>('AUTH');
+    const [restartStep, setRestartStep] = useState<'AUTH' | 'PROCESS'>('AUTH');
 
     const handleJammingComplete = () => {
         if (selectedSat) {
@@ -175,7 +176,13 @@ export default function SatUplink() {
         }
     };
 
-    // ... (rest of the component)
+    const handleRestoreComplete = () => {
+        if (selectedSat) {
+            setJammedSats(prev => prev.filter(id => id !== selectedSat.id));
+            setModalType(null);
+            setRestartStep('AUTH');
+        }
+    };
 
     return (
         <div className="w-full h-full bg-[#020403] text-green-500 font-sans selection:bg-green-900 selection:text-white overflow-hidden flex">
@@ -204,6 +211,21 @@ export default function SatUplink() {
                         duration={4000}
                         onComplete={handleJammingComplete}
                         danger
+                    />
+                )
+            )}
+
+            {modalType === 'RESTART' && (
+                restartStep === 'AUTH' ? (
+                    <AuthModal
+                        title="SYSTEM REBOOT AUTHORIZATION"
+                        onClose={() => setModalType(null)}
+                        onSuccess={() => setRestartStep('PROCESS')}
+                    />
+                ) : (
+                    <RestartModal
+                        onClose={() => setModalType(null)}
+                        onComplete={handleRestoreComplete}
                     />
                 )
             )}
@@ -298,6 +320,11 @@ export default function SatUplink() {
                                 {selectedSat?.type === 'MILITARY' && !jammedSats.includes(selectedSat.id) && (
                                     <button onClick={() => setModalType('JAMMER')} className="w-full py-2 px-3 text-xs font-bold border border-red-900/50 bg-red-900/10 text-red-400 hover:bg-red-900/30 flex items-center justify-between">
                                         <span className="flex items-center gap-2"><ShieldAlert className="w-3 h-3" /> SIGNAL JAMMER</span><span className="text-[9px] border border-red-800 px-1">EXE</span>
+                                    </button>
+                                )}
+                                {selectedSat && jammedSats.includes(selectedSat.id) && (
+                                    <button onClick={() => setModalType('RESTART')} className="w-full py-2 px-3 text-xs font-bold border border-green-900/50 bg-green-900/20 text-green-400 hover:bg-green-900/40 flex items-center justify-between animate-pulse">
+                                        <span className="flex items-center gap-2"><Activity className="w-3 h-3" /> SYSTEM REBOOT</span><span className="text-[9px] border border-green-800 px-1">EXE</span>
                                     </button>
                                 )}
                             </div>

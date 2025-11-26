@@ -100,6 +100,90 @@ export const ProgressModal = ({ title, action, duration = 3000, onComplete, dang
     );
 };
 
+// --- RESTART MODAL ---
+export const RestartModal = ({ onClose, onComplete }: { onClose: () => void, onComplete: () => void }) => {
+    const [stage, setStage] = useState(0);
+    const [status, setStatus] = useState<'IDLE' | 'RUNNING' | 'COMPLETE'>('IDLE');
+    const [progress, setProgress] = useState(0);
+
+    const STAGES = [
+        { name: 'SYSTEM DIAGNOSTICS', action: 'RUN DIAGNOSTICS', duration: 2000 },
+        { name: 'FIRMWARE PATCH', action: 'UPLOAD PATCH', duration: 3000 },
+        { name: 'REBOOT SEQUENCE', action: 'INITIATE REBOOT', duration: 4000 }
+    ];
+
+    const runStage = () => {
+        setStatus('RUNNING');
+        setProgress(0);
+        const duration = STAGES[stage].duration;
+        const start = Date.now();
+
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - start;
+            const p = Math.min(100, (elapsed / duration) * 100);
+            setProgress(p);
+
+            if (p >= 100) {
+                clearInterval(interval);
+                setStatus('COMPLETE');
+                if (stage === STAGES.length - 1) {
+                    setTimeout(onComplete, 1000);
+                } else {
+                    setTimeout(() => {
+                        setStage(s => s + 1);
+                        setStatus('IDLE');
+                        setProgress(0);
+                    }, 500);
+                }
+            }
+        }, 50);
+    };
+
+    return (
+        <Modal title="SYSTEM RESTORATION SEQUENCE" onClose={onClose} wide>
+            <div className="p-6 flex flex-col gap-6 h-full">
+                <div className="grid grid-cols-3 gap-4">
+                    {STAGES.map((s, i) => (
+                        <div key={i} className={`p-3 border rounded flex flex-col items-center gap-2 transition-colors ${i === stage ? 'bg-green-900/20 border-green-500' : (i < stage ? 'bg-green-900/10 border-green-900/30 opacity-50' : 'bg-black border-gray-800 opacity-30')}`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border ${i === stage ? 'border-green-500 text-green-500' : (i < stage ? 'bg-green-500 text-black border-green-500' : 'border-gray-700 text-gray-700')}`}>
+                                {i < stage ? '✓' : i + 1}
+                            </div>
+                            <div className={`text-[10px] font-bold ${i === stage ? 'text-green-400' : 'text-gray-500'}`}>{s.name}</div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="flex-1 bg-black border border-green-900/30 rounded p-4 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
+                    {status === 'RUNNING' && (
+                        <div className="absolute inset-0 bg-green-900/5 flex flex-col items-center justify-center z-0">
+                            <div className="w-full max-w-md space-y-2 px-8">
+                                <div className="flex justify-between text-[10px] font-mono text-green-500">
+                                    <span>EXECUTING {STAGES[stage].name}...</span>
+                                    <span>{Math.floor(progress)}%</span>
+                                </div>
+                                <div className="w-full h-1 bg-gray-900 rounded-full overflow-hidden">
+                                    <div className="h-full bg-green-500 transition-all duration-75" style={{ width: `${progress}%` }} />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="z-10 text-center space-y-4">
+                        <div className="text-sm font-mono text-green-400">
+                            {status === 'IDLE' ? `READY TO ${STAGES[stage].action}` : (status === 'RUNNING' ? 'PROCESSING...' : 'STAGE COMPLETE')}
+                        </div>
+                        {status === 'IDLE' && (
+                            <button onClick={runStage} className="px-6 py-2 bg-green-600 hover:bg-green-500 text-black font-bold text-xs rounded transition-colors flex items-center gap-2 mx-auto">
+                                <Activity size={14} /> {STAGES[stage].action}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </Modal>
+    );
+};
+
 // --- SETTINGS MODAL ---
 export const SettingsModal = ({ onClose, apiKey, setApiKey }: { onClose: () => void, apiKey: string, setApiKey: (key: string) => void }) => {
     const [inputKey, setInputKey] = useState(apiKey);
