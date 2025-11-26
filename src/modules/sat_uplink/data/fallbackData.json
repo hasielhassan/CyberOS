@@ -1,0 +1,580 @@
+{
+    "satellites": {
+        "iss": {
+            "id": "iss",
+            "name": "ISS (ZARYA)",
+            "type": "STATION",
+            "owner": "MULTINATIONAL",
+            "orbit": "LEO",
+            "alt": "418 km",
+            "inclination": 51.6,
+            "period": 92.6,
+            "fuel": 100,
+            "status": "MANNED // EXPERIMENTS ACTIVE",
+            "color": "#eab308",
+            "description": "International Space Station. Microgravity research laboratory.",
+            "supportedTargets": [
+                "Hurricane",
+                "City Lights",
+                "Ocean"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 18,
+            "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80"
+        },
+        "css": {
+            "id": "css",
+            "name": "TIANGONG (CSS)",
+            "type": "STATION",
+            "owner": "CHINA",
+            "orbit": "LEO",
+            "alt": "389 km",
+            "inclination": 41.5,
+            "period": 92,
+            "fuel": 95,
+            "status": "MANNED // OPERATIONAL",
+            "color": "#eab308",
+            "description": "China Space Station. T-shaped modular space station.",
+            "supportedTargets": [
+                "Asia",
+                "Ocean"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 18,
+            "imageUrl": "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=80"
+        },
+        "hst": {
+            "id": "hst",
+            "name": "HST (HUBBLE)",
+            "type": "TELESCOPE",
+            "owner": "NASA/ESA",
+            "orbit": "LEO",
+            "alt": "540 km",
+            "inclination": 28.5,
+            "period": 95,
+            "fuel": 85,
+            "status": "OBSERVING",
+            "color": "#8b5cf6",
+            "description": "Hubble Space Telescope. Deep space optical observer.",
+            "supportedTargets": [
+                "Nebula",
+                "Galaxy",
+                "Deep Field"
+            ],
+            "apiQueryType": "SPACE",
+            "visualAlt": 22,
+            "imageUrl": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80"
+        },
+        "jwst": {
+            "id": "jwst",
+            "name": "JAMES WEBB (JWST)",
+            "type": "TELESCOPE",
+            "owner": "NASA",
+            "orbit": "L2",
+            "alt": "1.5M km",
+            "inclination": 0,
+            "period": 10000,
+            "fuel": 98,
+            "status": "DEEP FIELD IMAGING",
+            "color": "#8b5cf6",
+            "description": "Next-gen IR observatory. L2 Lagrange Point.",
+            "supportedTargets": [
+                "Deep Field",
+                "Nebula"
+            ],
+            "apiQueryType": "SPACE",
+            "visualAlt": 120,
+            "imageUrl": "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=80"
+        },
+        "chandra": {
+            "id": "chandra",
+            "name": "CHANDRA (CXO)",
+            "type": "TELESCOPE",
+            "owner": "NASA",
+            "orbit": "HEO",
+            "alt": "139,000 km",
+            "inclination": 76,
+            "period": 3800,
+            "fuel": 60,
+            "status": "X-RAY OBSERVATION",
+            "color": "#8b5cf6",
+            "description": "Flagship-class X-ray telescope.",
+            "supportedTargets": [
+                "Black Hole",
+                "Supernova"
+            ],
+            "apiQueryType": "SPACE",
+            "visualAlt": 90,
+            "imageUrl": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80"
+        },
+        "voyager1": {
+            "id": "voyager1",
+            "name": "VOYAGER 1",
+            "type": "TELESCOPE",
+            "owner": "NASA",
+            "orbit": "INTERSTELLAR",
+            "alt": "24B km",
+            "inclination": 35,
+            "period": 0,
+            "fuel": 10,
+            "status": "INTERSTELLAR SPACE",
+            "color": "#8b5cf6",
+            "description": "Farthest human-made object from Earth.",
+            "supportedTargets": [
+                "Deep Space"
+            ],
+            "apiQueryType": "SPACE",
+            "visualAlt": 200,
+            "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80"
+        },
+        "sl-0": {
+            "id": "sl-0",
+            "name": "STARLINK-3000",
+            "type": "CIVIL",
+            "owner": "SPACEX",
+            "orbit": "LEO",
+            "alt": "550 km",
+            "inclination": 53,
+            "period": 95,
+            "fuel": 90,
+            "status": "ACTIVE",
+            "color": "#3b82f6",
+            "description": "Low-latency internet communication satellite.",
+            "supportedTargets": [
+                "Ocean"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 20,
+            "imageUrl": "https://images.unsplash.com/photo-1460500063983-994d4c27756c?auto=format&fit=crop&w=800&q=80"
+        },
+        "iridium": {
+            "id": "iridium",
+            "name": "IRIDIUM NEXT-10",
+            "type": "CIVIL",
+            "owner": "IRIDIUM",
+            "orbit": "LEO",
+            "alt": "780 km",
+            "inclination": 86.4,
+            "period": 100,
+            "fuel": 85,
+            "status": "COMMUNICATIONS",
+            "color": "#3b82f6",
+            "description": "Global satellite communications network.",
+            "supportedTargets": [
+                "Global"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 25,
+            "imageUrl": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80"
+        },
+        "morelos3": {
+            "id": "morelos3",
+            "name": "MORELOS-3",
+            "type": "CIVIL",
+            "owner": "MEXICO",
+            "orbit": "GEO",
+            "alt": "35,786 km",
+            "inclination": 0,
+            "period": 1436,
+            "fuel": 80,
+            "status": "ACTIVE // MEXSAT",
+            "color": "#3b82f6",
+            "description": "Mexican communications satellite. Part of MEXSAT system.",
+            "supportedTargets": [
+                "Mexico"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 80,
+            "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80"
+        },
+        "bicentenario": {
+            "id": "bicentenario",
+            "name": "BICENTENARIO",
+            "type": "CIVIL",
+            "owner": "MEXICO",
+            "orbit": "GEO",
+            "alt": "35,786 km",
+            "inclination": 0,
+            "period": 1436,
+            "fuel": 75,
+            "status": "ACTIVE // MEXSAT",
+            "color": "#3b82f6",
+            "description": "Mexsat-3. Telecommunications for national security.",
+            "supportedTargets": [
+                "Mexico"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 80,
+            "imageUrl": "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=80"
+        },
+        "aztechsat": {
+            "id": "aztechsat",
+            "name": "AZTECHSAT-1",
+            "type": "CIVIL",
+            "owner": "MEXICO/NASA",
+            "orbit": "LEO",
+            "alt": "400 km",
+            "inclination": 51.6,
+            "period": 92,
+            "fuel": 0,
+            "status": "DECAYED (HISTORICAL)",
+            "color": "#3b82f6",
+            "description": "First Mexican nanosatellite deployed from ISS.",
+            "supportedTargets": [
+                "Global"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 18,
+            "imageUrl": "https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&w=800&q=80"
+        },
+        "gps3": {
+            "id": "gps3",
+            "name": "GPS III SV05",
+            "type": "MILITARY",
+            "owner": "USA",
+            "orbit": "MEO",
+            "alt": "20,200 km",
+            "inclination": 55,
+            "period": 718,
+            "fuel": 95,
+            "status": "NAVIGATION",
+            "color": "#ef4444",
+            "description": "Global Positioning System Block III.",
+            "supportedTargets": [
+                "Global"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 60,
+            "imageUrl": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80"
+        },
+        "galileo": {
+            "id": "galileo",
+            "name": "GALILEO-26",
+            "type": "CIVIL",
+            "owner": "ESA",
+            "orbit": "MEO",
+            "alt": "23,222 km",
+            "inclination": 56,
+            "period": 844,
+            "fuel": 90,
+            "status": "NAVIGATION",
+            "color": "#3b82f6",
+            "description": "European global navigation satellite system.",
+            "supportedTargets": [
+                "Global"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 65,
+            "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80"
+        },
+        "beidou": {
+            "id": "beidou",
+            "name": "BEIDOU-3 M19",
+            "type": "CIVIL",
+            "owner": "CHINA",
+            "orbit": "MEO",
+            "alt": "21,528 km",
+            "inclination": 55,
+            "period": 773,
+            "fuel": 92,
+            "status": "NAVIGATION",
+            "color": "#3b82f6",
+            "description": "Chinese global navigation satellite system.",
+            "supportedTargets": [
+                "Global"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 62,
+            "imageUrl": "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=80"
+        },
+        "glonass": {
+            "id": "glonass",
+            "name": "GLONASS-K",
+            "type": "CIVIL",
+            "owner": "RUSSIA",
+            "orbit": "MEO",
+            "alt": "19,130 km",
+            "inclination": 64.8,
+            "period": 675,
+            "fuel": 88,
+            "status": "NAVIGATION",
+            "color": "#3b82f6",
+            "description": "Russian global navigation satellite system.",
+            "supportedTargets": [
+                "Global"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 58,
+            "imageUrl": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80"
+        },
+        "nrol": {
+            "id": "nrol",
+            "name": "NROL-110",
+            "type": "MILITARY",
+            "owner": "NRO",
+            "orbit": "POLAR",
+            "alt": "800 km",
+            "inclination": 90,
+            "period": 100,
+            "fuel": 60,
+            "status": "SURVEILLANCE",
+            "color": "#ef4444",
+            "description": "Classified reconnaissance payload.",
+            "supportedTargets": [
+                "Military Base"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 25,
+            "imageUrl": "https://images.unsplash.com/photo-1596267802871-33e1444c9b1f?auto=format&fit=crop&w=800&q=80"
+        },
+        "kh11": {
+            "id": "kh11",
+            "name": "USA-245 (KH-11)",
+            "type": "MILITARY",
+            "owner": "NRO",
+            "orbit": "LEO",
+            "alt": "260 km",
+            "inclination": 97.9,
+            "period": 89,
+            "fuel": 50,
+            "status": "OPTICAL RECON",
+            "color": "#ef4444",
+            "description": "Keyhole-class optical reconnaissance satellite.",
+            "supportedTargets": [
+                "Ground Targets"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 16,
+            "imageUrl": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80"
+        },
+        "x37b": {
+            "id": "x37b",
+            "name": "OTV-6 (X-37B)",
+            "type": "MILITARY",
+            "owner": "USSF",
+            "orbit": "LEO",
+            "alt": "300 km",
+            "inclination": 45,
+            "period": 90,
+            "fuel": 99,
+            "status": "CLASSIFIED MISSION",
+            "color": "#ef4444",
+            "description": "Reusable robotic spaceplane.",
+            "supportedTargets": [
+                "Orbit"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 17,
+            "imageUrl": "https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&w=800&q=80"
+        },
+        "yaogan": {
+            "id": "yaogan",
+            "name": "YAOGAN-35",
+            "type": "MILITARY",
+            "owner": "CHINA",
+            "orbit": "LEO",
+            "alt": "500 km",
+            "inclination": 35,
+            "period": 94,
+            "fuel": 90,
+            "status": "REMOTE SENSING",
+            "color": "#ef4444",
+            "description": "Military reconnaissance constellation.",
+            "supportedTargets": [
+                "Ocean"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 20,
+            "imageUrl": "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=80"
+        },
+        "cosmos": {
+            "id": "cosmos",
+            "name": "COSMOS-2542",
+            "type": "MILITARY",
+            "owner": "RUSSIA",
+            "orbit": "LEO",
+            "alt": "600 km",
+            "inclination": 97,
+            "period": 96,
+            "fuel": 70,
+            "status": "INSPECTOR",
+            "color": "#ef4444",
+            "description": "Satellite inspector / anti-satellite test platform.",
+            "supportedTargets": [
+                "Satellites"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 22,
+            "imageUrl": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80"
+        },
+        "deb-0": {
+            "id": "deb-0",
+            "name": "DEBRIS-C1408",
+            "type": "DEBRIS",
+            "owner": "UNKNOWN",
+            "orbit": "LEO",
+            "alt": "400 km",
+            "inclination": 45,
+            "period": 93,
+            "fuel": 0,
+            "status": "TUMBLING",
+            "color": "#9ca3af",
+            "description": "Tracked space debris fragment.",
+            "supportedTargets": [
+                "Debris"
+            ],
+            "apiQueryType": "SPACE",
+            "visualAlt": 20,
+            "imageUrl": "https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=800&q=80"
+        },
+        "envisat": {
+            "id": "envisat",
+            "name": "ENVISAT (DEBRIS)",
+            "type": "DEBRIS",
+            "owner": "ESA",
+            "orbit": "LEO",
+            "alt": "760 km",
+            "inclination": 98,
+            "period": 100,
+            "fuel": 0,
+            "status": "INACTIVE // HAZARD",
+            "color": "#9ca3af",
+            "description": "Large defunct earth observation satellite.",
+            "supportedTargets": [
+                "Debris"
+            ],
+            "apiQueryType": "EARTH",
+            "visualAlt": 24,
+            "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80"
+        }
+    },
+    "neos": [
+        {
+            "id": "1",
+            "name": "(2025 AB)",
+            "missDistance": "1,200,000",
+            "velocity": "45,000",
+            "isHazardous": true,
+            "time": "14:30",
+            "magnitude": 22
+        },
+        {
+            "id": "2",
+            "name": "(2021 GL)",
+            "missDistance": "4,500,000",
+            "velocity": "22,000",
+            "isHazardous": false,
+            "time": "18:45",
+            "magnitude": 19
+        },
+        {
+            "id": "3",
+            "name": "(2024 RX)",
+            "missDistance": "8,100,000",
+            "velocity": "35,000",
+            "isHazardous": true,
+            "time": "09:15",
+            "magnitude": 24
+        },
+        {
+            "id": "4",
+            "name": "(2022 QQ)",
+            "missDistance": "2,800,000",
+            "velocity": "67,000",
+            "isHazardous": false,
+            "time": "11:20",
+            "magnitude": 20
+        },
+        {
+            "id": "5",
+            "name": "(2025 YY)",
+            "missDistance": "500,000",
+            "velocity": "12,000",
+            "isHazardous": true,
+            "time": "22:00",
+            "magnitude": 25
+        },
+        {
+            "id": "6",
+            "name": "APOPHIS",
+            "missDistance": "32,000",
+            "velocity": "28,000",
+            "isHazardous": true,
+            "time": "2029-04-13",
+            "magnitude": 27
+        },
+        {
+            "id": "7",
+            "name": "(2023 DZ2)",
+            "missDistance": "175,000",
+            "velocity": "28,000",
+            "isHazardous": true,
+            "time": "04:15",
+            "magnitude": 23
+        },
+        {
+            "id": "8",
+            "name": "BENNU",
+            "missDistance": "10,000,000",
+            "velocity": "101,000",
+            "isHazardous": true,
+            "time": "00:00",
+            "magnitude": 20
+        },
+        {
+            "id": "9",
+            "name": "(2020 SW)",
+            "missDistance": "27,000",
+            "velocity": "27,720",
+            "isHazardous": false,
+            "time": "12:00",
+            "magnitude": 28
+        },
+        {
+            "id": "10",
+            "name": "(2010 TK7)",
+            "missDistance": "80,000,000",
+            "velocity": "15,000",
+            "isHazardous": false,
+            "time": "00:00",
+            "magnitude": 24
+        }
+    ],
+    "spaceWeather": [
+        {
+            "id": "1",
+            "type": "FLR",
+            "startTime": "2025-11-25T10:00:00Z",
+            "link": "#",
+            "note": "M-Class Solar Flare detected from AR3842."
+        },
+        {
+            "id": "2",
+            "type": "GST",
+            "startTime": "2025-11-24T10:00:00Z",
+            "link": "#",
+            "note": "G2 Moderate Geomagnetic Storm detected."
+        },
+        {
+            "id": "3",
+            "type": "RBE",
+            "startTime": "2025-11-23T10:00:00Z",
+            "link": "#",
+            "note": "Radiation Belt Enhancement event in progress."
+        },
+        {
+            "id": "4",
+            "type": "GST",
+            "startTime": "2025-11-26T08:00:00Z",
+            "link": "#",
+            "note": "G4 Severe Geomagnetic Storm Warning. Aurora visible at low latitudes."
+        },
+        {
+            "id": "5",
+            "type": "SEP",
+            "startTime": "2025-11-26T09:30:00Z",
+            "link": "#",
+            "note": "S2 Solar Radiation Storm. HF Radio blackouts expected."
+        }
+    ]
+}
