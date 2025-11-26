@@ -8,9 +8,10 @@ interface CyberGlobe3DProps {
     onObjectSelect: (id: string | null) => void;
     selectedId: string | null;
     satellites: Record<string, SatelliteData>;
+    jammedSats?: string[];
 }
 
-const CyberGlobe3D = ({ filters, onObjectSelect, selectedId, satellites }: CyberGlobe3DProps) => {
+const CyberGlobe3D = ({ filters, onObjectSelect, selectedId, satellites, jammedSats = [] }: CyberGlobe3DProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const sceneRef = useRef<THREE.Scene | null>(null);
     const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -39,7 +40,10 @@ const CyberGlobe3D = ({ filters, onObjectSelect, selectedId, satellites }: Cyber
             orbitLinesRef.current = {};
 
             Object.values(satellites).forEach(sat => {
-                const color = new THREE.Color(sat.color);
+                if (!filters.includes(sat.type)) return;
+
+                const isJammed = jammedSats.includes(sat.id);
+                const color = isJammed ? 0x111111 : new THREE.Color(sat.color);
                 const R = 100;
                 let mesh: THREE.Mesh;
 
@@ -90,7 +94,7 @@ const CyberGlobe3D = ({ filters, onObjectSelect, selectedId, satellites }: Cyber
                 globe.add(mesh);
             });
         }
-    }, [satellites]);
+    }, [satellites, filters, jammedSats]);
 
     useEffect(() => {
         let frameId: number;
@@ -236,77 +240,40 @@ const CyberGlobe3D = ({ filters, onObjectSelect, selectedId, satellites }: Cyber
         const animate = () => {
             frameId = requestAnimationFrame(animate);
 
+            if (rendererRef.current && sceneRef.current && cameraRef.current) {
+                // Rotate satellites
+                Object.values(satMeshesRef.current).forEach(mesh => {
+                    if (mesh.userData.isStatic) return;
 
-            const globe = globeRef.current;
-            const camera = cameraRef.current;
-            const renderer = rendererRef.current;
+                    const sat = satellitesRef.current[mesh.userData.id];
+                    if (sat) {
+                        const time = Date.now() * 0.0001 * (sat.period ? 90 / sat.period : 1);
+                        const angle = mesh.userData.offset + time;
+                        const alt = mesh.userData.orbitAlt;
+                        const x = alt * Math.cos(angle);
+                        const z = alt * Math.sin(angle);
+                        const incRad = (mesh.userData.inclination * Math.PI) / 180;
 
-            if (!sceneRef.current || !globe || !camera || !renderer) return;
-            const satMeshes = satMeshesRef.current;
-            const orbitLines = orbitLinesRef.current;
-            const filters = filtersRef.current;
-            const selectedId = selectedIdRef.current;
-            const satellites = satellitesRef.current;
-
-            globe.rotation.y += 0.0003;
-
-            const time = Date.now() * 0.001;
-
-            Object.keys(satMeshes).forEach(key => {
-                const mesh = satMeshes[key];
-                const data = mesh.userData;
-                const sat = satellites[key];
-
-                if (!sat) return;
-
-                const isVisible = filters.includes(sat.type);
-                mesh.visible = isVisible;
-                if (orbitLines[key]) orbitLines[key].visible = isVisible;
-
-                if (!isVisible) return;
-
-                if (data.isStatic) {
-                    if (selectedId === key) {
-                        mesh.scale.set(1.5, 1.5, 1.5);
-                        (mesh.material as any).color.setHex(0xffffff);
-                    } else {
-                        mesh.scale.set(1, 1, 1);
-                        (mesh.material as any).color.set(sat.color);
+                        mesh.position.set(x, -z * Math.sin(incRad), z * Math.cos(incRad));
                     }
-                } else {
-                    const angle = (time * data.speed) + data.offset;
-                    const x = data.orbitAlt * Math.cos(angle);
-                    const z = data.orbitAlt * Math.sin(angle);
-                    const incRad = (data.inclination * Math.PI) / 180;
-                    mesh.position.set(x, -z * Math.sin(incRad), z * Math.cos(incRad));
+                });
 
-                    if (selectedId === key) {
-                        mesh.scale.set(2.5, 2.5, 2.5);
-                        (mesh.material as any).color.setHex(0xffffff);
-                        if (orbitLines[key]) {
-                            (orbitLines[key].material as any).opacity = 0.8;
-                            (orbitLines[key].material as any).linewidth = 8;
-                        }
-                    } else {
-                        mesh.scale.set(1, 1, 1);
-                        (mesh.material as any).color.set(sat.color);
-                        if (orbitLines[key]) (orbitLines[key].material as any).opacity = 0.5;
-                    }
+                // Rotate globe slowly
+                if (!isMiddleDragging && globeRef.current) {
+                    globeRef.current.rotation.y += 0.0005;
                 }
-            });
 
-            renderer.render(sceneRef.current, camera);
+                rendererRef.current.render(sceneRef.current, cameraRef.current);
+            }
         };
-
         animate();
 
         return () => {
-            if (frameId) cancelAnimationFrame(frameId);
-            if (containerRef.current && rendererRef.current) {
-                containerRef.current.innerHTML = '';
+            cancelAnimationFrame(frameId);
+            if (containerRef.current && renderer.domElement) {
+                containerRef.current.removeChild(renderer.domElement);
             }
-            // Do NOT clear refs here. Let them persist.
-            // The satellites effect will handle clearing them if needed.
+            renderer.dispose();
         };
     }, []);
 

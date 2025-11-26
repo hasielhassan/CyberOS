@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, Key, Activity, Aperture, Globe, Search, Crosshair } from 'lucide-react';
+import { X, Key, Activity, Aperture, Search, Crosshair, Lock, Unlock, ShieldAlert, Terminal, MapPin } from 'lucide-react';
 import { SatelliteData, ObjectType } from '../types';
 import { NASA_BASE_URL, IMAGE_ASSETS, CATEGORY_COLORS } from '../constants';
 
@@ -17,6 +17,88 @@ export const Modal = ({ title, onClose, children, danger = false, wide = false, 
         </div>
     </div>
 );
+
+// --- AUTH MODAL ---
+export const AuthModal = ({ title, onClose, onSuccess, danger = false }: { title: string, onClose: () => void, onSuccess: () => void, danger?: boolean }) => {
+    const [code, setCode] = useState('');
+    const [error, setError] = useState(false);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (code === 'ADMIN' || code === 'OVERRIDE') {
+            onSuccess();
+        } else {
+            setError(true);
+            setTimeout(() => setError(false), 1000);
+        }
+    };
+
+    return (
+        <Modal title={title} onClose={onClose} danger={danger}>
+            <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
+                <div className={`text-xs font-mono ${danger ? 'text-red-400' : 'text-green-400'}`}>
+                    SECURE CLEARANCE REQUIRED. ENTER AUTHORIZATION CODE.
+                </div>
+                <div className="relative">
+                    <Lock className={`absolute left-3 top-2.5 w-4 h-4 ${danger ? 'text-red-700' : 'text-green-700'}`} />
+                    <input
+                        autoFocus
+                        type="password"
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        className={`w-full bg-black border ${error ? 'border-red-500 animate-shake' : (danger ? 'border-red-900/50' : 'border-green-900/50')} pl-10 pr-4 py-2 text-xs ${danger ? 'text-red-100 focus:border-red-500' : 'text-green-100 focus:border-green-500'} focus:outline-none rounded font-mono tracking-widest`}
+                        placeholder="ACCESS CODE"
+                    />
+                </div>
+                <button type="submit" className={`w-full py-2 ${danger ? 'bg-red-600 hover:bg-red-500' : 'bg-green-600 hover:bg-green-500'} text-black font-bold text-xs rounded transition-colors flex items-center justify-center gap-2`}>
+                    {danger ? <ShieldAlert size={14} /> : <Unlock size={14} />}
+                    AUTHENTICATE
+                </button>
+            </form>
+        </Modal>
+    );
+};
+
+// --- PROGRESS MODAL ---
+export const ProgressModal = ({ title, action, duration = 3000, onComplete, danger = false }: { title: string, action: string, duration?: number, onComplete: () => void, danger?: boolean }) => {
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const start = Date.now();
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - start;
+            const p = Math.min(100, (elapsed / duration) * 100);
+            setProgress(p);
+            if (p >= 100) {
+                clearInterval(interval);
+                setTimeout(onComplete, 500);
+            }
+        }, 50);
+        return () => clearInterval(interval);
+    }, [duration, onComplete]);
+
+    return (
+        <Modal title={title} onClose={() => { }} danger={danger}>
+            <div className="p-8 flex flex-col items-center gap-6">
+                <div className={`relative w-24 h-24 flex items-center justify-center`}>
+                    <div className={`absolute inset-0 border-4 ${danger ? 'border-red-900/30 border-t-red-500' : 'border-green-900/30 border-t-green-500'} rounded-full animate-spin`} />
+                    <div className={`text-xl font-bold font-mono ${danger ? 'text-red-500' : 'text-green-500'}`}>{Math.floor(progress)}%</div>
+                </div>
+                <div className="w-full space-y-2">
+                    <div className={`text-xs font-mono text-center ${danger ? 'text-red-400 animate-pulse' : 'text-green-400 animate-pulse'}`}>
+                        {action}...
+                    </div>
+                    <div className={`w-full h-1 bg-gray-900 rounded-full overflow-hidden`}>
+                        <div className={`h-full ${danger ? 'bg-red-600' : 'bg-green-600'} transition-all duration-75`} style={{ width: `${progress}%` }} />
+                    </div>
+                </div>
+                <div className="font-mono text-[10px] text-gray-500">
+                    DO NOT CLOSE TERMINAL
+                </div>
+            </div>
+        </Modal>
+    );
+};
 
 // --- SETTINGS MODAL ---
 export const SettingsModal = ({ onClose, apiKey, setApiKey }: { onClose: () => void, apiKey: string, setApiKey: (key: string) => void }) => {
@@ -155,7 +237,7 @@ export const SensorFeedModal = ({ onClose, satellite, apiKey }: { onClose: () =>
                         </>
                     ) : (
                         <div className="text-center opacity-30">
-                            <Globe className="w-16 h-16 mx-auto mb-2" />
+                            <Search className="w-16 h-16 mx-auto mb-2" />
                             <div className="text-xs font-mono">WAITING FOR TARGET ASSIGNMENT</div>
                         </div>
                     )}
@@ -168,16 +250,92 @@ export const SensorFeedModal = ({ onClose, satellite, apiKey }: { onClose: () =>
 // --- TELEMETRY MODAL ---
 export const TelemetryModal = ({ onClose }: { onClose: () => void }) => {
     const [lines, setLines] = useState<string[]>([]);
+    const [isPaused, setIsPaused] = useState(false);
+    const [step, setStep] = useState<'STREAM' | 'AUTH' | 'DECRYPTING' | 'DECRYPTED'>('STREAM');
     const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        if (isPaused || step !== 'STREAM') return;
+
         const interval = setInterval(() => {
             const hex = Array(4).fill(0).map(() => Math.floor(Math.random() * 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0')).join(' ');
             setLines(prev => [...prev.slice(-30), `[${new Date().toLocaleTimeString()}] RECV: ${hex}`]);
             if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }, 150);
         return () => clearInterval(interval);
-    }, []);
+    }, [isPaused, step]);
+
+    if (step === 'AUTH') {
+        return <AuthModal title="DECRYPTION AUTHORIZATION" onClose={() => setStep('STREAM')} onSuccess={() => setStep('DECRYPTING')} />;
+    }
+
+    if (step === 'DECRYPTING') {
+        return <ProgressModal title="DECRYPTING LOGS" action="CRACKING ENCRYPTION KEY" onComplete={() => setStep('DECRYPTED')} />;
+    }
+
+    if (step === 'DECRYPTED') {
+        return (
+            <Modal title="DECRYPTED TELEMETRY DATA" onClose={onClose} wide>
+                <div className="p-6 grid grid-cols-2 gap-6 h-full">
+                    <div className="space-y-4">
+                        <div className="bg-green-900/10 border border-green-900/30 p-4 rounded">
+                            <h4 className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2"><MapPin size={14} /> GEOLOCATION DATA</h4>
+                            <div className="space-y-2 font-mono text-[10px] text-green-300">
+                                <div className="flex justify-between border-b border-green-900/30 pb-1"><span>LATITUDE</span><span>34.0522° N</span></div>
+                                <div className="flex justify-between border-b border-green-900/30 pb-1"><span>LONGITUDE</span><span>118.2437° W</span></div>
+                                <div className="flex justify-between border-b border-green-900/30 pb-1"><span>ALTITUDE</span><span>408.2 KM</span></div>
+                                <div className="flex justify-between"><span>VELOCITY</span><span>7.66 KM/S</span></div>
+                            </div>
+                        </div>
+                        <div className="bg-green-900/10 border border-green-900/30 p-4 rounded">
+                            <h4 className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2"><Activity size={14} /> SYSTEM STATUS</h4>
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="bg-black/40 p-2 rounded text-center border border-green-900/20">
+                                    <div className="text-[9px] text-gray-500">TEMP</div>
+                                    <div className="text-green-400 font-mono font-bold">245 K</div>
+                                </div>
+                                <div className="bg-black/40 p-2 rounded text-center border border-green-900/20">
+                                    <div className="text-[9px] text-gray-500">POWER</div>
+                                    <div className="text-green-400 font-mono font-bold">98%</div>
+                                </div>
+                                <div className="bg-black/40 p-2 rounded text-center border border-green-900/20">
+                                    <div className="text-[9px] text-gray-500">SIGNAL</div>
+                                    <div className="text-green-400 font-mono font-bold">-82 dBm</div>
+                                </div>
+                                <div className="bg-black/40 p-2 rounded text-center border border-green-900/20">
+                                    <div className="text-[9px] text-gray-500">UPTIME</div>
+                                    <div className="text-green-400 font-mono font-bold">412D</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex flex-col h-full">
+                        <h4 className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2"><Terminal size={14} /> ACCESS LOGS</h4>
+                        <div className="flex-1 bg-black border border-green-900/30 rounded p-3 font-mono text-[10px] overflow-y-auto space-y-2">
+                            {[
+                                { time: '12:44:01', user: 'ADMIN', action: 'AUTH_HANDSHAKE', ip: '192.168.4.22' },
+                                { time: '12:44:05', user: 'SYSTEM', action: 'ORBIT_CORRECTION', ip: 'INTERNAL' },
+                                { time: '12:45:12', user: 'UNKNOWN', action: 'PORT_SCAN_DETECTED', ip: '45.22.19.112', alert: true },
+                                { time: '12:45:13', user: 'FIREWALL', action: 'CONNECTION_REFUSED', ip: '45.22.19.112' },
+                                { time: '12:50:00', user: 'SYSTEM', action: 'TELEMETRY_SYNC', ip: 'INTERNAL' },
+                                { time: '12:55:30', user: 'USER_1', action: 'DATA_REQUEST', ip: '10.0.0.5' },
+                            ].map((log, i) => (
+                                <div key={i} className={`flex gap-2 ${log.alert ? 'text-red-400' : 'text-green-400/80'}`}>
+                                    <span className="opacity-50">[{log.time}]</span>
+                                    <span className="font-bold">{log.user}</span>
+                                    <span className="flex-1">{log.action}</span>
+                                    <span className="opacity-50">{log.ip}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <button onClick={() => setStep('STREAM')} className="mt-4 w-full py-2 bg-green-900/20 border border-green-500/50 text-green-400 rounded hover:bg-green-500 hover:text-black transition-colors text-xs font-bold">
+                            RETURN TO RAW STREAM
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+        );
+    }
 
     return (
         <Modal title="RAW TELEMETRY STREAM" onClose={onClose}>
@@ -186,8 +344,12 @@ export const TelemetryModal = ({ onClose }: { onClose: () => void }) => {
                     {lines.map((l, i) => <div key={i}>{l}</div>)}
                 </div>
                 <div className="flex gap-2">
-                    <button className="flex-1 py-2 bg-green-900/30 border border-green-500/50 text-green-400 rounded hover:bg-green-500 hover:text-black transition-colors">PAUSE STREAM</button>
-                    <button className="flex-1 py-2 bg-green-600 text-black font-bold rounded hover:bg-green-500 transition-colors">DECRYPT LOGS</button>
+                    <button onClick={() => setIsPaused(!isPaused)} className={`flex-1 py-2 border rounded transition-colors ${isPaused ? 'bg-yellow-900/20 border-yellow-500/50 text-yellow-500' : 'bg-green-900/30 border-green-500/50 text-green-400 hover:bg-green-500 hover:text-black'}`}>
+                        {isPaused ? 'RESUME STREAM' : 'PAUSE STREAM'}
+                    </button>
+                    <button onClick={() => setStep('AUTH')} className="flex-1 py-2 bg-green-600 text-black font-bold rounded hover:bg-green-500 transition-colors">
+                        DECRYPT LOGS
+                    </button>
                 </div>
             </div>
         </Modal>

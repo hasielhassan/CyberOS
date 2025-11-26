@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { useMissions } from '../contracts/MissionsContext';
 import CyberGlobe3D from './components/CyberGlobe3D';
-import { SettingsModal, SensorFeedModal, TelemetryModal, CatalogModal } from './components/Modals';
+import { SettingsModal, SensorFeedModal, TelemetryModal, CatalogModal, AuthModal, ProgressModal } from './components/Modals';
 import { SatelliteData, NEOData, SpaceWeather, ObjectType } from './types';
 import { CATEGORY_COLORS, DEFAULT_API_KEY, NASA_BASE_URL, EONET_URL } from './constants';
 import fallbackData from './data/fallbackData.json';
@@ -15,7 +15,7 @@ export default function SatUplink() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [selectedNeo, setSelectedNeo] = useState<NEOData | null>(null);
     const [filters, setFilters] = useState<ObjectType[]>(['CIVIL', 'MILITARY', 'DEBRIS', 'STATION', 'TELESCOPE', 'WILDFIRE', 'STORM']);
-    const [modalType, setModalType] = useState<'SENSOR' | 'CATALOG' | 'TELEMETRY' | 'SETTINGS' | 'APOD' | null>(null);
+    const [modalType, setModalType] = useState<'SENSOR' | 'CATALOG' | 'TELEMETRY' | 'SETTINGS' | 'APOD' | 'JAMMER' | null>(null);
     const [neos, setNeos] = useState<NEOData[]>([]);
     const [spaceWeather, setSpaceWeather] = useState<SpaceWeather[]>([]);
     const [loadingNeos, setLoadingNeos] = useState(false);
@@ -161,6 +161,22 @@ export default function SatUplink() {
     const visibleNeos = neos.slice(neoPage * 5, (neoPage + 1) * 5);
     const maxPage = Math.ceil(neos.length / 5) - 1;
 
+    const [jammedSats, setJammedSats] = useState<string[]>([]);
+    const [jammingStep, setJammingStep] = useState<'AUTH' | 'PROGRESS' | 'COMPLETE'>('AUTH');
+
+    const handleJammingComplete = () => {
+        if (selectedSat) {
+            setJammedSats(prev => [...prev, selectedSat.id]);
+            setJammingStep('COMPLETE');
+            setTimeout(() => {
+                setModalType(null);
+                setJammingStep('AUTH');
+            }, 2000);
+        }
+    };
+
+    // ... (rest of the component)
+
     return (
         <div className="w-full h-full bg-[#020403] text-green-500 font-sans selection:bg-green-900 selection:text-white overflow-hidden flex">
 
@@ -172,6 +188,25 @@ export default function SatUplink() {
             )}
             {modalType === 'TELEMETRY' && <TelemetryModal onClose={() => setModalType(null)} />}
             {modalType === 'SETTINGS' && <SettingsModal onClose={() => setModalType(null)} apiKey={apiKey} setApiKey={handleSetApiKey} />}
+
+            {modalType === 'JAMMER' && (
+                jammingStep === 'AUTH' ? (
+                    <AuthModal
+                        title="WEAPON SYSTEM AUTHORIZATION"
+                        onClose={() => setModalType(null)}
+                        onSuccess={() => setJammingStep('PROGRESS')}
+                        danger
+                    />
+                ) : (
+                    <ProgressModal
+                        title="SIGNAL JAMMING SEQUENCE"
+                        action="OVERWHELMING TARGET TRANSPONDER"
+                        duration={4000}
+                        onComplete={handleJammingComplete}
+                        danger
+                    />
+                )
+            )}
 
             {/* CENTER + RIGHT WRAPPER */}
             <div className="flex-1 flex flex-col min-w-0 bg-[#020403]">
@@ -204,7 +239,7 @@ export default function SatUplink() {
                             </div>
 
                             <div className="absolute inset-0">
-                                <CyberGlobe3D filters={filters} onObjectSelect={(id) => { setSelectedId(id); setSelectedNeo(null); }} selectedId={selectedId} satellites={satellites} />
+                                <CyberGlobe3D filters={filters} onObjectSelect={(id) => { setSelectedId(id); setSelectedNeo(null); }} selectedId={selectedId} satellites={satellites} jammedSats={jammedSats} />
                             </div>
 
                             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-[10px] text-green-700 bg-black/40 px-2 rounded pointer-events-none">
@@ -222,9 +257,12 @@ export default function SatUplink() {
 
                             {selectedSat ? (
                                 <>
-                                    <div className="text-sm font-bold text-green-100 mb-1">{selectedSat.name}</div>
+                                    <div className="text-sm font-bold text-green-100 mb-1 flex justify-between">
+                                        {selectedSat.name}
+                                        {jammedSats.includes(selectedSat.id) && <span className="text-red-500 text-[10px] border border-red-500 px-1 rounded bg-red-900/20">OFFLINE</span>}
+                                    </div>
                                     <div className="text-[10px] text-green-600 mb-4 italic">{selectedSat.description}</div>
-                                    <div className="space-y-2 text-[11px] font-mono text-green-500 bg-green-900/5 p-2 rounded">
+                                    <div className={`space-y-2 text-[11px] font-mono ${jammedSats.includes(selectedSat.id) ? 'text-gray-500 opacity-50' : 'text-green-500'} bg-green-900/5 p-2 rounded`}>
                                         <div className="flex justify-between"><span className="opacity-60">OWNER:</span> <span className="text-green-300">{selectedSat.owner}</span></div>
                                         <div className="flex justify-between"><span className="opacity-60">TYPE:</span> <span>{selectedSat.type}</span></div>
                                         <div className="flex justify-between"><span className="opacity-60">ALT:</span> <span>{selectedSat.alt}</span></div>
@@ -257,8 +295,8 @@ export default function SatUplink() {
                                 <button onClick={() => setModalType('TELEMETRY')} className="w-full py-2 px-3 text-xs font-bold border border-green-900/50 bg-green-900/10 text-green-400 hover:bg-green-900/30 flex items-center justify-between">
                                     <span className="flex items-center gap-2"><Database className="w-3 h-3" /> DOWNLOAD TELEMETRY</span><span className="text-[9px] border border-green-800 px-1">EXE</span>
                                 </button>
-                                {selectedSat?.type === 'MILITARY' && (
-                                    <button className="w-full py-2 px-3 text-xs font-bold border border-red-900/50 bg-red-900/10 text-red-400 hover:bg-red-900/30 flex items-center justify-between">
+                                {selectedSat?.type === 'MILITARY' && !jammedSats.includes(selectedSat.id) && (
+                                    <button onClick={() => setModalType('JAMMER')} className="w-full py-2 px-3 text-xs font-bold border border-red-900/50 bg-red-900/10 text-red-400 hover:bg-red-900/30 flex items-center justify-between">
                                         <span className="flex items-center gap-2"><ShieldAlert className="w-3 h-3" /> SIGNAL JAMMER</span><span className="text-[9px] border border-red-800 px-1">EXE</span>
                                     </button>
                                 )}
