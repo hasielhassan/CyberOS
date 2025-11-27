@@ -18,6 +18,7 @@ export interface Mission {
     estimatedTime: string; // e.g., "15-30 min"
     target?: string;
     location?: string;
+    checklist?: { id: string; description: string; completed?: boolean }[];
 }
 
 export interface MissionProgress {

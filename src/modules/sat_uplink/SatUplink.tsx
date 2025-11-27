@@ -4,6 +4,7 @@ import {
     ChevronLeft, ChevronRight, AlertTriangle, Activity
 } from 'lucide-react';
 import { useMissions } from '../contracts/MissionsContext';
+import { useMissionState } from '../../hooks/useMissionState';
 import CyberGlobe3D from './components/CyberGlobe3D';
 import { SettingsModal, SensorFeedModal, TelemetryModal, CatalogModal, AuthModal, ProgressModal, RestartModal } from './components/Modals';
 import { SatelliteData, NEOData, SpaceWeather, ObjectType } from './types';
@@ -12,6 +13,7 @@ import fallbackData from './data/fallbackData.json';
 
 export default function SatUplink() {
     const { activeMission } = useMissions();
+    const { completeTask, isTaskCompleted } = useMissionState();
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [selectedNeo, setSelectedNeo] = useState<NEOData | null>(null);
     const [filters, setFilters] = useState<ObjectType[]>(['CIVIL', 'MILITARY', 'DEBRIS', 'STATION', 'TELESCOPE', 'WILDFIRE', 'STORM']);
@@ -34,13 +36,28 @@ export default function SatUplink() {
         localStorage.setItem('nasa_api_key', key);
     };
 
-    // Merge Mission Data
+    // Merge Mission Data & Apply Persistence
     useEffect(() => {
         const missionSatellites = activeMission?.moduleData?.Satellite?.satellites;
         if (missionSatellites) {
-            setSatellites(prev => mergeMissionData(prev, missionSatellites));
+            setSatellites(prev => {
+                const merged = mergeMissionData(prev, missionSatellites);
+
+                // Check for persisted completion state
+                Object.entries(missionSatellites).forEach(([id, data]: [string, any]) => {
+                    if (data.tasksUpdate && data.resetData) {
+                        // Check if any of the tasks that trigger this update are completed
+                        const shouldReset = Object.keys(data.tasksUpdate).some(taskId => isTaskCompleted(taskId));
+                        if (shouldReset) {
+                            merged[id] = { ...merged[id], ...data.resetData };
+                        }
+                    }
+                });
+
+                return merged;
+            });
         }
-    }, [activeMission]);
+    }, [activeMission, isTaskCompleted]);
 
     // --- DEEP MERGE UTILITY ---
     const mergeMissionData = (baseSats: Record<string, SatelliteData>, missionSats: Record<string, any>) => {
@@ -209,6 +226,13 @@ export default function SatUplink() {
     const handleRestoreComplete = () => {
         if (selectedSat) {
             setJammedSats(prev => prev.filter(id => id !== selectedSat.id));
+
+            // Mark tasks as completed
+            if (selectedSat.tasksUpdate) {
+                Object.entries(selectedSat.tasksUpdate).forEach(([taskId, shouldComplete]) => {
+                    if (shouldComplete) completeTask(taskId);
+                });
+            }
 
             // Apply reset data if available (Mission Success State)
             if (selectedSat.resetData) {

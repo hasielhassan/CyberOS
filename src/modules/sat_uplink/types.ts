@@ -29,6 +29,7 @@ export interface SatelliteData {
     patchData?: string;
     completionMessage?: string;
     resetData?: Partial<SatelliteData>;
+    tasksUpdate?: Record<string, boolean>;
 }
 
 export interface NEOData {

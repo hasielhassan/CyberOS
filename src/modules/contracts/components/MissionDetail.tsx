@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { FileText, CheckCircle, XCircle } from 'lucide-react';
+import { FileText, CheckCircle, XCircle, CheckSquare, Square } from 'lucide-react';
 import { Mission } from '../types';
+import { useMissionState } from '../../../hooks/useMissionState';
 import { DocumentViewer } from '../../directory/components/DocumentViewer';
 import { Document } from '../../directory/types';
 
@@ -21,6 +22,9 @@ export const MissionDetail = ({ mission, isActive, isCompleted, onComplete, onAb
         HARD: 'text-orange-500',
         EXPERT: 'text-red-500'
     };
+
+    const { isTaskCompleted, areAllTasksCompleted } = useMissionState();
+    const allTasksCompleted = areAllTasksCompleted(mission);
 
     return (
         <div className="h-full flex flex-col p-6 overflow-y-auto custom-scrollbar">
@@ -53,6 +57,24 @@ export const MissionDetail = ({ mission, isActive, isCompleted, onComplete, onAb
                     {mission.fullDescription}
                 </p>
             </div>
+
+            {/* Mission Checklist */}
+            {mission.checklist && mission.checklist.length > 0 && (
+                <div className="mb-6">
+                    <h2 className="text-sm font-bold text-green-500 mb-3 uppercase">Mission Checklist</h2>
+                    <div className="space-y-2 bg-green-900/10 p-3 border border-green-900/30">
+                        {mission.checklist.map((task) => {
+                            const completed = isTaskCompleted(task.id);
+                            return (
+                                <div key={task.id} className={`flex items-center gap-3 p-2 border ${completed ? 'border-green-500/50 bg-green-500/10' : 'border-green-900/30'} transition-colors`}>
+                                    {completed ? <CheckSquare size={16} className="text-green-400" /> : <Square size={16} className="text-green-800" />}
+                                    <span className={`text-sm ${completed ? 'text-green-300 line-through opacity-70' : 'text-green-400'}`}>{task.description}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
 
             {/* Mission Details Grid */}
             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -129,10 +151,11 @@ export const MissionDetail = ({ mission, isActive, isCompleted, onComplete, onAb
                     </button>
                     <button
                         onClick={onComplete}
-                        className="flex-1 py-2 bg-green-600 text-black hover:bg-green-500 transition-colors text-sm font-bold flex items-center justify-center gap-2"
+                        disabled={!allTasksCompleted}
+                        className={`flex-1 py-2 text-sm font-bold flex items-center justify-center gap-2 transition-colors ${allTasksCompleted ? 'bg-green-600 text-black hover:bg-green-500' : 'bg-green-900/20 text-green-700 cursor-not-allowed border border-green-900'}`}
                     >
                         <CheckCircle size={16} />
-                        COMPLETE MISSION
+                        {allTasksCompleted ? 'COMPLETE MISSION' : 'TASKS INCOMPLETE'}
                     </button>
                 </div>
             )}

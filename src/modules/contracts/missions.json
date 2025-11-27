@@ -40,6 +40,13 @@
         "questions": {
             "Which city is the IP located in?": "Seattle"
         },
+        "checklist": [
+            {
+                "id": "trace_ip",
+                "description": "Trace IP 198.51.100.55",
+                "completed": false
+            }
+        ],
         "estimatedTime": "5 min",
         "target": "Unknown Source",
         "location": "Unknown",
@@ -97,6 +104,18 @@
             "Which city is the target in?": "London",
             "What is the name of the facility?": "Canary Wharf Financial Hub"
         },
+        "checklist": [
+            {
+                "id": "trace_signal",
+                "description": "Trace Signal Source",
+                "completed": false
+            },
+            {
+                "id": "identify_facility",
+                "description": "Identify Target Facility",
+                "completed": false
+            }
+        ],
         "estimatedTime": "10 min",
         "target": "Financial Node",
         "location": "London, UK",
@@ -664,6 +683,9 @@
                             "orbit": "STABLE",
                             "collisionTarget": "",
                             "description": "Restored Soviet satellite. Operating within normal parameters."
+                        },
+                        "tasksUpdate": {
+                            "recover_kosmos": true
                         }
                     }
                 },
@@ -698,6 +720,23 @@
             "Where is the impact target?": "London",
             "What is the name of the patch file?": "stabilize_orbit.exe"
         },
+        "checklist": [
+            {
+                "id": "decrypt_telemetry",
+                "description": "Decrypt Satellite Telemetry",
+                "completed": false
+            },
+            {
+                "id": "jam_satellite",
+                "description": "Jam KOSMOS-2499 Signal",
+                "completed": false
+            },
+            {
+                "id": "recover_kosmos",
+                "description": "Stabilize KOSMOS-2499 Orbit",
+                "completed": false
+            }
+        ],
         "estimatedTime": "45 min",
         "target": "KOSMOS-2499",
         "location": "Low Earth Orbit",

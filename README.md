@@ -81,6 +81,13 @@ Each mission is defined by a JSON object with the following key components:
 - **`requiredModules`**: List of modules needed to complete the mission (e.g., `["Terminal", "Geo Tracker"]`).
 - **`moduleData`**: A dictionary containing mission-specific data injected into the respective modules.
 - **`questions`**: A set of questions and answers used to verify mission completion.
+- **`checklist`**: A list of specific tasks that must be completed within modules (e.g., "Decrypt Telemetry").
+
+### Persistence & State Management
+Mission progress is persisted using `localStorage` via the `useMissionState` hook. This ensures that:
+- Completed checklist items remain checked across sessions.
+- Satellite states (e.g., "Safe" status after repair) are preserved.
+- Mission completion status is saved.
 
 ### Module Integration & Responsibility
 Modules are responsible for checking the active mission context and rendering specific data provided in `moduleData`.
