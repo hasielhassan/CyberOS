@@ -36,26 +36,32 @@ export default function SatUplink() {
         localStorage.setItem('nasa_api_key', key);
     };
 
+    // --- DATA MERGING HELPER ---
+    const getMissionSatellites = (baseSats: Record<string, SatelliteData>) => {
+        if (!activeMission?.moduleData?.Satellite?.satellites) return baseSats;
+
+        const missionSatellites = activeMission.moduleData.Satellite.satellites;
+        const merged = mergeMissionData(baseSats, missionSatellites);
+
+        // Check for persisted completion state
+        Object.entries(missionSatellites).forEach(([id, data]: [string, any]) => {
+            if (data.tasksUpdate && data.resetData) {
+                // Check if any of the tasks that trigger this update are completed
+                const shouldReset = Object.keys(data.tasksUpdate).some(taskId => isTaskCompleted(taskId));
+                if (shouldReset) {
+                    merged[id] = { ...merged[id], ...data.resetData };
+                }
+            }
+        });
+
+        return merged;
+    };
+
     // Merge Mission Data & Apply Persistence
     useEffect(() => {
         const missionSatellites = activeMission?.moduleData?.Satellite?.satellites;
         if (missionSatellites) {
-            setSatellites(prev => {
-                const merged = mergeMissionData(prev, missionSatellites);
-
-                // Check for persisted completion state
-                Object.entries(missionSatellites).forEach(([id, data]: [string, any]) => {
-                    if (data.tasksUpdate && data.resetData) {
-                        // Check if any of the tasks that trigger this update are completed
-                        const shouldReset = Object.keys(data.tasksUpdate).some(taskId => isTaskCompleted(taskId));
-                        if (shouldReset) {
-                            merged[id] = { ...merged[id], ...data.resetData };
-                        }
-                    }
-                });
-
-                return merged;
-            });
+            setSatellites(prev => getMissionSatellites(prev));
         }
     }, [activeMission, isTaskCompleted]);
 
@@ -120,16 +126,12 @@ export default function SatUplink() {
 
                 setSatellites(prev => {
                     const withHazards = { ...prev, ...newHazards };
-                    // Re-apply mission data if active
-                    if (activeMission?.moduleData?.Satellite?.satellites) {
-                        return mergeMissionData(withHazards, activeMission.moduleData.Satellite.satellites);
-                    }
-                    return withHazards;
+                    return getMissionSatellites(withHazards);
                 });
             } catch (e) { console.log("[DEBUG] SatUplink: EONET Fetch failed, using fallback", e); }
         };
         fetchEvents();
-    }, [activeMission]);
+    }, [activeMission, isTaskCompleted]);
 
     // 2. DONKI Integration (Space Weather)
     useEffect(() => {
