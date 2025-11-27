@@ -209,6 +209,18 @@ export default function SatUplink() {
     const handleRestoreComplete = () => {
         if (selectedSat) {
             setJammedSats(prev => prev.filter(id => id !== selectedSat.id));
+
+            // Apply reset data if available (Mission Success State)
+            if (selectedSat.resetData) {
+                setSatellites(prev => ({
+                    ...prev,
+                    [selectedSat.id]: {
+                        ...prev[selectedSat.id],
+                        ...selectedSat.resetData
+                    }
+                }));
+            }
+
             setModalType(null);
             setRestartStep('AUTH');
         }
@@ -238,6 +250,7 @@ export default function SatUplink() {
                         title="WEAPON SYSTEM AUTHORIZATION"
                         onClose={() => setModalType(null)}
                         onSuccess={() => setJammingStep('PROGRESS')}
+                        validationKey={selectedSat?.jammerKey}
                         danger
                     />
                 ) : (
@@ -257,12 +270,14 @@ export default function SatUplink() {
                         title="SYSTEM REBOOT AUTHORIZATION"
                         onClose={() => setModalType(null)}
                         onSuccess={() => setRestartStep('PROCESS')}
+                        validationKey={selectedSat?.rebootKey}
                     />
                 ) : (
                     <RestartModal
                         onClose={() => setModalType(null)}
                         onComplete={handleRestoreComplete}
                         isMissionTarget={!!activeMission?.moduleData?.Satellite?.satellites?.[selectedSat?.id || '']}
+                        satellite={selectedSat || undefined}
                     />
                 )
             )}

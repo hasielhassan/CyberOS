@@ -104,10 +104,12 @@ export const ProgressModal = ({ title, action, duration = 3000, onComplete, dang
 };
 
 // --- RESTART MODAL ---
-export const RestartModal = ({ onClose, onComplete, isMissionTarget = false }: { onClose: () => void, onComplete: () => void, isMissionTarget?: boolean }) => {
+export const RestartModal = ({ onClose, onComplete, isMissionTarget = false, satellite }: { onClose: () => void, onComplete: () => void, isMissionTarget?: boolean, satellite?: SatelliteData }) => {
     const [stage, setStage] = useState(0);
-    const [status, setStatus] = useState<'IDLE' | 'RUNNING' | 'COMPLETE'>('IDLE');
+    const [status, setStatus] = useState<'IDLE' | 'RUNNING' | 'WAITING_INPUT' | 'COMPLETE'>('IDLE');
     const [progress, setProgress] = useState(0);
+    const [patchInput, setPatchInput] = useState('');
+    const [error, setError] = useState(false);
 
     const STAGES = [
         { name: 'SYSTEM DIAGNOSTICS', action: 'RUN DIAGNOSTICS', duration: 2000 },
@@ -116,6 +118,11 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false }: {
     ];
 
     const runStage = () => {
+        if (stage === 1 && isMissionTarget && satellite?.patchData) {
+            setStatus('WAITING_INPUT');
+            return;
+        }
+
         setStatus('RUNNING');
         setProgress(0);
         const duration = STAGES[stage].duration;
@@ -125,15 +132,13 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false }: {
             const elapsed = Date.now() - start;
             const p = Math.min(100, (elapsed / duration) * 100);
             setProgress(p);
-
             if (p >= 100) {
                 clearInterval(interval);
                 setStatus('COMPLETE');
                 if (stage === STAGES.length - 1) {
                     if (isMissionTarget) {
-                        // Special success message for mission
-                        setStatus('COMPLETE'); // Keep it complete to show the message
-                        setTimeout(onComplete, 2000);
+                        setStatus('COMPLETE');
+                        // setTimeout(onComplete, 2000); // Removed auto-close for mission target
                     } else {
                         setTimeout(onComplete, 1000);
                     }
@@ -148,9 +153,37 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false }: {
         }, 50);
     };
 
+    const handlePatchSubmit = () => {
+        if (!satellite?.patchData) return;
+
+        // Normalize line endings and trim for comparison
+        const normalize = (str: string) => str.replace(/\r\n/g, '\n').trim();
+
+        if (normalize(patchInput) === normalize(satellite.patchData)) {
+            setStatus('RUNNING');
+            // Resume the progress animation for the patch stage
+            const duration = STAGES[1].duration;
+            const start = Date.now();
+            const interval = setInterval(() => {
+                const elapsed = Date.now() - start;
+                const p = Math.min(100, (elapsed / duration) * 100);
+                setProgress(p);
+                if (p >= 100) {
+                    clearInterval(interval);
+                    setStage(s => s + 1);
+                    setStatus('IDLE');
+                    setProgress(0);
+                }
+            }, 50);
+        } else {
+            setError(true);
+            setTimeout(() => setError(false), 1000);
+        }
+    };
+
     return (
         <Modal title="SYSTEM RESTORATION SEQUENCE" onClose={onClose} wide>
-            <div className="p-6 flex flex-col gap-6 h-full">
+            <div className="p-6 flex flex-col gap-6 h-full min-h-[500px]">
                 <div className="grid grid-cols-3 gap-4">
                     {STAGES.map((s, i) => (
                         <div key={i} className={`p-3 border rounded flex flex-col items-center gap-2 transition-colors ${i === stage ? 'bg-green-900/20 border-green-500' : (i < stage ? 'bg-green-900/10 border-green-900/30 opacity-50' : 'bg-black border-gray-800 opacity-30')}`}>
@@ -162,7 +195,7 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false }: {
                     ))}
                 </div>
 
-                <div className="flex-1 bg-black border border-green-900/30 rounded p-4 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
+                <div className="flex-1 bg-black border border-green-900/30 rounded p-4 flex flex-col items-center justify-center gap-4 relative overflow-hidden min-h-[300px]">
                     {status === 'RUNNING' && (
                         <div className="absolute inset-0 bg-green-900/5 flex flex-col items-center justify-center z-0">
                             <div className="w-full max-w-md space-y-2 px-8">
@@ -177,14 +210,47 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false }: {
                         </div>
                     )}
 
+                    {status === 'WAITING_INPUT' && (
+                        <div className="absolute inset-0 bg-black/95 flex flex-col items-center justify-center z-50 p-6">
+                            <div className="w-full max-w-md space-y-4 animate-in fade-in zoom-in duration-300">
+                                <div className="text-xs font-mono text-green-400 text-center animate-pulse">
+                                    MANUAL OVERRIDE REQUIRED // UPLOAD PATCH DATA
+                                </div>
+                                <textarea
+                                    value={patchInput}
+                                    onChange={(e) => setPatchInput(e.target.value)}
+                                    className={`w-full h-32 bg-black border ${error ? 'border-red-500 animate-shake' : 'border-green-900/50'} p-2 text-[10px] font-mono text-green-300 focus:outline-none focus:border-green-500 rounded resize-none`}
+                                    placeholder="PASTE BINARY BLOB HERE..."
+                                    autoFocus
+                                />
+                                <button onClick={handlePatchSubmit} className="w-full py-2 bg-green-600 hover:bg-green-500 text-black font-bold text-xs rounded transition-colors border border-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]">
+                                    VERIFY & UPLOAD
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="z-10 text-center space-y-4">
                         <div className="text-sm font-mono text-green-400">
-                            {status === 'IDLE' ? `READY TO ${STAGES[stage].action}` : (status === 'RUNNING' ? 'PROCESSING...' : (isMissionTarget && stage === 2 ? 'ORBIT STABILIZED // MISSION OBJECTIVE COMPLETE' : 'STAGE COMPLETE'))}
+                            {status === 'IDLE' ? `READY TO ${STAGES[stage].action}` :
+                                status === 'RUNNING' ? 'PROCESSING...' :
+                                    status === 'WAITING_INPUT' ? 'AWAITING MANUAL INPUT...' :
+                                        (isMissionTarget && stage === 2 ? 'ORBIT STABILIZED // MISSION OBJECTIVE COMPLETE' : 'STAGE COMPLETE')}
                         </div>
                         {status === 'IDLE' && (
                             <button onClick={runStage} className="px-6 py-2 bg-green-600 hover:bg-green-500 text-black font-bold text-xs rounded transition-colors flex items-center gap-2 mx-auto">
                                 <Activity size={14} /> {STAGES[stage].action}
                             </button>
+                        )}
+                        {status === 'COMPLETE' && isMissionTarget && stage === 2 && (
+                            <div className="animate-in fade-in zoom-in duration-500 space-y-4">
+                                <div className="text-xs text-green-300 max-w-md mx-auto border border-green-500/30 bg-green-900/10 p-4 rounded">
+                                    {satellite?.completionMessage || "MISSION ACCOMPLISHED. SYSTEM RESTORED."}
+                                </div>
+                                <button onClick={onComplete} className="px-8 py-2 bg-green-500 hover:bg-green-400 text-black font-bold text-sm rounded shadow-[0_0_15px_rgba(34,197,94,0.5)] transition-all hover:scale-105">
+                                    CLOSE & CONFIRM
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -356,14 +422,8 @@ export const TelemetryModal = ({ onClose, missionTelemetry, satellite }: { onClo
         if (isPaused || step !== 'STREAM') return;
 
         const interval = setInterval(() => {
-            if (missionTelemetry && Math.random() > 0.7) {
-                // Inject mission telemetry
-                const log = missionTelemetry[Math.floor(Math.random() * missionTelemetry.length)];
-                setLines(prev => [...prev.slice(-30), `[${new Date().toLocaleTimeString()}] ${log}`]);
-            } else {
-                const hex = Array(4).fill(0).map(() => Math.floor(Math.random() * 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0')).join(' ');
-                setLines(prev => [...prev.slice(-30), `[${new Date().toLocaleTimeString()}] RECV: ${hex}`]);
-            }
+            const hex = Array(4).fill(0).map(() => Math.floor(Math.random() * 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0')).join(' ');
+            setLines(prev => [...prev.slice(-30), `[${new Date().toLocaleTimeString()}] RECV: ${hex}`]);
             if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }, 150);
         return () => clearInterval(interval);
@@ -427,20 +487,26 @@ export const TelemetryModal = ({ onClose, missionTelemetry, satellite }: { onClo
                     <div className="flex flex-col h-full">
                         <h4 className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2"><Terminal size={14} /> ACCESS LOGS</h4>
                         <div className="flex-1 bg-black border border-green-900/30 rounded p-3 font-mono text-[10px] overflow-y-auto space-y-2">
-                            {[
+                            {(missionTelemetry || [
                                 { time: '12:44:01', user: 'ADMIN', action: 'AUTH_HANDSHAKE', ip: '192.168.4.22' },
                                 { time: '12:44:05', user: 'SYSTEM', action: 'ORBIT_CORRECTION', ip: 'INTERNAL' },
                                 { time: '12:45:12', user: 'UNKNOWN', action: 'PORT_SCAN_DETECTED', ip: '45.22.19.112', alert: true },
                                 { time: '12:45:13', user: 'FIREWALL', action: 'CONNECTION_REFUSED', ip: '45.22.19.112' },
                                 { time: '12:50:00', user: 'SYSTEM', action: 'TELEMETRY_SYNC', ip: 'INTERNAL' },
                                 { time: '12:55:30', user: 'USER_1', action: 'DATA_REQUEST', ip: '10.0.0.5' },
-                            ].map((log, i) => (
-                                <div key={i} className={`flex gap-2 ${log.alert ? 'text-red-400' : 'text-green-400/80'}`}>
-                                    <span className="opacity-50">[{log.time}]</span>
-                                    <span className="font-bold">{log.user}</span>
-                                    <span className="flex-1">{log.action}</span>
-                                    <span className="opacity-50">{log.ip}</span>
-                                </div>
+                            ]).map((log: any, i: number) => (
+                                typeof log === 'string' ? (
+                                    <div key={i} className="text-green-400/80">
+                                        <span className="opacity-50">[{new Date().toLocaleTimeString()}]</span> <span className="font-bold">SYSTEM</span> <span className="flex-1">{log}</span>
+                                    </div>
+                                ) : (
+                                    <div key={i} className={`flex gap-2 ${log.alert ? 'text-red-400' : 'text-green-400/80'}`}>
+                                        <span className="opacity-50">[{log.time}]</span>
+                                        <span className="font-bold">{log.user}</span>
+                                        <span className="flex-1">{log.action}</span>
+                                        <span className="opacity-50">{log.ip}</span>
+                                    </div>
+                                )
                             ))}
                         </div>
                         <button onClick={() => setStep('STREAM')} className="mt-4 w-full py-2 bg-green-900/20 border border-green-500/50 text-green-400 rounded hover:bg-green-500 hover:text-black transition-colors text-xs font-bold">

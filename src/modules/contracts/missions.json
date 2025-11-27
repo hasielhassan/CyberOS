@@ -620,34 +620,6 @@
                             "home": {
                                 "type": "dir",
                                 "content": {
-                                    "admin": {
-                                        "type": "dir",
-                                        "content": {
-                                            "todo.txt": {
-                                                "type": "file",
-                                                "content": "1. Check legacy uplink status.\n2. Update routing tables for C2."
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "kosmos-control.ru": {
-                        "systemName": "KOSMOS-C2",
-                        "fileSystem": {
-                            "bin": {
-                                "type": "dir",
-                                "content": {
-                                    "stabilize_orbit.exe": {
-                                        "type": "file",
-                                        "content": "BINARY_DATA_PATCH_V2.4"
-                                    }
-                                }
-                            },
-                            "conf": {
-                                "type": "dir",
-                                "content": {
                                     "target.dat": {
                                         "type": "file",
                                         "content": "TARGET_COORDS: 51.5007, -0.1246"
@@ -680,7 +652,19 @@
                         "supportedTargets": [
                             "EARTH"
                         ],
-                        "apiQueryType": "EARTH"
+                        "apiQueryType": "EARTH",
+                        "jammerKey": "JAM-KOSMOS-99",
+                        "rebootKey": "ROOT-ACCESS-2499",
+                        "patchData": ":: ORBITAL PATCH v2.4 ::\n[SYSTEM] INITIATING WRITE SEQUENCE\n[ADDR] 0x0049221\n[DATA] 44 92 11 00\n[CHECKSUM] VERIFIED\n:: END PATCH ::",
+                        "completionMessage": "PATCH APPLIED SUCCESSFULLY. ORBIT STABILIZED. COLLISION AVOIDED.",
+                        "resetData": {
+                            "type": "MILITARY",
+                            "realType": "MILITARY",
+                            "status": "SAFE",
+                            "orbit": "STABLE",
+                            "collisionTarget": "",
+                            "description": "Restored Soviet satellite. Operating within normal parameters."
+                        }
                     }
                 },
                 "telemetry": {

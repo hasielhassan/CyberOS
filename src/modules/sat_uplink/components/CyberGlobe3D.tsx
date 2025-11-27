@@ -36,6 +36,15 @@ const CyberGlobe3D = ({ filters, onObjectSelect, selectedId, satellites, jammedS
             // Clear existing satellites to prevent duplicates/stale references
             Object.values(satMeshesRef.current).forEach(mesh => globe.remove(mesh));
             Object.values(orbitLinesRef.current).forEach(line => globe.remove(line));
+
+            // Clear all collision lines
+            const collisionLines = globe.children.filter(c => c.userData.isCollisionLine);
+            collisionLines.forEach(line => {
+                globe.remove(line);
+                (line as any).geometry.dispose();
+                (line as any).material.dispose();
+            });
+
             satMeshesRef.current = {};
             orbitLinesRef.current = {};
 
@@ -91,12 +100,23 @@ const CyberGlobe3D = ({ filters, onObjectSelect, selectedId, satellites, jammedS
                     globe.add(orbitMesh);
 
                     // COLLISION TRAJECTORY VISUALIZATION
+                    const lineId = `line-${sat.id}`;
+                    const existingLine = globe.children.find(c => c.userData.id === lineId);
+
                     if (sat.collisionTarget) {
-                        const collisionGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0)]);
-                        const collisionMat = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 3 });
-                        const collisionLine = new THREE.Line(collisionGeo, collisionMat);
-                        collisionLine.userData = { isCollisionLine: true, parentId: sat.id, target: sat.collisionTarget, targetCoords: sat.coordinates };
-                        globe.add(collisionLine);
+                        if (!existingLine) {
+                            const collisionGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0)]);
+                            const collisionMat = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 3 });
+                            const collisionLine = new THREE.Line(collisionGeo, collisionMat);
+                            collisionLine.userData = { id: lineId, isCollisionLine: true, parentId: sat.id, target: sat.collisionTarget, targetCoords: sat.coordinates };
+                            globe.add(collisionLine);
+                        }
+                    } else {
+                        if (existingLine) {
+                            globe.remove(existingLine);
+                            (existingLine as any).geometry.dispose();
+                            (existingLine as any).material.dispose();
+                        }
                     }
                 }
                 satMeshesRef.current[sat.id] = mesh;
@@ -131,7 +151,7 @@ const CyberGlobe3D = ({ filters, onObjectSelect, selectedId, satellites, jammedS
         globeRef.current = globe;
 
         const coreGeo = new THREE.SphereGeometry(R - 0.5, 64, 64);
-        const coreMat = new THREE.MeshBasicMaterial({ color: 0x020403, transparent: true, opacity: 0.5 });
+        const coreMat = new THREE.MeshBasicMaterial({ color: 0x020403, transparent: true, opacity: 0.75 });
         globe.add(new THREE.Mesh(coreGeo, coreMat));
 
         // Grid

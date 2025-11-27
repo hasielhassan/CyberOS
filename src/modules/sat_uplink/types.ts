@@ -23,6 +23,12 @@ export interface SatelliteData {
     imageUrl?: string;
     collisionTarget?: string;
     telemetryKey?: string;
+    jammerKey?: string;
+    rebootKey?: string;
+    realType?: ObjectType;
+    patchData?: string;
+    completionMessage?: string;
+    resetData?: Partial<SatelliteData>;
 }
 
 export interface NEOData {
