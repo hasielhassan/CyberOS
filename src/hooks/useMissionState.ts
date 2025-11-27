@@ -25,10 +25,7 @@ export const useMissionState = () => {
         }
     }, []);
 
-    const saveState = useCallback((newState: MissionState) => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        setState(newState);
-    }, []);
+
 
     const completeTask = useCallback((taskId: string) => {
         setState(prevState => {
