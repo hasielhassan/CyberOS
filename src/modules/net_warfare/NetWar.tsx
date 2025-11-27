@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Shield, CheckCircle, Search, Skull, Database, Server, AlertTriangle, Key, Save, FileText, Ghost, Shuffle, Disc } from 'lucide-react';
 import fsTemplatesRaw from './fs_templates.json';
+import { useMissions } from '../contracts/MissionsContext';
 
 // --- Helper function to interpolate placeholders in file system structures ---
 const interpolateTemplate = (structure: any, ip: string, domain: string): any => {
@@ -37,6 +38,8 @@ type Phase = 'input' | 'tracing' | 'active' | 'victory';
 type Utility = 'ghost' | 'proxy' | 'decoy';
 
 const NetWar = () => {
+    const { activeMission } = useMissions();
+
     // --- STATE ---
     const [level, setLevel] = useState<number>(1);
     const [targetUrl, setTargetUrl] = useState('');
@@ -69,6 +72,12 @@ const NetWar = () => {
         logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [logs]);
 
+    const addLog = (msg: string, type: string) => {
+        const timestamp = new Date().toLocaleTimeString().split(' ')[0];
+        const prefix = type === 'trace' || type === 'raw' ? '' : `[${timestamp}] `;
+        setLogs(prev => [...prev, `${type}|${prefix}${msg}`]);
+    };
+
     // --- UTILITY LOGIC (BUFFED) ---
     const activateUtility = (util: Utility) => {
         const now = Date.now();
@@ -97,6 +106,26 @@ const NetWar = () => {
                 setActiveBuffs(prev => prev.filter(b => b !== 'decoy'));
                 addLog(`DECOY EXPIRED.`, 'warn');
             }, 6000);
+        }
+    };
+
+    const handleTraceFailure = () => {
+        addLog('*** CRITICAL FAILURE: TRACE COMPLETE ***', 'error');
+        setActiveAction(null); setTraceLevel(0); setPhase('input'); setNodes([]); setActiveBuffs([]);
+    };
+
+    const findSourceID = (targetId: number) => {
+        const owned = nodes.filter(n => n.status === 'own').map(n => n.id);
+        const link = links.find(l => (owned.includes(l.from) && l.to === targetId) || (owned.includes(l.to) && l.from === targetId));
+        return link ? (owned.includes(link.from) ? link.from : link.to) : 1;
+    };
+
+    const spawnPacket = (from: number, to: number, type: string) => {
+        const start = nodes.find(n => n.id === from); const end = nodes.find(n => n.id === to);
+        if (start && end) {
+            const pid = Date.now();
+            setPackets(prev => [...prev, { id: pid, fromX: start.x, fromY: start.y, toX: end.x, toY: end.y, type: type as any }]);
+            setTimeout(() => setPackets(prev => prev.filter(p => p.id !== pid)), 1000);
         }
     };
 
@@ -135,13 +164,19 @@ const NetWar = () => {
         return () => clearInterval(interval);
     }, [activeAction, level, nodes, phase, activeBuffs]);
 
-    const handleTraceFailure = () => {
-        addLog('*** CRITICAL FAILURE: TRACE COMPLETE ***', 'error');
-        setActiveAction(null); setTraceLevel(0); setPhase('input'); setNodes([]); setActiveBuffs([]);
-    };
-
     // --- LOOT GENERATION ---
     const generateLoot = (ip: string, domain: string) => {
+        // Check for mission override
+        if (activeMission?.moduleData?.NetWarfare?.targets?.[domain]) {
+            const missionTarget = activeMission.moduleData.NetWarfare.targets[domain];
+            const sshHash = Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 6).toUpperCase()).join('-');
+            return {
+                timestamp: Date.now(), domain, ip, sshKey: `SSH-RSA-${sshHash}`,
+                systemName: missionTarget.systemName || "CLASSIFIED SYSTEM",
+                fileSystem: missionTarget.fileSystem
+            };
+        }
+
         const template = FS_TEMPLATES[Math.floor(Math.random() * FS_TEMPLATES.length)];
         const sshHash = Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 6).toUpperCase()).join('-');
         return {
@@ -266,26 +301,6 @@ const NetWar = () => {
         setVictoryData(null); setTargetUrl(''); setPhase('input'); setNodes([]); setLinks([]);
         setScannedNodes([]); setTraceLevel(0); setActiveBuffs([]);
         addLog(`CONNECTION SAVED. READY FOR NEXT ASSIGNMENT.`, 'success');
-    };
-
-    const addLog = (msg: string, type: string) => {
-        const timestamp = new Date().toLocaleTimeString().split(' ')[0];
-        const prefix = type === 'trace' || type === 'raw' ? '' : `[${timestamp}] `;
-        setLogs(prev => [...prev, `${type}|${prefix}${msg}`]);
-    };
-
-    const findSourceID = (targetId: number) => {
-        const owned = nodes.filter(n => n.status === 'own').map(n => n.id);
-        const link = links.find(l => (owned.includes(l.from) && l.to === targetId) || (owned.includes(l.to) && l.from === targetId));
-        return link ? (owned.includes(link.from) ? link.from : link.to) : 1;
-    };
-    const spawnPacket = (from: number, to: number, type: string) => {
-        const start = nodes.find(n => n.id === from); const end = nodes.find(n => n.id === to);
-        if (start && end) {
-            const pid = Date.now();
-            setPackets(prev => [...prev, { id: pid, fromX: start.x, fromY: start.y, toX: end.x, toY: end.y, type: type as any }]);
-            setTimeout(() => setPackets(prev => prev.filter(p => p.id !== pid)), 1000);
-        }
     };
 
     return (
@@ -444,7 +459,7 @@ const NetWar = () => {
                             <button onClick={() => activateUtility('ghost')}
                                 disabled={Date.now() < cooldowns['ghost']}
                                 className={`w-full p-2 border rounded flex flex-col items-center justify-center gap-1 transition-all
-                                ${activeBuffs.includes('ghost') ? 'border-blue-400 bg-blue-900/30 text-white' :
+                            ${activeBuffs.includes('ghost') ? 'border-blue-400 bg-blue-900/30 text-white' :
                                         Date.now() < cooldowns['ghost'] ? 'border-gray-800 text-gray-700' : 'border-green-900/50 text-green-400 hover:bg-green-900/20'}`}>
                                 <Ghost size={16} /> <div className="text-[9px] font-bold">GHOST</div>
                                 {Date.now() < cooldowns['ghost'] && <div className="text-[8px]">{Math.ceil((cooldowns['ghost'] - Date.now()) / 1000)}s</div>}
@@ -459,7 +474,7 @@ const NetWar = () => {
                             <button onClick={() => activateUtility('proxy')}
                                 disabled={Date.now() < cooldowns['proxy']}
                                 className={`w-full p-2 border rounded flex flex-col items-center justify-center gap-1 transition-all
-                                ${Date.now() < cooldowns['proxy'] ? 'border-gray-800 text-gray-700' : 'border-green-900/50 text-green-400 hover:bg-green-900/20'}`}>
+                            ${Date.now() < cooldowns['proxy'] ? 'border-gray-800 text-gray-700' : 'border-green-900/50 text-green-400 hover:bg-green-900/20'}`}>
                                 <Shuffle size={16} /> <div className="text-[9px] font-bold">PROXY</div>
                                 {Date.now() < cooldowns['proxy'] && <div className="text-[8px]">{Math.ceil((cooldowns['proxy'] - Date.now()) / 1000)}s</div>}
                             </button>
@@ -473,7 +488,7 @@ const NetWar = () => {
                             <button onClick={() => activateUtility('decoy')}
                                 disabled={Date.now() < cooldowns['decoy']}
                                 className={`w-full p-2 border rounded flex flex-col items-center justify-center gap-1 transition-all
-                                ${activeBuffs.includes('decoy') ? 'border-yellow-400 bg-yellow-900/30 text-white' :
+                            ${activeBuffs.includes('decoy') ? 'border-yellow-400 bg-yellow-900/30 text-white' :
                                         Date.now() < cooldowns['decoy'] ? 'border-gray-800 text-gray-700' : 'border-green-900/50 text-green-400 hover:bg-green-900/20'}`}>
                                 <Disc size={16} /> <div className="text-[9px] font-bold">DECOY</div>
                                 {Date.now() < cooldowns['decoy'] && <div className="text-[8px]">{Math.ceil((cooldowns['decoy'] - Date.now()) / 1000)}s</div>}

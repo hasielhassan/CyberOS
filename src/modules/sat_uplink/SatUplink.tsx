@@ -26,7 +26,6 @@ export default function SatUplink() {
     // Initialize with fallback data
     const [satellites, setSatellites] = useState<Record<string, SatelliteData>>(() => {
         const data = fallbackData.satellites as Record<string, SatelliteData>;
-        console.log('[DEBUG] SatUplink: Initializing satellites from fallback:', Object.keys(data).length, 'satellites');
         return data;
     });
 
@@ -37,14 +36,26 @@ export default function SatUplink() {
 
     // Merge Mission Data
     useEffect(() => {
-        if (activeMission?.moduleData?.Satellite) {
-            const missionData = activeMission.moduleData.Satellite;
-            if (missionData.satellites) {
-                console.log('[DEBUG] SatUplink: Merging mission data:', Object.keys(missionData.satellites).length);
-                setSatellites(prev => ({ ...prev, ...missionData.satellites }));
-            }
+        const missionSatellites = activeMission?.moduleData?.Satellite?.satellites;
+        if (missionSatellites) {
+            setSatellites(prev => mergeMissionData(prev, missionSatellites));
         }
     }, [activeMission]);
+
+    // --- DEEP MERGE UTILITY ---
+    const mergeMissionData = (baseSats: Record<string, SatelliteData>, missionSats: Record<string, any>) => {
+        const merged = { ...baseSats };
+        Object.entries(missionSats).forEach(([id, data]) => {
+            if (merged[id]) {
+                // Deep merge existing
+                merged[id] = { ...merged[id], ...data };
+            } else {
+                // Add new
+                merged[id] = data as SatelliteData;
+            }
+        });
+        return merged;
+    };
 
     // 1. EONET Integration (Direct URL)
     useEffect(() => {
@@ -89,16 +100,29 @@ export default function SatUplink() {
                         }
                     });
                 }
-                console.log(`[DEBUG] SatUplink: EONET data processed. Hazards: ${Object.keys(newHazards).length}`);
-                setSatellites(prev => ({ ...prev, ...newHazards }));
+
+                setSatellites(prev => {
+                    const withHazards = { ...prev, ...newHazards };
+                    // Re-apply mission data if active
+                    if (activeMission?.moduleData?.Satellite?.satellites) {
+                        return mergeMissionData(withHazards, activeMission.moduleData.Satellite.satellites);
+                    }
+                    return withHazards;
+                });
             } catch (e) { console.log("[DEBUG] SatUplink: EONET Fetch failed, using fallback", e); }
         };
         fetchEvents();
-    }, []);
+    }, [activeMission]);
 
     // 2. DONKI Integration (Space Weather)
     useEffect(() => {
         const fetchWeather = async () => {
+            // Check for mission override
+            if (activeMission?.moduleData?.Satellite?.spaceWeather) {
+                setSpaceWeather(activeMission.moduleData.Satellite.spaceWeather);
+                return;
+            }
+
             console.log('[DEBUG] SatUplink: Fetching DONKI data...');
             try {
                 const res = await fetch(`${NASA_BASE_URL}/DONKI/notifications?type=GST,FLR&api_key=${apiKey}`);
@@ -110,20 +134,25 @@ export default function SatUplink() {
                     link: w.messageURL,
                     note: w.messageBody.substring(0, 100) + "..."
                 })) : [];
-                console.log(`[DEBUG] SatUplink: DONKI data received. Weather events: ${weather.length}`);
                 setSpaceWeather(weather);
             } catch (e) {
-                console.log("[DEBUG] SatUplink: DONKI Fetch failed, using fallback", e);
                 setSpaceWeather(fallbackData.spaceWeather as SpaceWeather[]);
             }
         };
         fetchWeather();
-    }, [apiKey]);
+    }, [apiKey, activeMission]);
 
     // 3. NeoWs Integration (Asteroids)
     useEffect(() => {
         const fetchNEOs = async () => {
             setLoadingNeos(true);
+
+            // Check for mission override
+            let missionNeos: NEOData[] = [];
+            if (activeMission?.moduleData?.Satellite?.neos) {
+                missionNeos = activeMission.moduleData.Satellite.neos;
+            }
+
             try {
                 const today = new Date().toISOString().split('T')[0];
                 const res = await fetch(`${NASA_BASE_URL}/neo/rest/v1/feed?start_date=${today}&end_date=${today}&api_key=${apiKey}`);
@@ -138,15 +167,16 @@ export default function SatUplink() {
                     time: o.close_approach_data[0].close_approach_date_full.split(' ')[1] || '00:00',
                     magnitude: o.absolute_magnitude_h
                 })).sort((a: NEOData, b: NEOData) => (a.isHazardous === b.isHazardous ? 0 : a.isHazardous ? -1 : 1));
-                setNeos(processed);
+
+                setNeos([...missionNeos, ...processed]);
             } catch (e) {
-                setNeos(fallbackData.neos as NEOData[]);
+                setNeos([...missionNeos, ...(fallbackData.neos as NEOData[])]);
             } finally {
                 setLoadingNeos(false);
             }
         };
         fetchNEOs();
-    }, [apiKey]);
+    }, [apiKey, activeMission]);
 
     const selectedSat = selectedId ? satellites[selectedId] : null;
 
@@ -188,12 +218,18 @@ export default function SatUplink() {
         <div className="w-full h-full bg-[#020403] text-green-500 font-sans selection:bg-green-900 selection:text-white overflow-hidden flex">
 
             {modalType === 'SENSOR' && (selectedSat || neoAsSat) && (
-                <SensorFeedModal satellite={selectedSat || neoAsSat!} onClose={() => setModalType(null)} apiKey={apiKey} />
+                <SensorFeedModal
+                    satellite={selectedSat || neoAsSat!}
+                    onClose={() => setModalType(null)}
+                    apiKey={apiKey}
+                    missionImage={activeMission?.moduleData?.Satellite?.sensorFeed?.[selectedSat?.id || '']?.image}
+                    missionMeta={activeMission?.moduleData?.Satellite?.sensorFeed?.[selectedSat?.id || '']?.meta}
+                />
             )}
             {modalType === 'CATALOG' && (
                 <CatalogModal onClose={() => setModalType(null)} onTrack={(id) => { setSelectedId(id); setSelectedNeo(null); }} satellites={satellites} />
             )}
-            {modalType === 'TELEMETRY' && <TelemetryModal onClose={() => setModalType(null)} />}
+            {modalType === 'TELEMETRY' && <TelemetryModal onClose={() => setModalType(null)} missionTelemetry={activeMission?.moduleData?.Satellite?.telemetry?.[selectedSat?.id || '']} satellite={selectedSat || undefined} />}
             {modalType === 'SETTINGS' && <SettingsModal onClose={() => setModalType(null)} apiKey={apiKey} setApiKey={handleSetApiKey} />}
 
             {modalType === 'JAMMER' && (
@@ -226,6 +262,7 @@ export default function SatUplink() {
                     <RestartModal
                         onClose={() => setModalType(null)}
                         onComplete={handleRestoreComplete}
+                        isMissionTarget={!!activeMission?.moduleData?.Satellite?.satellites?.[selectedSat?.id || '']}
                     />
                 )
             )}
@@ -317,7 +354,7 @@ export default function SatUplink() {
                                 <button onClick={() => setModalType('TELEMETRY')} className="w-full py-2 px-3 text-xs font-bold border border-green-900/50 bg-green-900/10 text-green-400 hover:bg-green-900/30 flex items-center justify-between">
                                     <span className="flex items-center gap-2"><Database className="w-3 h-3" /> DOWNLOAD TELEMETRY</span><span className="text-[9px] border border-green-800 px-1">EXE</span>
                                 </button>
-                                {selectedSat?.type === 'MILITARY' && !jammedSats.includes(selectedSat.id) && (
+                                {(selectedSat?.type === 'MILITARY' || selectedSat?.realType === 'MILITARY') && !jammedSats.includes(selectedSat.id) && (
                                     <button onClick={() => setModalType('JAMMER')} className="w-full py-2 px-3 text-xs font-bold border border-red-900/50 bg-red-900/10 text-red-400 hover:bg-red-900/30 flex items-center justify-between">
                                         <span className="flex items-center gap-2"><ShieldAlert className="w-3 h-3" /> SIGNAL JAMMER</span><span className="text-[9px] border border-red-800 px-1">EXE</span>
                                     </button>

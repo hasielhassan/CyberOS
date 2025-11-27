@@ -537,5 +537,236 @@
                 }
             }
         ]
+    },
+    {
+        "id": "MSN-SKYFALL",
+        "title": "Operation Skyfall",
+        "difficulty": "HARD",
+        "reward": "7,500 BTC",
+        "briefing": "Intercept rogue satellite control. Prevent orbital impact.",
+        "fullDescription": "We have detected a decommissioned Soviet satellite, KOSMOS-2499, has been reactivated and is in a rapidly decaying orbit. Trajectory analysis indicates a targeted collision course with a major population center. Your mission is to trace the control signal, hack the ground station to retrieve the stabilization patch, and upload it to the satellite before impact.",
+        "warnings": [
+            "IMPACT IMMINENT",
+            "ORBITAL DECAY DETECTED",
+            "HOSTILE SIGNAL SOURCE"
+        ],
+        "requiredModules": [
+            "Terminal",
+            "NetWarfare",
+            "Satellite",
+            "Geo Tracker"
+        ],
+        "moduleData": {
+            "Terminal": {
+                "ipdata": {
+                    "45.33.22.11": {
+                        "info": {
+                            "ip": "45.33.22.11",
+                            "hostname": "relay-node-04.net",
+                            "city": "St. Petersburg",
+                            "region": "Leningrad",
+                            "country": "RU",
+                            "loc": "59.9343,30.3351",
+                            "org": "Roscosmos Legacy Relay",
+                            "postal": "190000",
+                            "timezone": "Europe/Moscow"
+                        },
+                        "trace": [
+                            "1. 10.0.0.1 - Localhost",
+                            "2. 89.14.22.1 - ISP Gateway",
+                            "3. 45.33.22.11 - St. Petersburg, RU"
+                        ]
+                    },
+                    "198.51.100.200": {
+                        "info": {
+                            "ip": "198.51.100.200",
+                            "hostname": "kosmos-control.ru",
+                            "city": "Moscow",
+                            "region": "Moscow",
+                            "country": "RU",
+                            "loc": "55.7558,37.6173",
+                            "org": "Roscosmos (Secure)",
+                            "postal": "101000",
+                            "timezone": "Europe/Moscow"
+                        },
+                        "trace": [
+                            "1. 10.0.0.1 - Localhost",
+                            "2. 89.14.22.1 - ISP Gateway",
+                            "3. 45.33.22.11 - St. Petersburg, RU",
+                            "4. 198.51.100.200 - Moscow, RU"
+                        ]
+                    }
+                }
+            },
+            "NetWarfare": {
+                "targets": {
+                    "45.33.22.11": {
+                        "systemName": "Relay-04",
+                        "fileSystem": {
+                            "var": {
+                                "type": "dir",
+                                "content": {
+                                    "log": {
+                                        "type": "dir",
+                                        "content": {
+                                            "syslog": {
+                                                "type": "file",
+                                                "content": "Connection established to kosmos-control.ru [198.51.100.200] via secure tunnel."
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "home": {
+                                "type": "dir",
+                                "content": {
+                                    "admin": {
+                                        "type": "dir",
+                                        "content": {
+                                            "todo.txt": {
+                                                "type": "file",
+                                                "content": "1. Check legacy uplink status.\n2. Update routing tables for C2."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "kosmos-control.ru": {
+                        "systemName": "KOSMOS-C2",
+                        "fileSystem": {
+                            "bin": {
+                                "type": "dir",
+                                "content": {
+                                    "stabilize_orbit.exe": {
+                                        "type": "file",
+                                        "content": "BINARY_DATA_PATCH_V2.4"
+                                    }
+                                }
+                            },
+                            "conf": {
+                                "type": "dir",
+                                "content": {
+                                    "target.dat": {
+                                        "type": "file",
+                                        "content": "TARGET_COORDS: 51.5007, -0.1246"
+                                    },
+                                    "decryption_key.txt": {
+                                        "type": "file",
+                                        "content": "TELEMETRY_DECRYPTION_KEY: KOSMOS-99-X"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Satellite": {
+                "satellites": {
+                    "KOSMOS-2499": {
+                        "id": "KOSMOS-2499",
+                        "name": "KOSMOS-2499",
+                        "type": "DEBRIS",
+                        "realType": "MILITARY",
+                        "telemetryKey": "KOSMOS-99-X",
+                        "orbit": "DECAYING",
+                        "visualAlt": 150,
+                        "inclination": 65,
+                        "collisionTarget": "EARTH",
+                        "status": "CRITICAL",
+                        "owner": "SOVIET UNION (LEGACY)",
+                        "description": "Decommissioned reconnaissance satellite. Reactivated by unknown actor.",
+                        "supportedTargets": [
+                            "EARTH"
+                        ],
+                        "apiQueryType": "EARTH"
+                    }
+                },
+                "telemetry": {
+                    "KOSMOS-2499": [
+                        "WARNING: ORBIT DECAY DETECTED",
+                        "ALTITUDE CRITICAL",
+                        "IMPACT TRAJECTORY CONFIRMED",
+                        "TARGET COORDINATES: 51.5007° N, 0.1246° W",
+                        "IMPACT: T-MINUS 1 HOUR"
+                    ]
+                },
+                "sensorFeed": {
+                    "KOSMOS-2499": {
+                        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/London_at_night_from_space.jpg/800px-London_at_night_from_space.jpg",
+                        "meta": "OPTICAL LOCK ESTABLISHED // IMPACT IMMINENT"
+                    }
+                }
+            },
+            "Geo Tracker": {
+                "coordinates": {
+                    "51.5007,-0.1246": {
+                        "name": "Palace of Westminster",
+                        "description": "Seat of the UK Parliament. Iconic landmark and high-density population center.",
+                        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Palace_of_Westminster_from_the_dome_on_Methodist_Central_Hall.jpg/800px-Palace_of_Westminster_from_the_dome_on_Methodist_Central_Hall.jpg"
+                    }
+                }
+            }
+        },
+        "questions": {
+            "What is the satellite ID?": "KOSMOS-2499",
+            "Where is the impact target?": "London",
+            "What is the name of the patch file?": "stabilize_orbit.exe"
+        },
+        "estimatedTime": "45 min",
+        "target": "KOSMOS-2499",
+        "location": "Low Earth Orbit",
+        "documents": [
+            {
+                "title": "Decay Analysis",
+                "type": "mission",
+                "meta": {
+                    "classification": "TOP SECRET",
+                    "date": "TODAY"
+                },
+                "data": {
+                    "operation": "SKYFALL",
+                    "target": "UNKNOWN",
+                    "briefing": "Orbit decaying. Source traced to Roscosmos Legacy Relay. Data integrity check required.",
+                    "assets": [
+                        "Suspected Relay IP: 45.33.22.11"
+                    ],
+                    "intel_photo": "https://placehold.co/200x200/000/fff?text=DECAY"
+                }
+            },
+            {
+                "title": "Intercepted Signal",
+                "type": "binary",
+                "meta": {
+                    "classification": "SIGINT",
+                    "date": "TODAY"
+                },
+                "data": {
+                    "frequency": "435.5 MHz",
+                    "source": "UNKNOWN",
+                    "content": "ENCRYPTED STREAM DETECTED... ORIGIN: 45.33.22.11"
+                }
+            },
+            {
+                "title": "Weather Report",
+                "type": "newspaper",
+                "meta": {
+                    "paperName": "METEO DAILY",
+                    "date": "TODAY",
+                    "price": "FREE"
+                },
+                "data": {
+                    "headline": "UNUSUAL ATMOSPHERIC ACTIVITY",
+                    "subhead": "Ionospheric disturbances reported over Northern Hemisphere",
+                    "leadImage": "https://placehold.co/600x300/000/fff?text=WEATHER",
+                    "imageCaption": "Atmospheric density map",
+                    "columns": [
+                        "Meteorologists are puzzled by sudden spikes in upper atmospheric density. While solar activity is low, these localized disturbances could affect satellite drag coefficients.",
+                        "Experts advise satellite operators to monitor orbital decay rates closely."
+                    ]
+                }
+            }
+        ]
     }
 ]

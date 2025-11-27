@@ -21,6 +21,8 @@ export interface SatelliteData {
     visualAlt?: number;
     coordinates?: [number, number];
     imageUrl?: string;
+    collisionTarget?: string;
+    telemetryKey?: string;
 }
 
 export interface NEOData {

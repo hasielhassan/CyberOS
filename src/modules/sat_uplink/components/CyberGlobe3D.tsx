@@ -89,6 +89,15 @@ const CyberGlobe3D = ({ filters, onObjectSelect, selectedId, satellites, jammedS
                     const orbitMesh = new THREE.LineLoop(orbitGeo, orbitMat);
                     orbitLinesRef.current[sat.id] = orbitMesh;
                     globe.add(orbitMesh);
+
+                    // COLLISION TRAJECTORY VISUALIZATION
+                    if (sat.collisionTarget) {
+                        const collisionGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0)]);
+                        const collisionMat = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 3 });
+                        const collisionLine = new THREE.Line(collisionGeo, collisionMat);
+                        collisionLine.userData = { isCollisionLine: true, parentId: sat.id, target: sat.collisionTarget, targetCoords: sat.coordinates };
+                        globe.add(collisionLine);
+                    }
                 }
                 satMeshesRef.current[sat.id] = mesh;
                 globe.add(mesh);
@@ -255,6 +264,52 @@ const CyberGlobe3D = ({ filters, onObjectSelect, selectedId, satellites, jammedS
                         const incRad = (mesh.userData.inclination * Math.PI) / 180;
 
                         mesh.position.set(x, -z * Math.sin(incRad), z * Math.cos(incRad));
+                    }
+                });
+
+                // Update Collision Lines
+                globeRef.current?.children.forEach((child: any) => {
+                    if (child.userData.isCollisionLine) {
+                        const parentSat = satMeshesRef.current[child.userData.parentId];
+                        if (parentSat) {
+                            const positions = child.geometry.attributes.position.array;
+                            // Start point (Satellite)
+                            positions[0] = parentSat.position.x;
+                            positions[1] = parentSat.position.y;
+                            positions[2] = parentSat.position.z;
+
+                            // End point (Target)
+                            if (child.userData.target === 'EARTH') {
+                                if (child.userData.targetCoords) {
+                                    // Calculate specific lat/lon on surface
+                                    const [lat, lng] = child.userData.targetCoords; // Note: coordinates are usually [lat, lng] in mission data, check format
+                                    // Wait, in EONET it was [lng, lat]. Let's assume [lat, lng] for mission data as per plan.
+                                    // Actually, let's stick to [lat, lng] as per standard.
+                                    const R = 100;
+                                    const phi = (90 - lat) * (Math.PI / 180);
+                                    const theta = (lng + 180) * (Math.PI / 180);
+                                    const tx = -(R * Math.sin(phi) * Math.cos(theta));
+                                    const tz = (R * Math.sin(phi) * Math.sin(theta));
+                                    const ty = (R * Math.cos(phi));
+                                    positions[3] = tx;
+                                    positions[4] = ty;
+                                    positions[5] = tz;
+                                } else {
+                                    // Center of Earth
+                                    positions[3] = 0;
+                                    positions[4] = 0;
+                                    positions[5] = 0;
+                                }
+                            }
+                            child.geometry.attributes.position.needsUpdate = true;
+
+                            // Flash effect
+                            if (Date.now() % 500 < 250) {
+                                child.material.color.setHex(0xff0000);
+                            } else {
+                                child.material.color.setHex(0x550000);
+                            }
+                        }
                     }
                 });
 

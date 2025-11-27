@@ -19,13 +19,16 @@ export const Modal = ({ title, onClose, children, danger = false, wide = false, 
 );
 
 // --- AUTH MODAL ---
-export const AuthModal = ({ title, onClose, onSuccess, danger = false }: { title: string, onClose: () => void, onSuccess: () => void, danger?: boolean }) => {
+export const AuthModal = ({ title, onClose, onSuccess, danger = false, validationKey }: { title: string, onClose: () => void, onSuccess: () => void, danger?: boolean, validationKey?: string }) => {
     const [code, setCode] = useState('');
     const [error, setError] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (code === 'ADMIN' || code === 'OVERRIDE') {
+        const validKeys = ['ADMIN', 'OVERRIDE'];
+        if (validationKey) validKeys.push(validationKey);
+
+        if (validKeys.includes(code)) {
             onSuccess();
         } else {
             setError(true);
@@ -101,7 +104,7 @@ export const ProgressModal = ({ title, action, duration = 3000, onComplete, dang
 };
 
 // --- RESTART MODAL ---
-export const RestartModal = ({ onClose, onComplete }: { onClose: () => void, onComplete: () => void }) => {
+export const RestartModal = ({ onClose, onComplete, isMissionTarget = false }: { onClose: () => void, onComplete: () => void, isMissionTarget?: boolean }) => {
     const [stage, setStage] = useState(0);
     const [status, setStatus] = useState<'IDLE' | 'RUNNING' | 'COMPLETE'>('IDLE');
     const [progress, setProgress] = useState(0);
@@ -127,7 +130,13 @@ export const RestartModal = ({ onClose, onComplete }: { onClose: () => void, onC
                 clearInterval(interval);
                 setStatus('COMPLETE');
                 if (stage === STAGES.length - 1) {
-                    setTimeout(onComplete, 1000);
+                    if (isMissionTarget) {
+                        // Special success message for mission
+                        setStatus('COMPLETE'); // Keep it complete to show the message
+                        setTimeout(onComplete, 2000);
+                    } else {
+                        setTimeout(onComplete, 1000);
+                    }
                 } else {
                     setTimeout(() => {
                         setStage(s => s + 1);
@@ -170,7 +179,7 @@ export const RestartModal = ({ onClose, onComplete }: { onClose: () => void, onC
 
                     <div className="z-10 text-center space-y-4">
                         <div className="text-sm font-mono text-green-400">
-                            {status === 'IDLE' ? `READY TO ${STAGES[stage].action}` : (status === 'RUNNING' ? 'PROCESSING...' : 'STAGE COMPLETE')}
+                            {status === 'IDLE' ? `READY TO ${STAGES[stage].action}` : (status === 'RUNNING' ? 'PROCESSING...' : (isMissionTarget && stage === 2 ? 'ORBIT STABILIZED // MISSION OBJECTIVE COMPLETE' : 'STAGE COMPLETE'))}
                         </div>
                         {status === 'IDLE' && (
                             <button onClick={runStage} className="px-6 py-2 bg-green-600 hover:bg-green-500 text-black font-bold text-xs rounded transition-colors flex items-center gap-2 mx-auto">
@@ -221,7 +230,7 @@ export const SettingsModal = ({ onClose, apiKey, setApiKey }: { onClose: () => v
 };
 
 // --- SENSOR FEED MODAL ---
-export const SensorFeedModal = ({ onClose, satellite, apiKey }: { onClose: () => void, satellite: SatelliteData, apiKey: string }) => {
+export const SensorFeedModal = ({ onClose, satellite, apiKey, missionImage, missionMeta }: { onClose: () => void, satellite: SatelliteData, apiKey: string, missionImage?: string, missionMeta?: string }) => {
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [target, setTarget] = useState<string>(satellite.supportedTargets[0]);
@@ -234,7 +243,12 @@ export const SensorFeedModal = ({ onClose, satellite, apiKey }: { onClose: () =>
         setMeta('');
 
         try {
-            if (mode === 'EPIC') {
+            if (missionImage) {
+                // Mission Override
+                await new Promise(r => setTimeout(r, 1500)); // Cinematic delay
+                setImageUrl(missionImage);
+                setMeta(missionMeta || "MISSION TARGET IDENTIFIED");
+            } else if (mode === 'EPIC') {
                 const res = await fetch(`${NASA_BASE_URL}/EPIC/api/natural/images?api_key=${apiKey}`);
                 const data = await res.json();
                 if (data && data.length > 0) {
@@ -332,7 +346,7 @@ export const SensorFeedModal = ({ onClose, satellite, apiKey }: { onClose: () =>
 };
 
 // --- TELEMETRY MODAL ---
-export const TelemetryModal = ({ onClose }: { onClose: () => void }) => {
+export const TelemetryModal = ({ onClose, missionTelemetry, satellite }: { onClose: () => void, missionTelemetry?: any[], satellite?: SatelliteData }) => {
     const [lines, setLines] = useState<string[]>([]);
     const [isPaused, setIsPaused] = useState(false);
     const [step, setStep] = useState<'STREAM' | 'AUTH' | 'DECRYPTING' | 'DECRYPTED'>('STREAM');
@@ -342,15 +356,21 @@ export const TelemetryModal = ({ onClose }: { onClose: () => void }) => {
         if (isPaused || step !== 'STREAM') return;
 
         const interval = setInterval(() => {
-            const hex = Array(4).fill(0).map(() => Math.floor(Math.random() * 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0')).join(' ');
-            setLines(prev => [...prev.slice(-30), `[${new Date().toLocaleTimeString()}] RECV: ${hex}`]);
+            if (missionTelemetry && Math.random() > 0.7) {
+                // Inject mission telemetry
+                const log = missionTelemetry[Math.floor(Math.random() * missionTelemetry.length)];
+                setLines(prev => [...prev.slice(-30), `[${new Date().toLocaleTimeString()}] ${log}`]);
+            } else {
+                const hex = Array(4).fill(0).map(() => Math.floor(Math.random() * 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0')).join(' ');
+                setLines(prev => [...prev.slice(-30), `[${new Date().toLocaleTimeString()}] RECV: ${hex}`]);
+            }
             if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }, 150);
         return () => clearInterval(interval);
-    }, [isPaused, step]);
+    }, [isPaused, step, missionTelemetry]);
 
     if (step === 'AUTH') {
-        return <AuthModal title="DECRYPTION AUTHORIZATION" onClose={() => setStep('STREAM')} onSuccess={() => setStep('DECRYPTING')} />;
+        return <AuthModal title="DECRYPTION AUTHORIZATION" onClose={() => setStep('STREAM')} onSuccess={() => setStep('DECRYPTING')} validationKey={satellite?.telemetryKey} />;
     }
 
     if (step === 'DECRYPTING') {
@@ -382,6 +402,17 @@ export const TelemetryModal = ({ onClose }: { onClose: () => void }) => {
                                     <div className="text-[9px] text-gray-500">POWER</div>
                                     <div className="text-green-400 font-mono font-bold">98%</div>
                                 </div>
+                            </div>
+                            {satellite?.collisionTarget && (
+                                <div className="mt-4 pt-4 border-t border-green-900/30">
+                                    <h4 className="text-xs font-bold text-red-500 mb-2 flex items-center gap-2 animate-pulse"><Crosshair size={14} /> COLLISION TARGET</h4>
+                                    <div className="bg-red-900/10 border border-red-900/30 p-2 rounded text-center">
+                                        <div className="text-xl font-mono font-bold text-red-500">{satellite.collisionTarget}</div>
+                                        <div className="text-[9px] text-red-400 mt-1">IMPACT TRAJECTORY CONFIRMED</div>
+                                    </div>
+                                </div>
+                            )}
+                            <div className="grid grid-cols-2 gap-2 mt-2">
                                 <div className="bg-black/40 p-2 rounded text-center border border-green-900/20">
                                     <div className="text-[9px] text-gray-500">SIGNAL</div>
                                     <div className="text-green-400 font-mono font-bold">-82 dBm</div>
@@ -417,7 +448,7 @@ export const TelemetryModal = ({ onClose }: { onClose: () => void }) => {
                         </button>
                     </div>
                 </div>
-            </Modal>
+            </Modal >
         );
     }
 
