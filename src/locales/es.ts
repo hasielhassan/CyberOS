@@ -10,7 +10,7 @@ export const es: Language = {
         'Sat_Uplink': 'Enlace_Sat',
         'Net_Warfare': 'Guerra_Red',
         'Decryption': 'Desencriptación',
-        'Contracts': 'Contratos',
+        'Missions': 'Misiones',
         'Surveillance': 'Vigilancia',
     }
 };

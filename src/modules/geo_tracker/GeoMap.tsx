@@ -4,7 +4,7 @@ import L from 'leaflet';
 import { Plane, Train, CloudRain, Search, Layers, Map as MapIcon, Globe } from 'lucide-react';
 import geoData from './geo_data.json';
 import placesData from './places.json';
-import { useMissions } from '../contracts/MissionsContext';
+import { useMissions } from '../missions/MissionsContext';
 
 // Custom Icons
 const createIcon = (svg: string, color: string, rotation: number = 0) => new L.DivIcon({

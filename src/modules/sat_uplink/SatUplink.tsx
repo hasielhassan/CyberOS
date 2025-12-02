@@ -3,7 +3,7 @@ import {
     Settings, List, Crosshair, Eye, Database, ShieldAlert,
     ChevronLeft, ChevronRight, AlertTriangle, Activity
 } from 'lucide-react';
-import { useMissions } from '../contracts/MissionsContext';
+import { useMissions } from '../missions/MissionsContext';
 import { useMissionState } from '../../hooks/useMissionState';
 import CyberGlobe3D from './components/CyberGlobe3D';
 import { SettingsModal, SensorFeedModal, TelemetryModal, CatalogModal, AuthModal, ProgressModal, RestartModal } from './components/Modals';

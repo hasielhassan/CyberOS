@@ -14,12 +14,12 @@ import { GeoTrackerPlugin } from './modules/geo_tracker';
 import { SatUplinkPlugin } from './modules/sat_uplink';
 import { NetWarfarePlugin } from './modules/net_warfare';
 import { DecryptionPlugin } from './modules/decryption';
-import { ContractsPlugin } from './modules/contracts';
+import { MissionsPlugin } from './modules/missions';
 import { SurveillancePlugin } from './modules/surveillance';
 import { BioLabPlugin } from './modules/bio_lab';
 import { HealthMonitorPlugin } from './modules/health_monitor';
 import { DirectoryPlugin } from './modules/directory';
-import { MissionsProvider } from './modules/contracts/MissionsContext';
+import { MissionsProvider } from './modules/missions/MissionsContext';
 
 import { en } from './locales/en';
 import { es } from './locales/es';
@@ -36,7 +36,7 @@ const App = () => {
         registerPlugin(SatUplinkPlugin);
         registerPlugin(NetWarfarePlugin);
         registerPlugin(DecryptionPlugin);
-        registerPlugin(ContractsPlugin);
+        registerPlugin(MissionsPlugin);
         registerPlugin(SurveillancePlugin);
         registerPlugin(BioLabPlugin);
         registerPlugin(HealthMonitorPlugin);

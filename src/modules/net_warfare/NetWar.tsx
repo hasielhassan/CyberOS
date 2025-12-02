@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Shield, CheckCircle, Search, Skull, Database, Server, AlertTriangle, Key, Save, FileText, Ghost, Shuffle, Disc } from 'lucide-react';
 import fsTemplatesRaw from './fs_templates.json';
-import { useMissions } from '../contracts/MissionsContext';
+import { useMissions } from '../missions/MissionsContext';
 
 // --- Helper function to interpolate placeholders in file system structures ---
 const interpolateTemplate = (structure: any, ip: string, domain: string): any => {

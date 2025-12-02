@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { getIpInfo, simulateTraceroute, formatIpInfo } from '../../utils/ipUtils';
-import { useMissions } from '../contracts/MissionsContext';
+import { useMissions } from '../missions/MissionsContext';
 
 const initialFileSystem = {
     '/': { type: 'dir', children: ['home', 'bin', 'var', 'missions'] },

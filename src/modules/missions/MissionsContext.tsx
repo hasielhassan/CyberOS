@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Mission, MissionProgress } from './types';
-import missionsData from './missions.json';
+
 
 interface MissionsContextType {
     missions: Mission[];
@@ -19,7 +19,10 @@ const MissionsContext = createContext<MissionsContextType | undefined>(undefined
 const STORAGE_KEY = 'cyberos_mission_progress';
 
 export const MissionsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [missions] = useState<Mission[]>(missionsData as Mission[]);
+    const [missions] = useState<Mission[]>(() => {
+        const modules = import.meta.glob('./data/*.json', { eager: true });
+        return Object.values(modules).map((mod: any) => mod.default || mod);
+    });
 
     // Initialize state from localStorage to avoid race conditions
     const [activeMissionId, setActiveMissionId] = useState<string | null>(() => {

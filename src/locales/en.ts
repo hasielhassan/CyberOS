@@ -10,7 +10,7 @@ export const en: Language = {
         'Sat_Uplink': 'Sat_Uplink',
         'Net_Warfare': 'Net_Warfare',
         'Decryption': 'Decryption',
-        'Contracts': 'Contracts',
+        'Missions': 'Missions',
         'Surveillance': 'Surveillance',
         'directory.title': 'Directory',
     }

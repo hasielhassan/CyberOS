@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Camera, Settings, MapPin, Loader, Info, Filter, X } from 'lucide-react';
 import camsData from './cams_data.json';
-import { useMissions } from '../contracts/MissionsContext';
+import { useMissions } from '../missions/MissionsContext';
 
 // Types
 interface CamFeed {

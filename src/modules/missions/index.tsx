@@ -6,9 +6,9 @@ const WrappedMissionHub = () => (
     <MissionHub />
 );
 
-export const ContractsPlugin: Plugin = {
-    id: 'contracts',
-    name: 'Contracts',
+export const MissionsPlugin: Plugin = {
+    id: 'missions',
+    name: 'Missions',
     icon: Briefcase,
     component: WrappedMissionHub,
 };

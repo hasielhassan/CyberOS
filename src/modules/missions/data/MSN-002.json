@@ -1,0 +1,69 @@
+{
+    "id": "MSN-002",
+    "title": "Training: Geo Location",
+    "difficulty": "EASY",
+    "reward": "250 BTC",
+    "briefing": "Combine Terminal intel with Geo Tracking.",
+    "fullDescription": "Good work on the trace. Now we need to correlate digital signals with physical locations. We've intercepted a signal from IP 212.58.244.23. Trace it to find the coordinates, then use the Geo Tracker to identify the specific facility at that location.",
+    "warnings": [
+        "Training Simulation",
+        "Modules: Terminal, Geo Tracker"
+    ],
+    "requiredModules": [
+        "Terminal",
+        "Geo Tracker"
+    ],
+    "moduleData": {
+        "Terminal": {
+            "ipdata": {
+                "212.58.244.23": {
+                    "info": {
+                        "ip": "212.58.244.23",
+                        "hostname": "london-gw.finance.net",
+                        "city": "London",
+                        "region": "England",
+                        "country": "GB",
+                        "loc": "51.5045,-0.0183",
+                        "org": "Global Finance Corp",
+                        "postal": "E14",
+                        "timezone": "Europe/London"
+                    },
+                    "trace": [
+                        "1. 10.0.0.1 - Localhost",
+                        "2. 212.58.244.23 - London, GB"
+                    ]
+                }
+            }
+        },
+        "Geo Tracker": {
+            "coordinates": {
+                "51.5045,-0.0183": {
+                    "name": "Canary Wharf Financial Hub",
+                    "description": "A dense cluster of banking skyscrapers in London where global capital flows intersect with high-frequency trading algorithms.",
+                    "insights": "Interpol Notice: Tracing a specific crypto-wallet led us here. Someone in the Sterling Tower is washing funds for the Lazarus Group.",
+                    "image": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Canary_Wharf_at_night%2C_from_Shadwell_cropped.jpg"
+                }
+            }
+        }
+    },
+    "questions": {
+        "Which city is the target in?": "London",
+        "What is the name of the facility?": "Canary Wharf Financial Hub"
+    },
+    "checklist": [
+        {
+            "id": "trace_signal",
+            "description": "Trace Signal Source",
+            "completed": false
+        },
+        {
+            "id": "identify_facility",
+            "description": "Identify Target Facility",
+            "completed": false
+        }
+    ],
+    "estimatedTime": "10 min",
+    "target": "Financial Node",
+    "location": "London, UK",
+    "documents": []
+}

@@ -1,0 +1,53 @@
+{
+    "id": "MSN-001",
+    "title": "Training: Signal Trace",
+    "difficulty": "EASY",
+    "reward": "100 BTC",
+    "briefing": "Basic Terminal training. Trace a suspicious IP address.",
+    "fullDescription": "Welcome to CyberOS. Your first task is to learn the basics of the Terminal module. We have detected unauthorized access attempts from IP address 198.51.100.55. Use the 'ipinfo' command to identify the city of origin.",
+    "warnings": [
+        "Training Simulation",
+        "Module: Terminal"
+    ],
+    "requiredModules": [
+        "Terminal"
+    ],
+    "moduleData": {
+        "Terminal": {
+            "ipdata": {
+                "198.51.100.55": {
+                    "info": {
+                        "ip": "198.51.100.55",
+                        "hostname": "unknown-host.cyberdyne.net",
+                        "city": "Seattle",
+                        "region": "Washington",
+                        "country": "US",
+                        "loc": "47.6062,-122.3321",
+                        "org": "Cyberdyne Systems",
+                        "postal": "98101",
+                        "timezone": "America/Los_Angeles"
+                    },
+                    "trace": [
+                        "1. 10.0.0.1 - Localhost",
+                        "2. 192.168.1.1 - Gateway",
+                        "3. 198.51.100.55 - Seattle, US (Cyberdyne)"
+                    ]
+                }
+            }
+        }
+    },
+    "questions": {
+        "Which city is the IP located in?": "Seattle"
+    },
+    "checklist": [
+        {
+            "id": "trace_ip",
+            "description": "Trace IP 198.51.100.55",
+            "completed": false
+        }
+    ],
+    "estimatedTime": "5 min",
+    "target": "Unknown Source",
+    "location": "Unknown",
+    "documents": []
+}

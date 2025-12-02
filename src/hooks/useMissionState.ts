@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Mission } from '../modules/contracts/types';
+import { Mission } from '../modules/missions/types';
 
 const STORAGE_KEY = 'cyberos_mission_state';
 
