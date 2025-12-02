@@ -70,7 +70,7 @@ A simulation of biological threat monitoring.
 
 ## 🧩 Mission Architecture
 
-CyberOS features a robust, **Event-Driven Mission System**. Missions are defined in JSON and interact with the console's modules via a global event bus.
+CyberOS features a robust, **Event-Driven Mission System**. Missions are defined in TypeScript (for full i18n support) and interact with the console's modules via a global event bus.
 
 > 📘 **Want to build your own missions?**
 > Check out the complete [Mission Architect Handbook](./MISSION_ARCHITECT_HANDBOOK.md) for documentation on:

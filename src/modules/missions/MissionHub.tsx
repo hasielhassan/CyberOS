@@ -18,9 +18,18 @@ const MissionHub = () => {
     } = useMissions();
     const { t } = useLanguage();
 
-    const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
-    const [missionToAccept, setMissionToAccept] = useState<Mission | null>(null);
+    const [selectedMissionId, setSelectedMissionId] = useState<string | null>(null);
+    const [missionToAcceptId, setMissionToAcceptId] = useState<string | null>(null);
     const [showVerificationDialog, setShowVerificationDialog] = useState(false);
+
+    // Derive selected mission from current missions array to ensure language updates
+    const selectedMission = selectedMissionId
+        ? missions.find(m => m.id === selectedMissionId) || null
+        : null;
+
+    const missionToAccept = missionToAcceptId
+        ? missions.find(m => m.id === missionToAcceptId) || null
+        : null;
 
     const getMissionStatus = (mission: Mission): 'AVAILABLE' | 'ACTIVE' | 'COMPLETED' => {
         if (isMissionCompleted(mission.id)) return 'COMPLETED';
@@ -29,10 +38,10 @@ const MissionHub = () => {
     };
 
     const handleAcceptMission = () => {
-        if (missionToAccept) {
-            acceptMission(missionToAccept.id);
-            setSelectedMission(missionToAccept);
-            setMissionToAccept(null);
+        if (missionToAcceptId) {
+            acceptMission(missionToAcceptId);
+            setSelectedMissionId(missionToAcceptId);
+            setMissionToAcceptId(null);
         }
     };
 
@@ -44,7 +53,7 @@ const MissionHub = () => {
 
     const handleAbandonMission = () => {
         abandonMission();
-        setSelectedMission(null);
+        setSelectedMissionId(null);
     };
 
     const difficultyColors = {
@@ -72,9 +81,9 @@ const MissionHub = () => {
                     return (
                         <div
                             key={mission.id}
-                            onClick={() => setSelectedMission(mission)}
+                            onClick={() => setSelectedMissionId(mission.id)}
                             className={`p-3 border cursor-pointer transition-all hover:bg-green-900/20 relative overflow-hidden group
-                                ${selectedMission?.id === mission.id ? 'border-green-400 bg-green-900/30' : 'border-green-900/50'}
+                                ${selectedMissionId === mission.id ? 'border-green-400 bg-green-900/30' : 'border-green-900/50'}
                             `}
                         >
                             <div className="flex justify-between items-start mb-2">
@@ -97,7 +106,7 @@ const MissionHub = () => {
                                 </span>
                                 <span>{mission.reward}</span>
                             </div>
-                            {selectedMission?.id === mission.id && (
+                            {selectedMissionId === mission.id && (
                                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-green-500"></div>
                             )}
                         </div>
@@ -119,7 +128,7 @@ const MissionHub = () => {
                         {getMissionStatus(selectedMission) === 'AVAILABLE' && (
                             <div className="p-6 border-t-2 border-green-900">
                                 <button
-                                    onClick={() => setMissionToAccept(selectedMission)}
+                                    onClick={() => setMissionToAcceptId(selectedMission.id)}
                                     className="w-full py-3 bg-green-600 text-black hover:bg-green-500 transition-colors text-sm font-bold uppercase animate-pulse"
                                     disabled={activeMissionId !== null}
                                 >
@@ -141,7 +150,7 @@ const MissionHub = () => {
                 <AcceptMissionDialog
                     mission={missionToAccept}
                     onAccept={handleAcceptMission}
-                    onCancel={() => setMissionToAccept(null)}
+                    onCancel={() => setMissionToAcceptId(null)}
                 />
             )}
 

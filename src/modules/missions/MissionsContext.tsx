@@ -18,10 +18,17 @@ const MissionsContext = createContext<MissionsContextType | undefined>(undefined
 
 const STORAGE_KEY = 'cyberos_mission_progress';
 
+import { useLanguage } from '../../core/registry';
+
+// ... imports
+
 export const MissionsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const { language } = useLanguage();
+
     // Load missions dynamically
-    const modules = import.meta.glob('./data/*.json', { eager: true });
-    const missions = Object.values(modules).map((mod: any) => mod.default || mod) as Mission[];
+    const tsModules = import.meta.glob('./data/*/index.ts', { eager: true });
+
+    const missions = Object.values(tsModules).map((mod: any) => mod.getMission(language.code)) as Mission[];
 
     // Initialize state from localStorage to avoid race conditions
     const [activeMissionId, setActiveMissionId] = useState<string | null>(() => {

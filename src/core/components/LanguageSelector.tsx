@@ -11,19 +11,21 @@ export const LanguageSelector = () => {
                 <span className="text-xs font-code uppercase">{language.code}</span>
             </button>
 
-            <div className="absolute right-0 top-full mt-2 w-32 bg-black border border-green-900 hidden group-hover:block z-50">
-                {availableLanguages.map(lang => (
-                    <button
-                        key={lang.code}
-                        onClick={() => setLanguage(lang.code)}
-                        className={`w-full text-left px-3 py-2 text-xs font-code hover:bg-green-900/30 transition-colors flex items-center justify-between
-                            ${language.code === lang.code ? 'text-green-400 bg-green-900/10' : 'text-green-700'}
-                        `}
-                    >
-                        <span>{lang.name}</span>
-                        {language.code === lang.code && <span className="text-[10px] text-green-500">&lt;&lt;</span>}
-                    </button>
-                ))}
+            <div className="absolute right-0 top-full pt-2 hidden group-hover:block z-50">
+                <div className="w-32 bg-black border border-green-900 shadow-lg shadow-green-900/20">
+                    {availableLanguages.map(lang => (
+                        <button
+                            key={lang.code}
+                            onClick={() => setLanguage(lang.code)}
+                            className={`w-full text-left px-3 py-2 text-xs font-code hover:bg-green-900/30 transition-colors flex items-center justify-between
+                                ${language.code === lang.code ? 'text-green-400 bg-green-900/10' : 'text-green-700'}
+                            `}
+                        >
+                            <span>{lang.name}</span>
+                            {language.code === lang.code && <span className="text-[10px] text-green-500">&lt;&lt;</span>}
+                        </button>
+                    ))}
+                </div>
             </div>
         </div>
     );

@@ -108,3 +108,43 @@ export const MyComponent = () => {
 
 *   **Missing Key**: If a key is missing, the `t` function will return the key itself (e.g., `my_module.missing_key`).
 *   **Duplicate Keys**: The linter will warn you if you define the same key twice in a locale file.
+
+## Mission Data Internationalization
+
+Missions require a specific structure to support localization. Instead of a single JSON file, each mission lives in its own folder.
+
+### Structure
+```
+src/modules/missions/data/
+  └── MSN-001/
+      ├── index.ts          # Main entry point, exports getMission(lang)
+      └── locales/
+          ├── en.ts         # English data object
+          └── es.ts         # Spanish data object
+```
+
+### Implementation
+
+1.  **Locale Files (`locales/en.ts`)**: Export a plain object containing all text for the mission.
+    ```typescript
+    export const en = {
+        title: "Mission Title",
+        briefing: "Mission briefing...",
+        // ...
+    };
+    ```
+
+2.  **Index File (`index.ts`)**: Export a `getMission` function that selects the correct locale and returns the full mission object.
+    ```typescript
+    import { en } from './locales/en';
+    import { es } from './locales/es';
+
+    export const getMission = (lang: string) => {
+        const t = lang === 'es' ? es : en;
+        return {
+            id: "MSN-XXX",
+            title: t.title,
+            // ... map other fields
+        };
+    };
+    ```

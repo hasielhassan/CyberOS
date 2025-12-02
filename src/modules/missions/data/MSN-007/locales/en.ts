@@ -1,0 +1,34 @@
+export const en = {
+    title: "Orbital Watchdog",
+    briefing: "Neutralize a rogue satellite jamming communications over Tokyo.",
+    fullDescription: "An unknown satellite is jamming critical communications over Tokyo. Use the Satellite module to locate the rogue device, decrypt its control systems, and send a shutdown command via the Terminal. The satellite is disguised among legitimate ones, requiring careful visual identification.",
+    warnings: [
+        "High-stakes operation",
+        "Satellite identification required",
+        "Encryption: SHA-256",
+        "Failure could disrupt global communications"
+    ],
+    target: "Rogue Satellite UNKNOWN-7",
+    location: "Low Earth Orbit (Tokyo Region)",
+    estimatedTime: "30-40 min",
+    documents: {
+        assessment: {
+            title: "Satellite Threat Assessment",
+            meta: {
+                classification: "URGENT",
+                copy: "1 of 1",
+                date: "23 NOV 2025"
+            },
+            data: {
+                operation: "WATCHDOG",
+                target: "Rogue Satellite",
+                briefing: "The satellite is transmitting on unauthorized frequencies, disrupting emergency services and military communications. It must be neutralized immediately. Locate coordinates: 35.6° N, 139.7° E and identify the satellite marked UNKNOWN in the orbital tracking system.",
+                assets: [
+                    "Decryption Tools",
+                    "Satellite Override Codes",
+                    "Emergency Shutdown Protocol"
+                ]
+            }
+        }
+    }
+};

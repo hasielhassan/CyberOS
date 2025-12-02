@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileText, CheckCircle, XCircle, CheckSquare, Square } from 'lucide-react';
+import { FileText, CheckCircle, XCircle, Square } from 'lucide-react';
 import { Mission } from '../types';
 import { useLanguage } from '../../../core/registry';
 
@@ -30,6 +30,8 @@ export const MissionDetail = ({ mission, isActive, isCompleted, onComplete, onAb
 
     // Check if all required objectives are completed
     const allObjectivesCompleted = objectives.length > 0 && objectives.every(obj => obj.status === 'COMPLETED');
+
+    const displayObjectives = isActive ? objectives : (mission.objectives || []);
 
     return (
         <div className="h-full flex flex-col p-6 overflow-y-auto custom-scrollbar">
@@ -64,16 +66,16 @@ export const MissionDetail = ({ mission, isActive, isCompleted, onComplete, onAb
             </div>
 
             {/* Mission Checklist (Objectives) */}
-            {objectives.length > 0 && (
+            {displayObjectives.length > 0 && (
                 <div className="mb-6">
                     <h2 className="text-sm font-bold text-green-500 mb-3 uppercase">{t('mission.objectives')}</h2>
                     <div className="space-y-2 bg-green-900/10 p-3 border border-green-900/30">
-                        {objectives.map((obj) => {
-                            const completed = obj.status === 'COMPLETED';
-                            const locked = obj.status === 'LOCKED';
+                        {displayObjectives.map((obj) => {
+                            const completed = isActive ? obj.status === 'COMPLETED' : false;
+                            const locked = isActive ? obj.status === 'LOCKED' : false;
                             return (
                                 <div key={obj.id} className={`flex items-center gap-3 p-2 border ${completed ? 'border-green-500/50 bg-green-500/10' : locked ? 'border-green-900/10 opacity-50' : 'border-green-900/30'} transition-colors`}>
-                                    {completed ? <CheckSquare size={16} className="text-green-400" /> : <Square size={16} className="text-green-800" />}
+                                    {completed ? <CheckCircle size={16} className="text-green-400" /> : <Square size={16} className="text-green-800" />}
                                     <span className={`text-sm ${completed ? 'text-green-300 line-through opacity-70' : 'text-green-400'}`}>{obj.description}</span>
                                     {locked && <span className="text-[10px] text-green-800 ml-auto uppercase">{t('mission.locked')}</span>}
                                 </div>

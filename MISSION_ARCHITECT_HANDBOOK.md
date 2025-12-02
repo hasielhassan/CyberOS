@@ -6,29 +6,53 @@ Welcome to the **CyberOS Mission Architect Handbook**. This guide details how to
 
 ## 1. Mission File Structure
 
-Missions are defined as JSON files in `src/modules/missions/data/`.
+Missions are defined as TypeScript modules in `src/modules/missions/data/`. Each mission has its own folder containing the logic and localization files.
+
+### Directory Layout
+```
+src/modules/missions/data/
+  └── MSN-001/
+      ├── index.ts          # Main definition, exports getMission(lang)
+      └── locales/
+          ├── en.ts         # English text
+          └── es.ts         # Spanish text
+```
+
+### Mission Definition (`index.ts`)
+The `index.ts` file exports a `getMission` function that accepts the current language code and returns the mission object.
+
+```typescript
+import { en } from './locales/en';
+import { es } from './locales/es';
+
+export const getMission = (lang: string) => {
+    const t = lang === 'es' ? es : en;
+
+    return {
+        id: "MSN-001",
+        title: t.title,
+        // ...
+    };
+};
+```
 
 ### Core Properties
 | Property | Type | Description |
 | :--- | :--- | :--- |
 | `id` | `string` | Unique identifier (e.g., `"MSN-001"`). |
-| `title` | `string` | Display title of the mission. |
+| `title` | `string` | Display title of the mission (translated). |
 | `difficulty` | `enum` | `EASY`, `MEDIUM`, `HARD`, `EXPERT`. |
 | `reward` | `string` | Reward text (e.g., `"500 BTC"`). |
-| `briefing` | `string` | Short summary shown in the list. |
-| `fullDescription` | `string` | Detailed mission briefing. |
+| `briefing` | `string` | Short summary shown in the list (translated). |
+| `fullDescription` | `string` | Detailed mission briefing (translated). |
 | `requiredModules` | `string[]` | List of modules to unlock/highlight. |
 | `moduleData` | `object` | Data injection for specific modules (see Section 4). |
 | `objectives` | `array` | The core logic of the mission (see Section 2). |
 
 ### Localization Note
-To support multiple languages, mission data should ideally be defined in TypeScript files (e.g., `missions.ts`) rather than static JSON, allowing the injection of the `t()` translation function.
-*   **Current State**: Missions are JSON files (English only).
-*   **Future State**: Missions will be migrated to TS generators to support `t('mission.id.title')`.
-
-If you are creating a new mission today, be aware that hardcoded strings in JSON will not be translated.
-
----
+All user-facing text (titles, descriptions, messages) must be defined in the `locales/*.ts` files and accessed via the `t` object in `index.ts`.
+*   **Do not hardcode strings** in `index.ts`.
+*   Ensure both `en.ts` and `es.ts` have matching keys.
 
 ## 2. Objectives & Event Triggers
 
