@@ -6,6 +6,7 @@ import {
 import { useMissions } from '../missions/MissionsContext';
 import { missionEventBus } from '../missions/MissionEventBus';
 import { useMissionState } from '../../hooks/useMissionState';
+import { useLanguage } from '../../core/registry';
 import CyberGlobe3D from './components/CyberGlobe3D';
 import { SettingsModal, SensorFeedModal, TelemetryModal, CatalogModal, AuthModal, ProgressModal, RestartModal } from './components/Modals';
 import { SatelliteData, NEOData, SpaceWeather, ObjectType } from './types';
@@ -13,6 +14,7 @@ import { CATEGORY_COLORS, DEFAULT_API_KEY, NASA_BASE_URL, EONET_URL } from './co
 import fallbackData from './data/fallbackData.json';
 
 export default function SatUplink() {
+    const { t } = useLanguage();
     const { activeMission } = useMissions();
     const { completeTask, isTaskCompleted } = useMissionState();
     const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -275,7 +277,7 @@ export default function SatUplink() {
             {modalType === 'JAMMER' && (
                 jammingStep === 'AUTH' ? (
                     <AuthModal
-                        title="WEAPON SYSTEM AUTHORIZATION"
+                        title={t('sat.weapon_auth')}
                         onClose={() => setModalType(null)}
                         onSuccess={() => setJammingStep('PROGRESS')}
                         validationKey={selectedSat?.jammerKey}
@@ -283,8 +285,8 @@ export default function SatUplink() {
                     />
                 ) : (
                     <ProgressModal
-                        title="SIGNAL JAMMING SEQUENCE"
-                        action="OVERWHELMING TARGET TRANSPONDER"
+                        title={t('sat.jamming_sequence')}
+                        action={t('sat.overwhelming')}
                         duration={4000}
                         onComplete={handleJammingComplete}
                         danger
@@ -295,7 +297,7 @@ export default function SatUplink() {
             {modalType === 'RESTART' && (
                 restartStep === 'AUTH' ? (
                     <AuthModal
-                        title="SYSTEM REBOOT AUTHORIZATION"
+                        title={t('sat.reboot_auth')}
                         onClose={() => setModalType(null)}
                         onSuccess={() => setRestartStep('PROCESS')}
                         validationKey={selectedSat?.rebootKey}
@@ -315,11 +317,11 @@ export default function SatUplink() {
                 <header className="h-16 border-b border-green-900/30 flex items-center justify-between px-6 bg-[#030605] flex-shrink-0">
                     <div className="flex items-center gap-4">
                         <div className="h-2 w-2 bg-green-500 rounded-full animate-ping" />
-                        <h2 className="text-sm font-medium tracking-widest text-green-400">LIVE TRACKING // {Object.keys(satellites).length} ASSETS ACTIVE</h2>
+                        <h2 className="text-sm font-medium tracking-widest text-green-400">{t('sat.live_tracking', { count: Object.keys(satellites).length })}</h2>
                     </div>
                     <div className="flex gap-2">
                         <button onClick={() => setModalType('SETTINGS')} className="p-2 hover:bg-green-900/30 rounded text-green-400"><Settings size={16} /></button>
-                        <button onClick={() => setModalType('CATALOG')} className="flex items-center gap-2 px-3 py-1.5 bg-green-900/20 border border-green-900/50 rounded text-xs font-bold text-green-400"><List size={14} /> CATALOG</button>
+                        <button onClick={() => setModalType('CATALOG')} className="flex items-center gap-2 px-3 py-1.5 bg-green-900/20 border border-green-900/50 rounded text-xs font-bold text-green-400"><List size={14} /> {t('sat.catalog')}</button>
                     </div>
                 </header>
 
@@ -330,7 +332,7 @@ export default function SatUplink() {
                     <div className="flex-1 relative p-4 flex flex-col min-w-0">
                         <div className="flex-1 border border-green-900/30 rounded-lg relative overflow-hidden bg-[#030504]">
                             <div className="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-sm p-3 rounded border border-green-900/30">
-                                <h3 className="text-[10px] font-bold text-green-600 mb-2">LAYER_VISIBILITY</h3>
+                                <h3 className="text-[10px] font-bold text-green-600 mb-2">{t('sat.layer_visibility')}</h3>
                                 <div className="space-y-1 text-[10px] font-mono select-none">
                                     {['CIVIL', 'MILITARY', 'TELESCOPE', 'STATION', 'DEBRIS', 'WILDFIRE', 'STORM'].map(t => (
                                         <div key={t} onClick={() => setFilters(p => p.includes(t as any) ? p.filter(f => f !== t) : [...p, t as any])} className={`flex items-center gap-2 cursor-pointer ${filters.includes(t as any) ? 'opacity-100' : 'opacity-40'}`}>
@@ -345,7 +347,7 @@ export default function SatUplink() {
                             </div>
 
                             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-[10px] text-green-700 bg-black/40 px-2 rounded pointer-events-none">
-                                MIDDLE MOUSE DRAG: ROTATE // CLICK: SELECT // SCROLL: ZOOM
+                                {t('sat.middle_mouse')}
                             </div>
                         </div>
                     </div>
@@ -354,20 +356,20 @@ export default function SatUplink() {
                     <div className="w-80 flex-shrink-0 border-l border-green-900/30 bg-[#030605] flex flex-col p-4 gap-4 overflow-y-auto z-10">
                         <div className="border border-green-900/30 rounded p-4 bg-[#040806] min-h-[220px]">
                             <h3 className="text-xs font-bold text-green-600 mb-4 border-b border-green-900/30 pb-2 flex justify-between">
-                                TARGET_ANALYSIS {(selectedId || selectedNeo) && <span className="animate-pulse text-green-400">● LOCKED</span>}
+                                {t('sat.target_analysis')} {(selectedId || selectedNeo) && <span className="animate-pulse text-green-400">● {t('sat.locked')}</span>}
                             </h3>
 
                             {selectedSat ? (
                                 <>
                                     <div className="text-sm font-bold text-green-100 mb-1 flex justify-between">
                                         {selectedSat.name}
-                                        {jammedSats.includes(selectedSat.id) && <span className="text-red-500 text-[10px] border border-red-500 px-1 rounded bg-red-900/20">OFFLINE</span>}
+                                        {jammedSats.includes(selectedSat.id) && <span className="text-red-500 text-[10px] border border-red-500 px-1 rounded bg-red-900/20">{t('sat.offline')}</span>}
                                     </div>
                                     <div className="text-[10px] text-green-600 mb-4 italic">{selectedSat.description}</div>
                                     <div className={`space-y-2 text-[11px] font-mono ${jammedSats.includes(selectedSat.id) ? 'text-gray-500 opacity-50' : 'text-green-500'} bg-green-900/5 p-2 rounded`}>
-                                        <div className="flex justify-between"><span className="opacity-60">OWNER:</span> <span className="text-green-300">{selectedSat.owner}</span></div>
-                                        <div className="flex justify-between"><span className="opacity-60">TYPE:</span> <span>{selectedSat.type}</span></div>
-                                        <div className="flex justify-between"><span className="opacity-60">ALT:</span> <span>{selectedSat.alt}</span></div>
+                                        <div className="flex justify-between"><span className="opacity-60">{t('sat.owner')}:</span> <span className="text-green-300">{selectedSat.owner}</span></div>
+                                        <div className="flex justify-between"><span className="opacity-60">{t('sat.type')}:</span> <span>{selectedSat.type}</span></div>
+                                        <div className="flex justify-between"><span className="opacity-60">{t('sat.alt')}:</span> <span>{selectedSat.alt}</span></div>
                                     </div>
                                 </>
                             ) : selectedNeo ? (
@@ -375,36 +377,36 @@ export default function SatUplink() {
                                     <div className="text-sm font-bold text-red-100 mb-1">{selectedNeo.name}</div>
                                     <div className="text-[10px] text-red-400 mb-4 italic">Potentially Hazardous Asteroid.</div>
                                     <div className="space-y-2 text-[11px] font-mono text-red-500 bg-red-900/10 p-2 rounded">
-                                        <div className="flex justify-between"><span className="opacity-60">MISS DIST:</span> <span>{selectedNeo.missDistance} km</span></div>
-                                        <div className="flex justify-between"><span className="opacity-60">VELOCITY:</span> <span>{selectedNeo.velocity} km/h</span></div>
-                                        <div className="flex justify-between"><span className="opacity-60">MAG:</span> <span>{selectedNeo.magnitude}</span></div>
+                                        <div className="flex justify-between"><span className="opacity-60">{t('sat.miss_dist')}:</span> <span>{selectedNeo.missDistance} km</span></div>
+                                        <div className="flex justify-between"><span className="opacity-60">{t('sat.velocity')}:</span> <span>{selectedNeo.velocity} km/h</span></div>
+                                        <div className="flex justify-between"><span className="opacity-60">{t('sat.mag')}:</span> <span>{selectedNeo.magnitude}</span></div>
                                     </div>
                                 </>
                             ) : (
                                 <div className="h-full flex flex-col items-center justify-center text-green-800 opacity-50 py-10">
                                     <Crosshair className="w-10 h-10 mb-2" />
-                                    <span className="text-xs">SELECT ASSET OR ASTEROID</span>
+                                    <span className="text-xs">{t('sat.select_asset')}</span>
                                 </div>
                             )}
                         </div>
 
                         <div className={`border border-green-900/30 rounded p-4 bg-[#040806] ${(!selectedSat && !selectedNeo) ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
-                            <h3 className="text-xs font-bold text-green-600 mb-3 border-b border-green-900/30 pb-2">AVAILABLE_ACTIONS</h3>
+                            <h3 className="text-xs font-bold text-green-600 mb-3 border-b border-green-900/30 pb-2">{t('sat.available_actions')}</h3>
                             <div className="grid grid-cols-1 gap-2">
                                 <button onClick={() => setModalType('SENSOR')} className="w-full py-2 px-3 text-xs font-bold border border-green-900/50 bg-green-900/10 text-green-400 hover:bg-green-900/30 flex items-center justify-between">
-                                    <span className="flex items-center gap-2"><Eye className="w-3 h-3" /> {selectedNeo ? 'VISUAL TRACKING' : 'ACTIVATE SENSOR'}</span><span className="text-[9px] border border-green-800 px-1">EXE</span>
+                                    <span className="flex items-center gap-2"><Eye className="w-3 h-3" /> {selectedNeo ? t('sat.visual_tracking') : t('sat.activate_sensor')}</span><span className="text-[9px] border border-green-800 px-1">EXE</span>
                                 </button>
                                 <button onClick={() => setModalType('TELEMETRY')} className="w-full py-2 px-3 text-xs font-bold border border-green-900/50 bg-green-900/10 text-green-400 hover:bg-green-900/30 flex items-center justify-between">
-                                    <span className="flex items-center gap-2"><Database className="w-3 h-3" /> DOWNLOAD TELEMETRY</span><span className="text-[9px] border border-green-800 px-1">EXE</span>
+                                    <span className="flex items-center gap-2"><Database className="w-3 h-3" /> {t('sat.download_telemetry')}</span><span className="text-[9px] border border-green-800 px-1">EXE</span>
                                 </button>
                                 {(selectedSat?.type === 'MILITARY' || selectedSat?.realType === 'MILITARY') && !jammedSats.includes(selectedSat.id) && (
                                     <button onClick={() => setModalType('JAMMER')} className="w-full py-2 px-3 text-xs font-bold border border-red-900/50 bg-red-900/10 text-red-400 hover:bg-red-900/30 flex items-center justify-between">
-                                        <span className="flex items-center gap-2"><ShieldAlert className="w-3 h-3" /> SIGNAL JAMMER</span><span className="text-[9px] border border-red-800 px-1">EXE</span>
+                                        <span className="flex items-center gap-2"><ShieldAlert className="w-3 h-3" /> {t('sat.signal_jammer')}</span><span className="text-[9px] border border-red-800 px-1">EXE</span>
                                     </button>
                                 )}
                                 {selectedSat && jammedSats.includes(selectedSat.id) && (
                                     <button onClick={() => setModalType('RESTART')} className="w-full py-2 px-3 text-xs font-bold border border-green-900/50 bg-green-900/20 text-green-400 hover:bg-green-900/40 flex items-center justify-between animate-pulse">
-                                        <span className="flex items-center gap-2"><Activity className="w-3 h-3" /> SYSTEM REBOOT</span><span className="text-[9px] border border-green-800 px-1">EXE</span>
+                                        <span className="flex items-center gap-2"><Activity className="w-3 h-3" /> {t('sat.system_reboot')}</span><span className="text-[9px] border border-green-800 px-1">EXE</span>
                                     </button>
                                 )}
                             </div>
@@ -416,14 +418,14 @@ export default function SatUplink() {
                 <div className="h-40 border-t border-green-900/30 bg-[#030504] p-4 relative flex flex-col flex-shrink-0 z-20">
                     <div className="flex justify-between items-center mb-2">
                         <div className="flex gap-4 items-center">
-                            <h3 className="text-xs font-bold text-green-600">EVENT_HORIZON //</h3>
+                            <h3 className="text-xs font-bold text-green-600">{t('sat.event_horizon')}</h3>
                             <div className="flex gap-2">
-                                <button onClick={() => setActiveTab('NEO')} className={`text-[10px] px-2 py-0.5 rounded ${activeTab === 'NEO' ? 'bg-green-600 text-black' : 'border border-green-900/50 text-green-600'}`}>NEO WATCH</button>
-                                <button onClick={() => setActiveTab('WEATHER')} className={`text-[10px] px-2 py-0.5 rounded ${activeTab === 'WEATHER' ? 'bg-green-600 text-black' : 'border border-green-900/50 text-green-600'}`}>SPACE WEATHER</button>
+                                <button onClick={() => setActiveTab('NEO')} className={`text-[10px] px-2 py-0.5 rounded ${activeTab === 'NEO' ? 'bg-green-600 text-black' : 'border border-green-900/50 text-green-600'}`}>{t('sat.neo_watch')}</button>
+                                <button onClick={() => setActiveTab('WEATHER')} className={`text-[10px] px-2 py-0.5 rounded ${activeTab === 'WEATHER' ? 'bg-green-600 text-black' : 'border border-green-900/50 text-green-600'}`}>{t('sat.space_weather')}</button>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <span className="text-[9px] text-green-800 font-mono">DATA SOURCE: NASA API</span>
+                            <span className="text-[9px] text-green-800 font-mono">{t('sat.data_source')}</span>
                             {activeTab === 'NEO' && (
                                 <div className="flex gap-1">
                                     <button onClick={() => setNeoPage(p => Math.max(0, p - 1))} disabled={neoPage === 0} className="p-1 hover:bg-green-900/30 disabled:opacity-30 rounded"><ChevronLeft size={14} /></button>
@@ -437,7 +439,7 @@ export default function SatUplink() {
                         <div className="flex gap-4 h-full items-center">
                             {activeTab === 'NEO' ? (
                                 loadingNeos ? (
-                                    <div className="text-xs font-mono animate-pulse text-green-700">SCANNING DEEP SPACE NETWORK...</div>
+                                    <div className="text-xs font-mono animate-pulse text-green-700">{t('sat.scanning')}</div>
                                 ) : visibleNeos.map(neo => (
                                     <div key={neo.id} onClick={() => { setSelectedNeo(neo); setSelectedId(null); }} className={`flex-shrink-0 w-56 border cursor-pointer hover:bg-green-900/20 transition-all ${selectedNeo?.id === neo.id ? 'border-green-400 bg-green-900/30' : (neo.isHazardous ? 'border-red-900/50 bg-red-900/10' : 'border-green-900/30')} rounded p-2 flex flex-col gap-1`}>
                                         <div className="flex justify-between items-center">
@@ -451,15 +453,15 @@ export default function SatUplink() {
                                     </div>
                                 ))
                             ) : (
-                                spaceWeather.length === 0 ? <div className="text-xs text-green-800">NO ACTIVE ALERTS FROM DONKI...</div> :
+                                spaceWeather.length === 0 ? <div className="text-xs text-green-800">{t('sat.no_alerts')}</div> :
                                     spaceWeather.map(w => (
                                         <div key={w.id} className="flex-shrink-0 w-64 border border-green-900/30 bg-green-900/5 rounded p-2 flex flex-col gap-1">
                                             <div className="flex justify-between items-center">
-                                                <span className="text-[10px] font-bold text-green-300">{w.type} ALERT</span>
+                                                <span className="text-[10px] font-bold text-green-300">{w.type} {t('sat.alert')}</span>
                                                 <span className="text-[9px] text-green-700">{new Date(w.startTime).toLocaleDateString()}</span>
                                             </div>
                                             <div className="text-[9px] text-green-600 opacity-80 truncate">{w.note}</div>
-                                            <a href={w.link} target="_blank" rel="noreferrer" className="text-[9px] text-green-500 hover:text-white underline">READ REPORT</a>
+                                            <a href={w.link} target="_blank" rel="noreferrer" className="text-[9px] text-green-500 hover:text-white underline">{t('sat.read_report')}</a>
                                         </div>
                                     ))
                             )}

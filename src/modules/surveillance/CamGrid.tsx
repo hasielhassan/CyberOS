@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Camera, Settings, MapPin, Loader, Info, Filter, X } from 'lucide-react';
-import camsData from './cams_data.json';
+import { getCams } from './cams_data';
 import { useMissions } from '../missions/MissionsContext';
+import { useLanguage } from '../../core/registry';
 
 // Types
 interface CamFeed {
@@ -26,6 +27,7 @@ interface FilterOption {
 }
 
 const CamGrid = () => {
+    const { t } = useLanguage();
     const [apiKey, setApiKey] = useState(localStorage.getItem('windy_api_key') || '');
     const [showSettings, setShowSettings] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -58,6 +60,7 @@ const CamGrid = () => {
             }));
         }
 
+        const camsData = getCams(t);
         const defaultCams = camsData.map((cam, i) => ({
             id: `FB_${i}`,
             url: cam.url,
@@ -69,7 +72,7 @@ const CamGrid = () => {
         }));
 
         return [...missionCams, ...defaultCams];
-    }, [activeMission]);
+    }, [activeMission, t]);
 
     // Persist useLive state
     useEffect(() => {
@@ -147,10 +150,10 @@ const CamGrid = () => {
             });
 
             if (!res.ok) {
-                if (res.status === 401) throw new Error("INVALID API KEY");
-                if (res.status === 403) throw new Error("ACCESS DENIED");
-                if (res.status === 429) throw new Error("RATE LIMIT EXCEEDED");
-                throw new Error(`API ERROR: ${res.status}`);
+                if (res.status === 401) throw new Error(t('surv.err.invalid_key'));
+                if (res.status === 403) throw new Error(t('surv.err.access_denied'));
+                if (res.status === 429) throw new Error(t('surv.err.rate_limit'));
+                throw new Error(t('surv.err.api_error', { status: String(res.status) }));
             }
 
             const data = await res.json();
@@ -177,7 +180,7 @@ const CamGrid = () => {
             }
         } catch (err: any) {
             console.error("Failed to fetch cams", err);
-            setLiveError(`CONNECTION FAILED: ${err.message || 'UNKNOWN ERROR'}`);
+            setLiveError(t('surv.err.connection_failed', { error: err.message || 'UNKNOWN ERROR' }));
         }
         setLoading(false);
     };
@@ -215,28 +218,28 @@ const CamGrid = () => {
             {/* Toolbar */}
             <div className="flex justify-between items-center bg-black/60 border border-green-900 p-2 shrink-0">
                 <div className="flex items-center gap-2 text-green-500 font-bold text-sm">
-                    <Camera size={16} /> GLOBAL SURVEILLANCE GRID
+                    <Camera size={16} /> {t('surv.grid_title')}
                     {liveError && <span className="text-[10px] text-red-500 animate-pulse ml-2">[{liveError}]</span>}
                 </div>
                 <div className="flex gap-2 items-center">
                     {useLive && (
                         <div className="flex items-center gap-1 mr-2">
-                            <button onClick={() => handlePageChange('prev')} disabled={offset === 0} className="px-2 py-1 border border-green-900 text-green-500 disabled:opacity-30 hover:bg-green-900/30 text-[10px]">PREV</button>
-                            <span className="text-[10px] text-green-700">PAGE {Math.floor(offset / LIMIT) + 1}</span>
-                            <button onClick={() => handlePageChange('next')} className="px-2 py-1 border border-green-900 text-green-500 hover:bg-green-900/30 text-[10px]">NEXT</button>
+                            <button onClick={() => handlePageChange('prev')} disabled={offset === 0} className="px-2 py-1 border border-green-900 text-green-500 disabled:opacity-30 hover:bg-green-900/30 text-[10px]">{t('surv.prev')}</button>
+                            <span className="text-[10px] text-green-700">{t('surv.page')} {Math.floor(offset / LIMIT) + 1}</span>
+                            <button onClick={() => handlePageChange('next')} className="px-2 py-1 border border-green-900 text-green-500 hover:bg-green-900/30 text-[10px]">{t('surv.next')}</button>
                         </div>
                     )}
                     <button
                         onClick={() => setShowFilters(!showFilters)}
                         className={`px-2 py-1 text-[10px] border flex items-center gap-1 ${showFilters ? 'bg-green-900/40 border-green-500 text-green-400' : 'border-green-900 text-green-700'}`}
                     >
-                        <Filter size={10} /> FILTERS
+                        <Filter size={10} /> {t('surv.filters')}
                     </button>
                     <button
                         onClick={() => setUseLive(!useLive)}
                         className={`px-2 py-1 text-[10px] border ${useLive ? 'bg-red-900/50 border-red-500 text-red-500' : 'bg-green-900/20 border-green-700 text-green-700'}`}
                     >
-                        {useLive ? 'LIVE FEED' : 'SIMULATION'}
+                        {useLive ? t('surv.live_feed') : t('surv.simulation')}
                     </button>
                     <button onClick={() => setShowSettings(!showSettings)} className="p-1 hover:text-green-400">
                         <Settings size={16} />
@@ -251,13 +254,13 @@ const CamGrid = () => {
                 {showFilters && (
                     <div className="w-48 bg-black/90 border-r border-green-900 flex flex-col p-2 gap-4 backdrop-blur-sm z-10 transition-all h-full">
                         <div className="flex-1 flex flex-col min-h-0">
-                            <h3 className="text-[10px] font-bold text-green-500 mb-1 shrink-0">CATEGORY</h3>
+                            <h3 className="text-[10px] font-bold text-green-500 mb-1 shrink-0">{t('surv.category')}</h3>
                             <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar flex-1 border-b border-green-900/30 pb-2 mb-2">
                                 <button
                                     onClick={() => setActiveCategory('ALL')}
                                     className={`text-[9px] text-left px-2 py-1 border shrink-0 ${activeCategory === 'ALL' ? 'bg-green-500 text-black border-green-500' : 'border-green-900 text-green-600 hover:border-green-700'}`}
                                 >
-                                    ALL
+                                    {t('surv.all')}
                                 </button>
                                 {useLive ? (
                                     apiCategories.map(cat => (
@@ -283,13 +286,13 @@ const CamGrid = () => {
                             </div>
                         </div>
                         <div className="flex-1 flex flex-col min-h-0">
-                            <h3 className="text-[10px] font-bold text-green-500 mb-1 shrink-0">LOCATION (COUNTRY)</h3>
+                            <h3 className="text-[10px] font-bold text-green-500 mb-1 shrink-0">{t('surv.location_country')}</h3>
                             <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar flex-1">
                                 <button
                                     onClick={() => setActiveLocation('ALL')}
                                     className={`text-[9px] text-left px-2 py-1 border shrink-0 ${activeLocation === 'ALL' ? 'bg-green-500 text-black border-green-500' : 'border-green-900 text-green-600 hover:border-green-700'}`}
                                 >
-                                    ALL
+                                    {t('surv.all')}
                                 </button>
                                 {useLive ? (
                                     apiCountries.map(loc => (
@@ -323,7 +326,7 @@ const CamGrid = () => {
                         <div className="absolute inset-0 bg-black/80 z-10 flex items-center justify-center">
                             <div className="text-green-500 flex flex-col items-center gap-2">
                                 <Loader className="animate-spin" />
-                                <span className="text-xs animate-pulse">ESTABLISHING UPLINK...</span>
+                                <span className="text-xs animate-pulse">{t('surv.establishing')}</span>
                             </div>
                         </div>
                     )}
@@ -358,7 +361,7 @@ const CamGrid = () => {
                                 </div>
                                 <div className="flex items-center gap-1 shrink-0 ml-1">
                                     <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div>
-                                    <span className="text-[8px] text-red-500 font-bold">REC</span>
+                                    <span className="text-[8px] text-red-500 font-bold">{t('surv.rec')}</span>
                                 </div>
                             </div>
 
@@ -373,19 +376,19 @@ const CamGrid = () => {
             {/* Settings Modal */}
             {showSettings && (
                 <div className="absolute top-12 right-2 z-30 bg-black border border-green-500 p-4 w-64 shadow-lg">
-                    <h3 className="text-xs font-bold mb-2 text-green-400">API CONFIGURATION</h3>
+                    <h3 className="text-xs font-bold mb-2 text-green-400">{t('surv.api_config')}</h3>
                     <input
                         type="text"
                         value={apiKey}
                         onChange={(e) => saveKey(e.target.value)}
-                        placeholder="ENTER WINDY API KEY"
+                        placeholder={t('surv.enter_key')}
                         className="w-full bg-green-900/20 border border-green-700 p-2 text-[10px] text-green-400 mb-2"
                     />
                     <div className="text-[9px] text-green-700">
-                        Get key at: api.windy.com/webcams
+                        {t('surv.get_key')}
                     </div>
                     <button onClick={() => setShowSettings(false)} className="mt-2 w-full bg-green-900/30 border border-green-600 text-[10px] py-1 hover:bg-green-500 hover:text-black">
-                        CLOSE
+                        {t('surv.close')}
                     </button>
                 </div>
             )}
@@ -441,23 +444,23 @@ const CamGrid = () => {
 
                             <div className="space-y-2 text-xs font-code flex-1">
                                 <div className="flex justify-between border-b border-green-900/50 pb-1">
-                                    <span className="text-green-700">CATEGORY:</span>
+                                    <span className="text-green-700">{t('surv.category')}</span>
                                     <span className="text-green-300">{selectedCam.category}</span>
                                 </div>
                                 <div className="flex justify-between border-b border-green-900/50 pb-1">
                                     <span className="text-green-700">STATUS:</span>
-                                    <span className="text-green-300">{selectedCam.isLive ? 'LIVE STREAM' : 'ARCHIVED FOOTAGE'}</span>
+                                    <span className="text-green-300">{selectedCam.isLive ? t('surv.status.live') : t('surv.status.archived')}</span>
                                 </div>
                                 <div className="mt-2">
-                                    <span className="text-green-700 block mb-1">DESCRIPTION:</span>
+                                    <span className="text-green-700 block mb-1">{t('surv.description')}</span>
                                     <p className="text-green-400 leading-relaxed">{selectedCam.description}</p>
                                 </div>
                             </div>
 
                             <div className="mt-4 text-[9px] text-green-800 border-t border-green-900 pt-2">
-                                DATA SOURCE: WINDY.COM API V3<br />
-                                ENCRYPTION: AES-256<br />
-                                UPLINK: SECURE
+                                {t('surv.data_source')}<br />
+                                {t('surv.encryption')}<br />
+                                {t('surv.uplink_secure')}
                             </div>
                         </div>
                     </div>

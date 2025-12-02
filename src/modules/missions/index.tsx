@@ -8,7 +8,7 @@ const WrappedMissionHub = () => (
 
 export const MissionsPlugin: Plugin = {
     id: 'missions',
-    name: 'Missions',
+    name: 'mission.plugin_name',
     icon: Briefcase,
     component: WrappedMissionHub,
 };

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Person, Role } from './types';
-import initialData from './directory_data.json';
+import { getDirectoryData } from './directory_data';
+import { useLanguage } from '../../core/registry';
 
 interface DirectoryContextType {
     profiles: Person[];
@@ -18,6 +19,7 @@ interface DirectoryContextType {
 const DirectoryContext = createContext<DirectoryContextType | undefined>(undefined);
 
 export const DirectoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { t } = useLanguage();
     const [profiles, setProfiles] = useState<Person[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState<Role | 'ALL'>('ALL');
@@ -30,7 +32,7 @@ export const DirectoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             try {
                 // Load local data first
                 // @ts-ignore
-                const localProfiles: Person[] = initialData;
+                const localProfiles: Person[] = getDirectoryData(t);
 
                 // Fetch random citizens
                 const response = await fetch('https://randomuser.me/api/?results=10&nat=us,gb,fr');
@@ -56,7 +58,7 @@ export const DirectoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                     },
                     documents: [
                         {
-                            title: "ID Card",
+                            title: t('dir.doc.official_cred'),
                             type: "identity",
                             meta: {
                                 issueDate: "2023-01-01",
@@ -82,14 +84,14 @@ export const DirectoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 console.error("Failed to fetch citizens:", error);
                 // Fallback to just local data
                 // @ts-ignore
-                setProfiles(initialData);
+                setProfiles(getDirectoryData(t));
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchCitizens();
-    }, []);
+    }, [t]);
 
     const toggleBookmark = (id: string) => {
         setBookmarks(prev =>

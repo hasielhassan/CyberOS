@@ -4,7 +4,7 @@ import CamGrid from './CamGrid';
 
 export const SurveillancePlugin: Plugin = {
     id: 'surveillance',
-    name: 'Surveillance',
+    name: 'surv.plugin_name',
     icon: Eye,
     component: CamGrid,
 };

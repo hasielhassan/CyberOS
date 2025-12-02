@@ -5,7 +5,7 @@ const Directory = lazy(() => import('./Directory'));
 
 export const DirectoryPlugin = {
     id: 'directory',
-    name: 'directory.title',
+    name: 'dir.title',
     component: Directory,
     icon: FileText
 };

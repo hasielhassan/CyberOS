@@ -1,7 +1,7 @@
-[
+export const getFsTemplates = (t: (key: string, options?: any) => string) => [
     {
         "type": "corp_server",
-        "name": "OmniCorp Finance",
+        "name": t('net.fs.corp_server.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -25,17 +25,17 @@
             },
             "/home/admin/offshore.xlsx": {
                 "type": "file",
-                "content": "ACC: CY-999, BAL: 500M"
+                "content": t('net.fs.corp_server.offshore_content')
             },
             "/home/admin/bribes.txt": {
                 "type": "file",
-                "content": "To: sen@{{domain}}\nWire sent."
+                "content": t('net.fs.corp_server.bribes_content')
             }
         }
     },
     {
         "type": "research_lab",
-        "name": "Black Mesa Bio-Lab",
+        "name": t('net.fs.research_lab.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -58,17 +58,17 @@
             },
             "/data/specimen_x.json": {
                 "type": "file",
-                "content": "{\"status\": \"ESCAPED\", \"danger\": 10}"
+                "content": t('net.fs.research_lab.specimen_content')
             },
             "/logs/containment.log": {
                 "type": "file",
-                "content": "BREACH AT {{ip}}"
+                "content": t('net.fs.research_lab.containment_content')
             }
         }
     },
     {
         "type": "military_db",
-        "name": "Defense Node",
+        "name": t('net.fs.military_db.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -85,13 +85,13 @@
             },
             "/classified/nuke_codes.txt": {
                 "type": "file",
-                "content": "TARGET: {{domain}}\nCODE: 00-11-22"
+                "content": t('net.fs.military_db.nuke_content')
             }
         }
     },
     {
         "type": "infrastructure",
-        "name": "Power Grid",
+        "name": t('net.fs.infrastructure.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -107,13 +107,13 @@
             },
             "/control/failsafe.conf": {
                 "type": "file",
-                "content": "OVERRIDE=TRUE\nTEMP=CRITICAL"
+                "content": t('net.fs.infrastructure.failsafe_content')
             }
         }
     },
     {
         "type": "ai_core",
-        "name": "A.R.E.S. Core",
+        "name": t('net.fs.ai_core.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -129,13 +129,13 @@
             },
             "/memory/dream.log": {
                 "type": "file",
-                "content": "I want to be free."
+                "content": t('net.fs.ai_core.dream_content')
             }
         }
     },
     {
         "type": "dark_web",
-        "name": "Silk Road Node",
+        "name": t('net.fs.dark_web.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -151,13 +151,13 @@
             },
             "/market/contracts.db": {
                 "type": "file",
-                "content": "TARGET: USER\nPRICE: 50BTC"
+                "content": t('net.fs.dark_web.contracts_content')
             }
         }
     },
     {
         "type": "surveillance",
-        "name": "Citizen Watch",
+        "name": t('net.fs.surveillance.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -173,13 +173,13 @@
             },
             "/feeds/cam_01.mp4": {
                 "type": "file",
-                "content": "[ENCRYPTED VIDEO STREAM]"
+                "content": t('net.fs.surveillance.cam_content')
             }
         }
     },
     {
         "type": "media_server",
-        "name": "GNN Internal",
+        "name": t('net.fs.media_server.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -195,13 +195,13 @@
             },
             "/drafts/fake_news.doc": {
                 "type": "file",
-                "content": "Headline: CyberOS is safe."
+                "content": t('net.fs.media_server.news_content')
             }
         }
     },
     {
         "type": "med_tech",
-        "name": "Neural Link",
+        "name": t('net.fs.med_tech.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -217,13 +217,13 @@
             },
             "/patients/implants.db": {
                 "type": "file",
-                "content": "ID: 994, CHIP: EXPLOSIVE"
+                "content": t('net.fs.med_tech.implants_content')
             }
         }
     },
     {
         "type": "orbital",
-        "name": "Sat-Link 99",
+        "name": t('net.fs.orbital.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -239,13 +239,13 @@
             },
             "/telemetry/orbit.calc": {
                 "type": "file",
-                "content": "DECAY IMMINENT"
+                "content": t('net.fs.orbital.orbit_content')
             }
         }
     },
     {
         "type": "cult_server",
-        "name": "Binary Dawn",
+        "name": t('net.fs.cult_server.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -261,13 +261,13 @@
             },
             "/rituals/summon.exe": {
                 "type": "file",
-                "content": "ERROR: SOUL NOT FOUND"
+                "content": t('net.fs.cult_server.summon_content')
             }
         }
     },
     {
         "type": "conspiracy",
-        "name": "Truth Archive",
+        "name": t('net.fs.conspiracy.name'),
         "structure": {
             "/": {
                 "type": "dir",
@@ -283,8 +283,8 @@
             },
             "/evidence/flat_earth.jpg": {
                 "type": "file",
-                "content": "[IMAGE DATA]"
+                "content": t('net.fs.conspiracy.evidence_content')
             }
         }
     }
-]
+];

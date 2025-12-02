@@ -3,6 +3,7 @@ import { Shield, ChevronRight, Menu, LogOut } from 'lucide-react';
 import { Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { usePlugins, useLanguage } from './registry';
 import { useAuth } from './AuthContext';
+import { LanguageSelector } from './components/LanguageSelector';
 
 export const Layout = () => {
     const { plugins } = usePlugins();
@@ -30,7 +31,8 @@ export const Layout = () => {
                     <div className="hidden lg:block text-green-700">MEM: 64TB // CPU: 12%</div>
                     <div className="text-red-500 font-bold border border-red-900 px-2 py-1 bg-red-900/10 text-xs md:text-sm">DEFCON 3</div>
                     <div className="flex items-center gap-2 border-l border-green-900 pl-4">
-                        <div className="text-right hidden sm:block">
+                        <LanguageSelector />
+                        <div className="text-right hidden sm:block border-l border-green-900 pl-4 ml-2">
                             <div className="text-xs text-white">{user?.name}</div>
                             <div className="text-[10px] text-green-600">{user?.id}</div>
                         </div>

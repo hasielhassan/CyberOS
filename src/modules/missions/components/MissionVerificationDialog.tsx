@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mission } from '../types';
 import { CheckCircle, XCircle, HelpCircle, AlertTriangle } from 'lucide-react';
+import { useLanguage } from '../../../core/registry';
 
 interface MissionVerificationDialogProps {
     mission: Mission;
@@ -9,6 +10,7 @@ interface MissionVerificationDialogProps {
 }
 
 const MissionVerificationDialog: React.FC<MissionVerificationDialogProps> = ({ mission, onComplete, onClose }) => {
+    const { t } = useLanguage();
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
@@ -37,7 +39,7 @@ const MissionVerificationDialog: React.FC<MissionVerificationDialogProps> = ({ m
             }, 1500);
         } else {
             setIncorrectFields(wrong);
-            setError("Incorrect answers. Review your intel and try again.");
+            setError(t('mission.verify.error'));
         }
     };
 
@@ -46,8 +48,8 @@ const MissionVerificationDialog: React.FC<MissionVerificationDialogProps> = ({ m
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
                 <div className="bg-black border border-green-500 p-8 max-w-md w-full text-center shadow-[0_0_50px_rgba(34,197,94,0.3)]">
                     <CheckCircle size={64} className="text-green-500 mx-auto mb-4 animate-bounce" />
-                    <h2 className="text-2xl font-bold text-green-500 mb-2">MISSION ACCOMPLISHED</h2>
-                    <p className="text-green-400 mb-4">Intel verified. Payment transferring...</p>
+                    <h2 className="text-2xl font-bold text-green-500 mb-2">{t('mission.verify.accomplished')}</h2>
+                    <p className="text-green-400 mb-4">{t('mission.verify.success_msg')}</p>
                     <div className="text-xl font-mono text-yellow-400">{mission.reward}</div>
                 </div>
             </div>
@@ -61,7 +63,7 @@ const MissionVerificationDialog: React.FC<MissionVerificationDialogProps> = ({ m
                 <div className="p-4 border-b border-green-900 bg-green-900/20 flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <HelpCircle className="text-green-500" />
-                        <h2 className="text-lg font-bold text-green-400">VERIFY MISSION INTEL</h2>
+                        <h2 className="text-lg font-bold text-green-400">{t('mission.verify.title')}</h2>
                     </div>
                     <button onClick={onClose} className="text-green-700 hover:text-green-500">
                         <XCircle size={24} />
@@ -73,8 +75,7 @@ const MissionVerificationDialog: React.FC<MissionVerificationDialogProps> = ({ m
                     <div className="mb-6 flex items-start gap-3 bg-yellow-900/20 border border-yellow-700/50 p-3 rounded">
                         <AlertTriangle className="text-yellow-500 shrink-0 mt-0.5" size={18} />
                         <p className="text-sm text-yellow-200/80">
-                            To complete this mission, you must verify the intelligence gathered.
-                            Consult your modules (Terminal, Geo Tracker, etc.) to find the answers.
+                            {t('mission.verify.desc')}
                         </p>
                     </div>
 
@@ -102,11 +103,11 @@ const MissionVerificationDialog: React.FC<MissionVerificationDialogProps> = ({ m
                                                 : 'border-green-700 focus:border-green-400 focus:bg-green-900/20'
                                             }
                                         `}
-                                        placeholder="Enter answer..."
+                                        placeholder={t('mission.verify.placeholder')}
                                     />
                                     {isWrong && (
                                         <div className="text-xs text-red-400 flex items-center gap-1">
-                                            <XCircle size={12} /> Incorrect
+                                            <XCircle size={12} /> {t('mission.verify.incorrect')}
                                         </div>
                                     )}
                                 </div>
@@ -128,13 +129,13 @@ const MissionVerificationDialog: React.FC<MissionVerificationDialogProps> = ({ m
                         onClick={onClose}
                         className="px-4 py-2 text-green-600 hover:text-green-400 font-bold text-sm uppercase"
                     >
-                        Cancel
+                        {t('mission.cancel')}
                     </button>
                     <button
                         onClick={handleSubmit}
                         className="px-6 py-2 bg-green-600 hover:bg-green-500 text-black font-bold text-sm uppercase shadow-[0_0_10px_rgba(34,197,94,0.5)] transition-all"
                     >
-                        Submit Verification
+                        {t('mission.verify.submit')}
                     </button>
                 </div>
             </div>

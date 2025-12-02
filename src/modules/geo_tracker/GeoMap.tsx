@@ -6,6 +6,7 @@ import geoData from './geo_data.json';
 import placesData from './places.json';
 import { useMissions } from '../missions/MissionsContext';
 import { missionEventBus } from '../missions/MissionEventBus';
+import { useLanguage } from '../../core/registry';
 
 // Custom Icons
 const createIcon = (svg: string, color: string, rotation: number = 0) => new L.DivIcon({
@@ -98,6 +99,7 @@ const calculateNoisyPath = (stops: { name: string, coords: number[] }[], noiseLe
 };
 
 const GeoMap = () => {
+    const { t } = useLanguage();
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
     const tileLayerRef = useRef<L.TileLayer | null>(null);
@@ -476,7 +478,7 @@ const GeoMap = () => {
 
                 {/* Overlay Text */}
                 <div className="absolute top-4 left-4 text-green-500 text-xs font-bold bg-black/80 p-1 border border-green-700 flex items-center gap-2 z-[400] pointer-events-none">
-                    <MapIcon size={12} /> GLOBAL TRACKING // LIVE
+                    <MapIcon size={12} /> {t('geo.global_tracking')}
                 </div>
 
                 {/* Map Type Toggle */}
@@ -484,14 +486,14 @@ const GeoMap = () => {
                     <button
                         onClick={() => setMapType('map')}
                         className={`p-1.5 border ${mapType === 'map' ? 'bg-green-900/80 border-green-400 text-green-400' : 'bg-black/80 border-green-900 text-green-700 hover:text-green-500'}`}
-                        title="Map View"
+                        title={t('geo.map_view')}
                     >
                         <MapIcon size={16} />
                     </button>
                     <button
                         onClick={() => setMapType('satellite')}
                         className={`p-1.5 border ${mapType === 'satellite' ? 'bg-green-900/80 border-green-400 text-green-400' : 'bg-black/80 border-green-900 text-green-700 hover:text-green-500'}`}
-                        title="Satellite View"
+                        title={t('geo.satellite_view')}
                     >
                         <Globe size={16} />
                     </button>
@@ -502,14 +504,14 @@ const GeoMap = () => {
             <div className="w-80 border-l border-green-900 bg-black/90 flex flex-col backdrop-blur-sm z-10">
                 <div className="p-4 border-b border-green-900">
                     <h2 className="text-lg font-bold flex items-center gap-2 text-green-500">
-                        <Layers size={18} /> TRACKING DATA
+                        <Layers size={18} /> {t('geo.tracking_data')}
                     </h2>
 
                     {/* Places Search */}
                     <div className="mt-4 relative">
                         <input
                             type="text"
-                            placeholder="SEARCH PLACES..."
+                            placeholder={t('geo.search_places')}
                             value={placesSearchTerm}
                             onChange={e => setPlacesSearchTerm(e.target.value)}
                             className="w-full bg-cyan-900/20 border border-cyan-700 p-2 pl-8 text-xs text-cyan-400 focus:outline-none focus:border-cyan-400 placeholder-cyan-800"
@@ -540,7 +542,7 @@ const GeoMap = () => {
                     <div className="mt-4 relative">
                         <input
                             type="text"
-                            placeholder="SEARCH ID OR NAME..."
+                            placeholder={t('geo.search_id')}
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                             className="w-full bg-green-900/20 border border-green-700 p-2 pl-8 text-xs text-green-400 focus:outline-none focus:border-green-400 placeholder-green-800"
@@ -554,19 +556,19 @@ const GeoMap = () => {
                             onClick={() => setActiveLayers((p: typeof activeLayers) => ({ ...p, flights: !p.flights }))}
                             className={`flex-1 py-1 text-[10px] border ${activeLayers.flights ? 'bg-green-900/40 border-green-500 text-green-400' : 'border-green-900 text-green-800'}`}
                         >
-                            FLIGHTS
+                            {t('geo.flights')}
                         </button>
                         <button
                             onClick={() => setActiveLayers((p: typeof activeLayers) => ({ ...p, trains: !p.trains }))}
                             className={`flex-1 py-1 text-[10px] border ${activeLayers.trains ? 'bg-yellow-900/40 border-yellow-500 text-yellow-400' : 'border-green-900 text-green-800'}`}
                         >
-                            TRAINS
+                            {t('geo.trains')}
                         </button>
                         <button
                             onClick={() => setActiveLayers((p: typeof activeLayers) => ({ ...p, weather: !p.weather }))}
                             className={`flex-1 py-1 text-[10px] border ${activeLayers.weather ? 'bg-red-900/40 border-red-500 text-red-400' : 'border-green-900 text-green-800'}`}
                         >
-                            STORMS
+                            {t('geo.storms')}
                         </button>
                     </div>
                 </div>
@@ -613,9 +615,9 @@ const GeoMap = () => {
                             <span className="text-[10px] border border-green-600 px-1 text-green-600">{selectedItem.type}</span>
                         </div>
                         <div className="grid grid-cols-1 gap-1 text-[10px] text-green-500 font-code">
-                            <div>ID: <span className="text-white">{selectedItem.id}</span></div>
-                            <div>ORIGIN: <span className="text-white">{selectedItem.origin}</span></div>
-                            <div>DEST: <span className="text-white">{selectedItem.destination}</span></div>
+                            <div>{t('geo.id')}: <span className="text-white">{selectedItem.id}</span></div>
+                            <div>{t('geo.origin')}: <span className="text-white">{selectedItem.origin}</span></div>
+                            <div>{t('geo.dest')}: <span className="text-white">{selectedItem.destination}</span></div>
                             <div className="mt-2 text-green-300 italic">{selectedItem.details}</div>
                         </div>
                     </div>

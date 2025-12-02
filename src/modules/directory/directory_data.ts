@@ -1,4 +1,4 @@
-[
+export const getDirectoryData = (t: (key: string) => string) => [
     {
         "id": "AGT-001",
         "name": "Viper",
@@ -7,22 +7,22 @@
         "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Viper&backgroundColor=b6e3f4",
         "details": {
             "age": 29,
-            "occupation": "Field Operative",
-            "location": "Sector 7",
-            "nationality": "Unknown"
+            "occupation": t('dir.prof.viper.occ'),
+            "location": t('dir.prof.viper.loc'),
+            "nationality": t('dir.prof.viper.nat')
         },
         "hiddenInfo": {
             "realName": "Natasha V.",
             "clearanceLevel": "LEVEL 5",
-            "notes": "Highly skilled in infiltration and CQC. Suspected double agent in 2023 (Cleared).",
+            "notes": t('dir.prof.viper.notes'),
             "knownAssociates": [
-                "The Baron (Target)",
+                t('dir.prof.baron.name'),
                 "Agent 004"
             ]
         },
         "documents": [
             {
-                "title": "Service Record",
+                "title": t('dir.doc.service_record'),
                 "type": "identity",
                 "meta": {
                     "issueDate": "2024-01-15",
@@ -41,7 +41,7 @@
                 }
             },
             {
-                "title": "Mission: Nightfall",
+                "title": t('dir.doc.mission_nightfall'),
                 "type": "mission",
                 "meta": {
                     "classification": "TOP SECRET",
@@ -50,12 +50,12 @@
                 },
                 "data": {
                     "operation": "NIGHTFALL",
-                    "target": "Embassy of Val Verde",
-                    "briefing": "Intelligence indicates the target is holding the encryption keys in a hardened safe within the basement level. Security is heavy. Stealth is mandatory.",
+                    "target": t('dir.doc.nightfall.target'),
+                    "briefing": t('dir.doc.nightfall.briefing'),
                     "assets": [
-                        "Suppressed Pistol",
-                        "Lockpick Kit",
-                        "Miniature Camera"
+                        t('dir.doc.nightfall.asset1'),
+                        t('dir.doc.nightfall.asset2'),
+                        t('dir.doc.nightfall.asset3')
                     ],
                     "intel_photo": "https://placehold.co/200x200/555/fff?text=TARGET+BLDG"
                 }
@@ -64,27 +64,27 @@
     },
     {
         "id": "CRM-992",
-        "name": "The Baron",
+        "name": t('dir.prof.baron.name'),
         "role": "CRIMINAL",
         "status": "WANTED",
         "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Baron&backgroundColor=ffdfbf",
         "details": {
             "age": 45,
-            "occupation": "Arms Dealer",
-            "location": "Unknown (Last seen in Eastern Europe)",
+            "occupation": t('dir.prof.baron.occ'),
+            "location": t('dir.prof.baron.loc'),
             "nationality": "Latverian"
         },
         "hiddenInfo": {
             "realName": "Victor D.",
             "clearanceLevel": "NONE",
-            "notes": "Leader of the 'Red Syndicate'. Dangerous. Do not approach without backup.",
+            "notes": t('dir.prof.baron.notes'),
             "knownAssociates": [
                 "Viper (Surveillance Target)"
             ]
         },
         "documents": [
             {
-                "title": "Wanted Poster",
+                "title": t('dir.doc.wanted_poster'),
                 "type": "newspaper",
                 "meta": {
                     "paperName": "GLOBAL TIMES",
@@ -93,16 +93,16 @@
                     "vol": "CDXLII"
                 },
                 "data": {
-                    "headline": "ARMS DEALER AT LARGE",
-                    "subhead": "Authorities offer reward for information leading to capture",
+                    "headline": t('dir.doc.wanted.headline'),
+                    "subhead": t('dir.doc.wanted.subhead'),
                     "leadImage": "https://placehold.co/600x300/333/fff?text=WANTED",
-                    "imageCaption": "Surveillance footage of 'The Baron'",
+                    "imageCaption": t('dir.doc.wanted.caption'),
                     "columns": [
-                        "Interpol has issued a Red Notice for the individual known as 'The Baron'. He is suspected of orchestrating major arms deals across three continents.",
-                        "Sources say he operates from a mobile command center."
+                        t('dir.doc.wanted.col1'),
+                        t('dir.doc.wanted.col2')
                     ],
                     "sidebar": {
-                        "title": "REWARD",
+                        "title": t('dir.doc.wanted.reward'),
                         "content": "5,000,000 BTC for verified intel."
                     }
                 }
@@ -117,19 +117,19 @@
         "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Ada&backgroundColor=c0aede",
         "details": {
             "age": 32,
-            "occupation": "Cryptographer",
+            "occupation": t('dir.prof.ada.occ'),
             "location": "CyberOS R&D Lab",
             "nationality": "British"
         },
         "hiddenInfo": {
             "realName": "Ada L.",
             "clearanceLevel": "LEVEL 4",
-            "notes": "Currently working on the 'Enigma' project. Essential personnel.",
+            "notes": t('dir.prof.ada.notes'),
             "knownAssociates": []
         },
         "documents": [
             {
-                "title": "PhD Certificate",
+                "title": t('dir.doc.phd_cert'),
                 "type": "certificate",
                 "meta": {
                     "id": "UNI-OX-22",
@@ -137,12 +137,12 @@
                     "colorTheme": "#4c1d95"
                 },
                 "data": {
-                    "header": "Doctor of Philosophy",
+                    "header": t('dir.doc.phd.header'),
                     "recipient": "Ada Love",
-                    "body": "For groundbreaking research in Quantum Cryptography and Artificial Intelligence alignment.",
+                    "body": t('dir.doc.phd.body'),
                     "signature": "Chancellor H."
                 }
             }
         ]
     }
-]
+];

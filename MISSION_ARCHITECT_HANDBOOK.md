@@ -21,6 +21,13 @@ Missions are defined as JSON files in `src/modules/missions/data/`.
 | `moduleData` | `object` | Data injection for specific modules (see Section 4). |
 | `objectives` | `array` | The core logic of the mission (see Section 2). |
 
+### Localization Note
+To support multiple languages, mission data should ideally be defined in TypeScript files (e.g., `missions.ts`) rather than static JSON, allowing the injection of the `t()` translation function.
+*   **Current State**: Missions are JSON files (English only).
+*   **Future State**: Missions will be migrated to TS generators to support `t('mission.id.title')`.
+
+If you are creating a new mission today, be aware that hardcoded strings in JSON will not be translated.
+
 ---
 
 ## 2. Objectives & Event Triggers

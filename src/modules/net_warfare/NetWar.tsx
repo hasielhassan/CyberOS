@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Shield, CheckCircle, Search, Skull, Database, Server, AlertTriangle, Key, Save, FileText, Ghost, Shuffle, Disc } from 'lucide-react';
-import fsTemplatesRaw from './fs_templates.json';
+import { getFsTemplates } from './fs_templates';
 import { useMissions } from '../missions/MissionsContext';
+import { useLanguage } from '../../core/registry';
 
 // --- Helper function to interpolate placeholders in file system structures ---
 const interpolateTemplate = (structure: any, ip: string, domain: string): any => {
@@ -23,13 +24,6 @@ const interpolateTemplate = (structure: any, ip: string, domain: string): any =>
     return result;
 };
 
-// Convert JSON templates to functional format
-const FS_TEMPLATES = fsTemplatesRaw.map(template => ({
-    type: template.type,
-    name: template.name,
-    structure: (ip: string, d: string) => interpolateTemplate(template.structure, ip, d)
-}));
-
 // --- TYPES ---
 type Node = { id: number; x: number; y: number; status: 'own' | 'neutral' | 'enemy'; type: string; label: string; ip: string; port: number; difficulty: number };
 type Link = { from: number; to: number };
@@ -38,7 +32,14 @@ type Phase = 'input' | 'tracing' | 'active' | 'victory';
 type Utility = 'ghost' | 'proxy' | 'decoy';
 
 const NetWar = () => {
+    const { t } = useLanguage();
     const { activeMission } = useMissions();
+
+    const fsTemplates = useMemo(() => getFsTemplates(t).map(template => ({
+        type: template.type,
+        name: template.name,
+        structure: (ip: string, d: string) => interpolateTemplate(template.structure, ip, d)
+    })), [t]);
 
     // --- STATE ---
     const [level, setLevel] = useState<number>(1);
@@ -64,8 +65,8 @@ const NetWar = () => {
     useEffect(() => {
         const savedLevel = localStorage.getItem('cyberos_level');
         if (savedLevel) setLevel(parseInt(savedLevel));
-        addLog(`CYBEROS KERNEL v9.3.0 LOADED.`, 'info');
-        addLog(`FILE SYSTEM EXTRACTION MODULE: ONLINE.`, 'success');
+        addLog(t('net.kernel_loaded'), 'info');
+        addLog(t('net.fs_module_online'), 'success');
     }, []);
 
     useEffect(() => {
@@ -82,35 +83,35 @@ const NetWar = () => {
     const activateUtility = (util: Utility) => {
         const now = Date.now();
         if (now < cooldowns[util]) {
-            addLog(`ERROR: ${util.toUpperCase()} RECHARGING...`, 'error'); return;
+            addLog(t('net.recharging', { util: util.toUpperCase() }), 'error'); return;
         }
         if (util === 'proxy') {
             setTraceLevel(prev => Math.max(0, prev - 40));
-            addLog(`PROXY CHAIN: TRACE SCRUBBED (-40%).`, 'success');
+            addLog(t('net.proxy_scrubbed'), 'success');
             setCooldowns(prev => ({ ...prev, proxy: now + 12000 }));
         }
         else if (util === 'ghost') {
             setActiveBuffs(prev => [...prev, 'ghost']);
-            addLog(`GHOST PROTOCOL: TRACE FROZEN (8s).`, 'success');
+            addLog(t('net.ghost_active'), 'success');
             setCooldowns(prev => ({ ...prev, ghost: now + 20000 }));
             setTimeout(() => {
                 setActiveBuffs(prev => prev.filter(b => b !== 'ghost'));
-                addLog(`GHOST PROTOCOL EXPIRED.`, 'warn');
+                addLog(t('net.ghost_expired'), 'warn');
             }, 8000);
         }
         else if (util === 'decoy') {
             setActiveBuffs(prev => [...prev, 'decoy']);
-            addLog(`DECOY ACTIVE: DEFENSE PACKETS NULLIFIED (6s).`, 'success');
+            addLog(t('net.decoy_active'), 'success');
             setCooldowns(prev => ({ ...prev, decoy: now + 15000 }));
             setTimeout(() => {
                 setActiveBuffs(prev => prev.filter(b => b !== 'decoy'));
-                addLog(`DECOY EXPIRED.`, 'warn');
+                addLog(t('net.decoy_expired'), 'warn');
             }, 6000);
         }
     };
 
     const handleTraceFailure = () => {
-        addLog('*** CRITICAL FAILURE: TRACE COMPLETE ***', 'error');
+        addLog(t('net.trace_failure'), 'error');
         setActiveAction(null); setTraceLevel(0); setPhase('input'); setNodes([]); setActiveBuffs([]);
     };
 
@@ -151,9 +152,9 @@ const NetWar = () => {
                     setTimeout(() => {
                         if (!activeBuffs.includes('decoy')) {
                             setTraceLevel(prev => Math.min(prev + 15, 100));
-                            addLog(`WARNING: IDS SPIKE DETECTED (+15%)`, 'warn');
+                            addLog(t('net.ids_spike'), 'warn');
                         } else {
-                            addLog(`DEFENSE PACKET MITIGATED BY DECOY.`, 'debug');
+                            addLog(t('net.decoy_mitigated'), 'debug');
                         }
                     }, 800);
                 }
@@ -177,7 +178,7 @@ const NetWar = () => {
             };
         }
 
-        const template = FS_TEMPLATES[Math.floor(Math.random() * FS_TEMPLATES.length)];
+        const template = fsTemplates[Math.floor(Math.random() * fsTemplates.length)];
         const sshHash = Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 6).toUpperCase()).join('-');
         return {
             timestamp: Date.now(), domain, ip, sshKey: `SSH-RSA-${sshHash}`,
@@ -189,7 +190,7 @@ const NetWar = () => {
     // --- GENERATORS & ACTIONS ---
     const generateLevel = (lvl: number) => {
         const newNodes: Node[] = []; const newLinks: Link[] = [];
-        newNodes.push({ id: 1, x: 50, y: 92, status: 'own', type: 'home', label: 'LOCALHOST', ip: '127.0.0.1', port: 22, difficulty: 0 });
+        newNodes.push({ id: 1, x: 50, y: 92, status: 'own', type: 'home', label: t('net.localhost'), ip: '127.0.0.1', port: 22, difficulty: 0 });
         const layers = Math.min(Math.floor(lvl / 2) + 1, 5);
         let previousLayerIds = [1]; let idCounter = 2;
         for (let i = 0; i < layers; i++) {
@@ -226,8 +227,8 @@ const NetWar = () => {
         setLinks([]);
         setScannedNodes([1]);
 
-        addLog(`Tracing route to ${targetUrl} [${newNodes[newNodes.length - 1].ip}]...`, 'info');
-        addLog(`over a maximum of 30 hops:`, 'info');
+        addLog(t('net.tracing_route', { target: targetUrl, ip: newNodes[newNodes.length - 1].ip }), 'info');
+        addLog(t('net.max_hops'), 'info');
         addLog('', 'raw'); // Spacer
 
         let currentNodeIndex = 1;
@@ -236,7 +237,7 @@ const NetWar = () => {
             if (currentNodeIndex >= newNodes.length) {
                 setPhase('active');
                 addLog('', 'raw');
-                addLog('Trace complete.', 'success');
+                addLog(t('net.trace_complete'), 'success');
                 return;
             }
 
@@ -278,10 +279,10 @@ const NetWar = () => {
         setTimeout(() => {
             setActiveAction(curr => {
                 if (!curr) return null;
-                if (type === 'scan') { setScannedNodes(p => [...p, node.id]); addLog('SCAN COMPLETE.', 'success'); }
+                if (type === 'scan') { setScannedNodes(p => [...p, node.id]); addLog(t('net.scan_complete'), 'success'); }
                 else {
                     setNodes(p => p.map(n => n.id === node.id ? { ...n, status: 'own' } : n));
-                    addLog('ACCESS GRANTED.', 'success');
+                    addLog(t('net.access_granted'), 'success');
                     if (node.type === 'target') {
                         setVictoryData(generateLoot(node.ip, targetUrl));
                         setPhase('victory');
@@ -300,7 +301,7 @@ const NetWar = () => {
         setLevel(prev => { const next = prev + 1; localStorage.setItem('cyberos_level', next.toString()); return next; });
         setVictoryData(null); setTargetUrl(''); setPhase('input'); setNodes([]); setLinks([]);
         setScannedNodes([]); setTraceLevel(0); setActiveBuffs([]);
-        addLog(`CONNECTION SAVED. READY FOR NEXT ASSIGNMENT.`, 'success');
+        addLog(t('net.connection_saved'), 'success');
     };
 
     return (
@@ -313,9 +314,9 @@ const NetWar = () => {
                         {/* Header */}
                         <div className="bg-green-600 text-black p-4 flex justify-between items-center">
                             <h2 className="text-xl font-bold flex items-center gap-2">
-                                <Key size={24} /> ACCESS GRANTED
+                                <Key size={24} /> {t('net.access_granted')}
                             </h2>
-                            <div className="text-xs font-mono">SECURE_SHELL_V2</div>
+                            <div className="text-xs font-mono">{t('net.secure_shell')}</div>
                         </div>
 
                         {/* Body */}
@@ -325,27 +326,27 @@ const NetWar = () => {
                                     <Server size={40} className="text-green-500" />
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-400">TARGET DOMAIN</div>
+                                    <div className="text-xs text-gray-400">{t('net.target_domain')}</div>
                                     <div className="text-xl font-bold text-white mb-2">{victoryData.domain}</div>
-                                    <div className="text-xs text-gray-400">IPV4 ADDRESS</div>
+                                    <div className="text-xs text-gray-400">{t('net.ipv4')}</div>
                                     <div className="font-mono text-green-400">{victoryData.ip}</div>
                                 </div>
                             </div>
 
                             <div className="bg-green-900/10 border border-green-800 p-4 rounded font-mono text-xs space-y-2">
                                 <div className="flex justify-between border-b border-green-900 pb-2">
-                                    <span className="text-gray-500">SYSTEM ARCH:</span>
+                                    <span className="text-gray-500">{t('net.sys_arch')}</span>
                                     <span className="text-white">{victoryData.systemName}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-500">SSH KEY HASH:</span>
+                                    <span className="text-gray-500">{t('net.ssh_key')}</span>
                                     <span className="text-yellow-400 font-bold">{victoryData.sshKey}</span>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-900/50 p-2 rounded">
                                 <FileText size={14} />
-                                <span>{Object.keys(victoryData.fileSystem).length} FILES/DIRS DISCOVERED FOR EXFILTRATION</span>
+                                <span>{t('net.files_discovered', { count: Object.keys(victoryData.fileSystem).length })}</span>
                             </div>
                         </div>
 
@@ -357,13 +358,13 @@ const NetWar = () => {
                                 }}
                                 className="flex-1 p-3 border border-red-900 text-red-500 hover:bg-red-900/20 text-xs font-bold transition-colors"
                             >
-                                DISCARD CONNECTION
+                                {t('net.discard_conn')}
                             </button>
                             <button
                                 onClick={saveAndContinue}
                                 className="flex-[2] p-3 bg-green-600 text-black font-bold hover:bg-green-500 text-xs flex items-center justify-center gap-2 transition-colors shadow-[0_0_15px_rgba(0,255,0,0.4)]"
                             >
-                                <Save size={16} /> SAVE KEYS TO TERMINAL
+                                <Save size={16} /> {t('net.save_keys')}
                             </button>
                         </div>
                     </div>
@@ -375,10 +376,10 @@ const NetWar = () => {
                 {phase === 'input' && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center z-40 bg-black/90">
                         <h1 className="text-5xl font-bold mb-2 tracking-widest text-green-500">CYBER<span className="text-white">OS</span></h1>
-                        <div className="text-sm text-gray-500 mb-8">SECURE CONNECTION LEVEL: {level}</div>
+                        <div className="text-sm text-gray-500 mb-8">{t('net.secure_level', { level })}</div>
                         <div className="flex gap-2 w-[400px]">
-                            <input type="text" value={targetUrl} onChange={(e) => setTargetUrl(e.target.value)} placeholder="ENTER TARGET DOMAIN" className="flex-1 bg-green-900/20 border border-green-700 p-3 text-green-400 outline-none font-mono uppercase text-sm" onKeyDown={(e) => e.key === 'Enter' && startTrace()} />
-                            <button onClick={startTrace} disabled={!targetUrl} className="bg-green-600 text-black font-bold px-6">TRACE</button>
+                            <input type="text" value={targetUrl} onChange={(e) => setTargetUrl(e.target.value)} placeholder={t('net.enter_target')} className="flex-1 bg-green-900/20 border border-green-700 p-3 text-green-400 outline-none font-mono uppercase text-sm" onKeyDown={(e) => e.key === 'Enter' && startTrace()} />
+                            <button onClick={startTrace} disabled={!targetUrl} className="bg-green-600 text-black font-bold px-6">{t('net.trace_btn')}</button>
                         </div>
                     </div>
                 )}
@@ -400,7 +401,7 @@ const NetWar = () => {
                                 {n.status === 'own' ? <CheckCircle /> : n.type === 'target' ? <Database className="text-red-500" /> : <Shield className={isScanned ? "text-blue-400" : "text-gray-600"} />}
                             </div>
                             <div className={`absolute left-1/2 -translate-x-1/2 text-center bg-black/90 px-2 py-1 rounded border border-green-800 min-w-[100px] mt-2`}>
-                                <div className="text-[10px] font-bold text-green-400">{isScanned || n.status === 'own' ? n.label : 'ENCRYPTED'}</div>
+                                <div className="text-[10px] font-bold text-green-400">{isScanned || n.status === 'own' ? n.label : t('net.encrypted')}</div>
                             </div>
                         </div>
                     );
@@ -414,7 +415,7 @@ const NetWar = () => {
                     <div className="text-xs font-bold text-green-500 flex justify-between mb-2">
                         <span className="flex items-center gap-2">
                             {traceLevel > 80 && <AlertTriangle size={14} className="animate-bounce text-red-500" />}
-                            TRACE LEVEL {activeBuffs.includes('ghost') && <span className="text-blue-400 animate-pulse ml-2">[GHOSTED]</span>}
+                            {t('net.trace_level')} {activeBuffs.includes('ghost') && <span className="text-blue-400 animate-pulse ml-2">[GHOSTED]</span>}
                         </span>
                         <span className={traceLevel > 80 ? 'text-red-500' : 'text-green-500'}>{traceLevel.toFixed(0)}%</span>
                     </div>
@@ -425,7 +426,7 @@ const NetWar = () => {
 
                 {/* OFFENSIVE MODULES */}
                 <div className="p-4 border-b border-green-900 bg-green-900/5">
-                    <div className="text-xs text-gray-500 mb-2 tracking-widest">OFFENSIVE MODULES</div>
+                    <div className="text-xs text-gray-500 mb-2 tracking-widest">{t('net.offensive_modules')}</div>
                     <div className="grid grid-cols-2 gap-2">
                         {/* NMAP + TOOLTIP */}
                         <div className="relative group">
@@ -433,8 +434,8 @@ const NetWar = () => {
                                 <div className="font-bold text-xs flex gap-2"><Search size={14} /> NMAP</div>
                             </button>
                             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-black border border-green-500 text-green-400 text-[10px] p-2 rounded shadow-lg hidden group-hover:block z-50 pointer-events-none">
-                                <div className="font-bold border-b border-green-800 mb-1 pb-1">RECONNAISSANCE</div>
-                                Reveals target Node Type and Open Ports. Required before attacking.
+                                <div className="font-bold border-b border-green-800 mb-1 pb-1">{t('net.recon')}</div>
+                                {t('net.recon_desc')}
                             </div>
                         </div>
                         {/* HYDRA + TOOLTIP */}
@@ -443,8 +444,8 @@ const NetWar = () => {
                                 <div className="font-bold text-xs flex gap-2"><Skull size={14} /> HYDRA</div>
                             </button>
                             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-black border border-red-500 text-red-400 text-[10px] p-2 rounded shadow-lg hidden group-hover:block z-50 pointer-events-none">
-                                <div className="font-bold border-b border-red-800 mb-1 pb-1">BRUTE FORCE</div>
-                                Cracks authentication on scanned nodes. Generates high Trace.
+                                <div className="font-bold border-b border-red-800 mb-1 pb-1">{t('net.brute_force')}</div>
+                                {t('net.brute_force_desc')}
                             </div>
                         </div>
                     </div>
@@ -452,7 +453,7 @@ const NetWar = () => {
 
                 {/* DEFENSE UTILITIES */}
                 <div className="p-4 border-b border-green-900">
-                    <div className="text-xs text-gray-500 mb-2 tracking-widest">DEFENSE UTILITIES</div>
+                    <div className="text-xs text-gray-500 mb-2 tracking-widest">{t('net.defense_utilities')}</div>
                     <div className="flex justify-between gap-2">
                         {/* GHOST */}
                         <div className="relative group flex-1">
@@ -461,12 +462,12 @@ const NetWar = () => {
                                 className={`w-full p-2 border rounded flex flex-col items-center justify-center gap-1 transition-all
                             ${activeBuffs.includes('ghost') ? 'border-blue-400 bg-blue-900/30 text-white' :
                                         Date.now() < cooldowns['ghost'] ? 'border-gray-800 text-gray-700' : 'border-green-900/50 text-green-400 hover:bg-green-900/20'}`}>
-                                <Ghost size={16} /> <div className="text-[9px] font-bold">GHOST</div>
+                                <Ghost size={16} /> <div className="text-[9px] font-bold">{t('net.ghost')}</div>
                                 {Date.now() < cooldowns['ghost'] && <div className="text-[8px]">{Math.ceil((cooldowns['ghost'] - Date.now()) / 1000)}s</div>}
                             </button>
                             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-40 bg-black border border-blue-500 text-blue-400 text-[10px] p-2 rounded shadow-lg hidden group-hover:block z-50 pointer-events-none">
-                                <div className="font-bold border-b border-blue-800 mb-1 pb-1">CLOAKING</div>
-                                Freezes Trace detection for 8 seconds. Use during deep hacks.
+                                <div className="font-bold border-b border-blue-800 mb-1 pb-1">{t('net.cloaking')}</div>
+                                {t('net.cloaking_desc')}
                             </div>
                         </div>
                         {/* PROXY */}
@@ -475,12 +476,12 @@ const NetWar = () => {
                                 disabled={Date.now() < cooldowns['proxy']}
                                 className={`w-full p-2 border rounded flex flex-col items-center justify-center gap-1 transition-all
                             ${Date.now() < cooldowns['proxy'] ? 'border-gray-800 text-gray-700' : 'border-green-900/50 text-green-400 hover:bg-green-900/20'}`}>
-                                <Shuffle size={16} /> <div className="text-[9px] font-bold">PROXY</div>
+                                <Shuffle size={16} /> <div className="text-[9px] font-bold">{t('net.proxy')}</div>
                                 {Date.now() < cooldowns['proxy'] && <div className="text-[8px]">{Math.ceil((cooldowns['proxy'] - Date.now()) / 1000)}s</div>}
                             </button>
                             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-40 bg-black border border-green-500 text-green-400 text-[10px] p-2 rounded shadow-lg hidden group-hover:block z-50 pointer-events-none">
-                                <div className="font-bold border-b border-green-800 mb-1 pb-1">IP BOUNCE</div>
-                                Instantly scrubs 40% of accumulated Trace. 12s Cooldown.
+                                <div className="font-bold border-b border-green-800 mb-1 pb-1">{t('net.ip_bounce')}</div>
+                                {t('net.ip_bounce_desc')}
                             </div>
                         </div>
                         {/* DECOY */}
@@ -490,12 +491,12 @@ const NetWar = () => {
                                 className={`w-full p-2 border rounded flex flex-col items-center justify-center gap-1 transition-all
                             ${activeBuffs.includes('decoy') ? 'border-yellow-400 bg-yellow-900/30 text-white' :
                                         Date.now() < cooldowns['decoy'] ? 'border-gray-800 text-gray-700' : 'border-green-900/50 text-green-400 hover:bg-green-900/20'}`}>
-                                <Disc size={16} /> <div className="text-[9px] font-bold">DECOY</div>
+                                <Disc size={16} /> <div className="text-[9px] font-bold">{t('net.decoy')}</div>
                                 {Date.now() < cooldowns['decoy'] && <div className="text-[8px]">{Math.ceil((cooldowns['decoy'] - Date.now()) / 1000)}s</div>}
                             </button>
                             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-40 bg-black border border-yellow-500 text-yellow-400 text-[10px] p-2 rounded shadow-lg hidden group-hover:block z-50 pointer-events-none">
-                                <div className="font-bold border-b border-yellow-800 mb-1 pb-1">SPOOFING</div>
-                                Grants immunity to Enemy Defense Packets (Red) for 6 seconds.
+                                <div className="font-bold border-b border-yellow-800 mb-1 pb-1">{t('net.spoofing')}</div>
+                                {t('net.spoofing_desc')}
                             </div>
                         </div>
                     </div>

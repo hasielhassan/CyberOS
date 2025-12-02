@@ -4,7 +4,7 @@ import Decryptor from './Decryptor';
 
 export const DecryptionPlugin: Plugin = {
     id: 'decryption',
-    name: 'Decryption',
+    name: 'dec.plugin_name',
     icon: Lock,
     component: Decryptor,
 };

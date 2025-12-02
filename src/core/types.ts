@@ -24,6 +24,6 @@ export interface RegistryContextType {
 export interface LanguageContextType {
     language: Language;
     setLanguage: (code: string) => void;
-    t: (key: string) => string;
+    t: (key: string, params?: Record<string, string | number>) => string;
     availableLanguages: Language[];
 }

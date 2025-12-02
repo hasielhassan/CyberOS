@@ -37,16 +37,29 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider = ({ children, initialLanguages }: { children: ReactNode, initialLanguages: Language[] }) => {
     const [languages] = useState<Language[]>(initialLanguages);
-    const [currentLangCode, setCurrentLangCode] = useState<string>(initialLanguages[0]?.code || 'en');
+    const [currentLangCode, setCurrentLangCode] = useState<string>(() => {
+        return localStorage.getItem('cyberos_language') || initialLanguages[0]?.code || 'en';
+    });
+
+    const setLanguage = (code: string) => {
+        setCurrentLangCode(code);
+        localStorage.setItem('cyberos_language', code);
+    };
 
     const language = languages.find(l => l.code === currentLangCode) || initialLanguages[0];
 
-    const t = (key: string) => {
-        return language.translations[key] || key;
+    const t = (key: string, params?: Record<string, string | number>) => {
+        let text = language.translations[key] || key;
+        if (params) {
+            Object.entries(params).forEach(([key, value]) => {
+                text = text.replace(`{${key}}`, String(value));
+            });
+        }
+        return text;
     };
 
     return (
-        <LanguageContext.Provider value={{ language, setLanguage: setCurrentLangCode, t, availableLanguages: languages }}>
+        <LanguageContext.Provider value={{ language, setLanguage, t, availableLanguages: languages }}>
             {children}
         </LanguageContext.Provider>
     );

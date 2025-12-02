@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useLanguage } from '../../core/registry';
 
 const Decryptor = () => {
+    const { t } = useLanguage();
     const [hash, setHash] = useState('5f4dcc3b5aa765d61d8327deb882cf99');
     const [progress, setProgress] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
@@ -18,17 +20,17 @@ const Decryptor = () => {
 
     return (
         <div className="h-full flex flex-col p-8 gap-6 bg-black border border-green-900/50 text-green-500 font-hacker">
-            <h2 className="text-2xl border-b border-green-500 pb-2">WPA2/SHA-256 CRACKER</h2>
+            <h2 className="text-2xl border-b border-green-500 pb-2">{t('dec.title')}</h2>
             <div className="space-y-2">
-                <label>TARGET HASH</label>
+                <label>{t('dec.target_hash')}</label>
                 <input className="w-full bg-green-900/10 border border-green-700 p-2 text-green-400" value={hash} onChange={e => setHash(e.target.value)} />
             </div>
             <div className="space-y-2">
-                <label>DICTIONARY</label>
+                <label>{t('dec.dictionary')}</label>
                 <select className="w-full bg-green-900/10 border border-green-700 p-2 text-green-400">
-                    <option>rockyou.txt (14MB)</option>
-                    <option>common_pass.txt (2KB)</option>
-                    <option>rainbow_table_v2.dat (50GB)</option>
+                    <option>{t('dec.dict.rockyou')}</option>
+                    <option>{t('dec.dict.common')}</option>
+                    <option>{t('dec.dict.rainbow')}</option>
                 </select>
             </div>
             <div className="h-8 w-full bg-green-900/30 border border-green-600 relative">
@@ -39,9 +41,9 @@ const Decryptor = () => {
             </div>
             <div className="flex justify-between items-center">
                 <button onClick={() => { setProgress(0); setIsRunning(true); setResult(''); }} className="px-6 py-2 bg-green-600 hover:bg-green-500 text-black font-bold">
-                    {isRunning ? 'RUNNING...' : 'START ATTACK'}
+                    {isRunning ? t('dec.btn.running') : t('dec.btn.start')}
                 </button>
-                {result && <div className="text-xl animate-pulse text-red-500">MATCH FOUND: {result}</div>}
+                {result && <div className="text-xl animate-pulse text-red-500">{t('dec.match_found', { result })}</div>}
             </div>
         </div>
     );

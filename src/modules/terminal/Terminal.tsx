@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { getIpInfo, simulateTraceroute, formatIpInfo } from '../../utils/ipUtils';
 import { useMissions } from '../missions/MissionsContext';
 import { missionEventBus } from '../missions/MissionEventBus';
+import { useLanguage } from '../../core/registry';
 
 const initialFileSystem = {
     '/': { type: 'dir', children: ['home', 'bin', 'var', 'missions'] },
@@ -16,8 +17,9 @@ const initialFileSystem = {
 };
 
 const TerminalConsole = () => {
+    const { t } = useLanguage();
     const { activeMission } = useMissions();
-    const [history, setHistory] = useState(['Welcome to CyberOS v9.0', 'Type "help" for commands.']);
+    const [history, setHistory] = useState([t('term.welcome'), t('term.help_prompt')]);
     const [input, setInput] = useState('');
     const [path, setPath] = useState('/');
     const [files, setFiles] = useState(() => {
@@ -61,27 +63,27 @@ const TerminalConsole = () => {
             case 'help':
                 setHistory(h => [
                     ...h,
-                    '--- CyberOS Terminal Help ---',
-                    'ls      - See what files are here',
-                    'cd      - Go to another folder',
-                    'pwd     - Show where I am right now',
-                    'mkdir   - Make a new folder',
-                    'rmdir   - Remove an empty folder',
-                    'touch   - Create a new empty file',
-                    'mv      - Move or rename a file',
-                    'rm      - Delete a file forever',
-                    'cat     - Read a file',
-                    'nano    - Write in a file',
-                    'search  - Find files by name or text',
-                    'ipinfo  - Get info about an IP address',
-                    'trace   - Trace route to an IP address',
-                    'clear   - Clean up this screen',
-                    'ssh     - Connect to another computer',
-                    'exit    - Leave the other computer'
+                    t('term.help_header'),
+                    t('term.help_ls'),
+                    t('term.help_cd'),
+                    t('term.help_pwd'),
+                    t('term.help_mkdir'),
+                    t('term.help_rmdir'),
+                    t('term.help_touch'),
+                    t('term.help_mv'),
+                    t('term.help_rm'),
+                    t('term.help_cat'),
+                    t('term.help_nano'),
+                    t('term.help_search'),
+                    t('term.help_ipinfo'),
+                    t('term.help_trace'),
+                    t('term.help_clear'),
+                    t('term.help_ssh'),
+                    t('term.help_exit')
                 ]);
                 break;
             case 'search':
-                if (!arg) { setHistory(h => [...h, 'Usage: search <term>']); return; }
+                if (!arg) { setHistory(h => [...h, t('term.usage_search')]); return; }
                 const term = arg.toLowerCase();
                 const results: string[] = [];
 
@@ -104,9 +106,9 @@ const TerminalConsole = () => {
                 });
 
                 if (results.length === 0) {
-                    setHistory(h => [...h, `No matches found for "${arg}"`]);
+                    setHistory(h => [...h, t('term.no_matches', { term: arg })]);
                 } else {
-                    setHistory(h => [...h, `Search results for "${arg}":`, ...results]);
+                    setHistory(h => [...h, t('term.search_results', { term: arg }), ...results]);
                 }
                 break;
             case 'pwd':
@@ -132,15 +134,15 @@ const TerminalConsole = () => {
                 if (files[newPath] && files[newPath].type === 'dir') {
                     setPath(newPath);
                 } else {
-                    setHistory(h => [...h, `Directory not found: ${arg}`]);
+                    setHistory(h => [...h, t('term.dir_not_found', { dir: arg })]);
                 }
                 break;
             case 'touch':
-                if (!arg) { setHistory(h => [...h, 'Usage: touch <filename>']); return; }
+                if (!arg) { setHistory(h => [...h, t('term.usage_touch')]); return; }
                 const touchPath = resolvePath(arg);
                 // @ts-ignore
                 if (files[touchPath]) {
-                    setHistory(h => [...h, `Updated timestamp for ${arg}`]);
+                    setHistory(h => [...h, t('term.updated_timestamp', { file: arg })]);
                 } else {
                     setFiles((prev: any) => {
                         const parentDir = touchPath.substring(0, touchPath.lastIndexOf('/')) || '/';
@@ -151,15 +153,15 @@ const TerminalConsole = () => {
                         newFiles[parentDir] = { ...prev[parentDir], children: [...prev[parentDir].children, fileName] };
                         return newFiles;
                     });
-                    setHistory(h => [...h, `Created file: ${arg}`]);
+                    setHistory(h => [...h, t('term.created_file', { file: arg })]);
                 }
                 break;
             case 'mkdir':
-                if (!arg) { setHistory(h => [...h, 'Usage: mkdir <foldername>']); return; }
+                if (!arg) { setHistory(h => [...h, t('term.usage_mkdir')]); return; }
                 const mkPath = resolvePath(arg);
                 // @ts-ignore
                 if (files[mkPath]) {
-                    setHistory(h => [...h, `Error: ${arg} already exists`]);
+                    setHistory(h => [...h, t('term.error_exists', { name: arg })]);
                     return;
                 }
                 setFiles((prev: any) => ({
@@ -167,19 +169,19 @@ const TerminalConsole = () => {
                     [mkPath]: { type: 'dir', children: [] },
                     [path]: { ...prev[path], children: [...prev[path].children, arg] }
                 }));
-                setHistory(h => [...h, `Created directory: ${arg}`]);
+                setHistory(h => [...h, t('term.created_dir', { dir: arg })]);
                 break;
             case 'rmdir':
-                if (!arg) { setHistory(h => [...h, 'Usage: rmdir <foldername>']); return; }
+                if (!arg) { setHistory(h => [...h, t('term.usage_rmdir')]); return; }
                 const rmdirPath = resolvePath(arg);
                 // @ts-ignore
                 const targetDir = files[rmdirPath];
                 if (!targetDir) {
-                    setHistory(h => [...h, `Directory not found: ${arg}`]);
+                    setHistory(h => [...h, t('term.dir_not_found', { dir: arg })]);
                 } else if (targetDir.type !== 'dir') {
-                    setHistory(h => [...h, `Not a directory: ${arg}`]);
+                    setHistory(h => [...h, t('term.not_a_dir', { name: arg })]);
                 } else if (targetDir.children.length > 0) {
-                    setHistory(h => [...h, `Directory not empty: ${arg}`]);
+                    setHistory(h => [...h, t('term.dir_not_empty', { name: arg })]);
                 } else {
                     setFiles((prev: any) => {
                         const newFiles = { ...prev };
@@ -193,17 +195,17 @@ const TerminalConsole = () => {
                         }
                         return newFiles;
                     });
-                    setHistory(h => [...h, `Removed directory: ${arg}`]);
+                    setHistory(h => [...h, t('term.removed_dir', { dir: arg })]);
                 }
                 break;
             case 'mv':
-                if (!arg || !arg2) { setHistory(h => [...h, 'Usage: mv <source> <destination>']); return; }
+                if (!arg || !arg2) { setHistory(h => [...h, t('term.usage_mv')]); return; }
                 const sourcePath = resolvePath(arg);
                 let destPath = resolvePath(arg2);
 
                 // @ts-ignore
                 if (!files[sourcePath]) {
-                    setHistory(h => [...h, `Source not found: ${arg}`]);
+                    setHistory(h => [...h, t('term.source_not_found', { src: arg })]);
                     return;
                 }
 
@@ -254,19 +256,19 @@ const TerminalConsole = () => {
 
                     return newFiles;
                 });
-                setHistory(h => [...h, `Moved ${arg} to ${arg2}`]);
+                setHistory(h => [...h, t('term.moved', { src: arg, dest: arg2 })]);
                 break;
             case 'rm':
-                if (!arg) { setHistory(h => [...h, 'Usage: rm <filename>']); return; }
+                if (!arg) { setHistory(h => [...h, t('term.usage_rm')]); return; }
                 const rmPath = resolvePath(arg);
                 // @ts-ignore
                 if (!files[rmPath]) {
-                    setHistory(h => [...h, `File not found: ${arg}`]);
+                    setHistory(h => [...h, t('term.file_not_found', { file: arg })]);
                     return;
                 }
                 // @ts-ignore
                 if (files[rmPath].type === 'dir') {
-                    setHistory(h => [...h, `Cannot rm a directory. Use rmdir.`]);
+                    setHistory(h => [...h, t('term.cannot_rm_dir')]);
                     return;
                 }
                 setFiles((prev: any) => {
@@ -282,22 +284,22 @@ const TerminalConsole = () => {
                     }
                     return newFiles;
                 });
-                setHistory(h => [...h, `Removed: ${arg}`]);
+                setHistory(h => [...h, t('term.removed', { file: arg })]);
                 break;
             case 'nano':
-                if (!arg) { setHistory(h => [...h, 'Usage: nano <filename>']); return; }
+                if (!arg) { setHistory(h => [...h, t('term.usage_nano')]); return; }
                 const filePath = resolvePath(arg);
                 // @ts-ignore
                 const file = files[filePath];
                 if (file && file.type === 'dir') {
-                    setHistory(h => [...h, `Cannot edit directory: ${arg}`]);
+                    setHistory(h => [...h, t('term.cannot_edit_dir', { dir: arg })]);
                 } else {
                     // @ts-ignore
                     setEditor({ active: true, file: filePath, content: file ? file.content : '' });
                 }
                 break;
             case 'cat':
-                if (!arg) { setHistory(h => [...h, 'Usage: cat <filename>']); return; }
+                if (!arg) { setHistory(h => [...h, t('term.usage_cat')]); return; }
                 const catPath = resolvePath(arg);
                 // @ts-ignore
                 const catFile = files[catPath];
@@ -305,16 +307,16 @@ const TerminalConsole = () => {
                     setHistory(h => [...h, catFile.content]);
                     missionEventBus.emit('TERMINAL_OPEN', { target: arg });
                 } else {
-                    setHistory(h => [...h, `File not found: ${arg}`]);
+                    setHistory(h => [...h, t('term.file_not_found', { file: arg })]);
                 }
                 break;
             case 'ssh':
                 if (sshSession) {
-                    setHistory(h => [...h, 'Error: Nested SSH sessions are not supported.']);
+                    setHistory(h => [...h, t('term.nested_ssh_error')]);
                     return;
                 }
                 if (!arg) {
-                    setHistory(h => [...h, 'Usage: ssh <domain|ip>']);
+                    setHistory(h => [...h, t('term.usage_ssh')]);
                     return;
                 }
 
@@ -322,17 +324,17 @@ const TerminalConsole = () => {
                 const targetHostIndex = hosts.findIndex((h: any) => h.domain === arg || h.ip === arg);
 
                 if (targetHostIndex === -1) {
-                    setHistory(h => [...h, `ssh: Could not resolve hostname ${arg}: Name or service not known`]);
+                    setHistory(h => [...h, t('term.ssh_resolve_error', { host: arg })]);
                     return;
                 }
 
                 const host = hosts[targetHostIndex];
-                setHistory(h => [...h, `Connecting to ${host.domain} (${host.ip})...`]);
+                setHistory(h => [...h, t('term.connecting_to', { host: host.domain, ip: host.ip })]);
 
                 setTimeout(() => {
-                    setHistory(h => [...h, `Authenticating using stored key: ${host.sshKey}...`]);
+                    setHistory(h => [...h, t('term.authenticating', { key: host.sshKey })]);
                     setTimeout(() => {
-                        setHistory(h => [...h, 'Access Granted.', `Welcome to ${host.systemName || host.domain}`]);
+                        setHistory(h => [...h, t('term.access_granted'), t('term.welcome_to', { host: host.systemName || host.domain })]);
                         setSshSession({ index: targetHostIndex, domain: host.domain, ip: host.ip, user: 'root' });
                         setFiles(host.fileSystem || { '/': { type: 'dir', children: [] } });
                         setPath('/');
@@ -342,24 +344,24 @@ const TerminalConsole = () => {
                 break;
             case 'exit':
                 if (sshSession) {
-                    setHistory(h => [...h, `Connection to ${sshSession.domain} closed.`]);
+                    setHistory(h => [...h, t('term.connection_closed', { host: sshSession.domain })]);
                     setSshSession(null);
                     // Reload local files
                     const saved = localStorage.getItem('cyber_fs');
                     setFiles(saved ? JSON.parse(saved) : initialFileSystem);
                     setPath('/');
                 } else {
-                    setHistory(h => [...h, 'Logout: Session terminated.']);
+                    setHistory(h => [...h, t('term.logout')]);
                 }
                 break;
             case 'ipinfo':
                 if (!arg) {
-                    setHistory(h => [...h, 'Usage: ipinfo <ip_address>']);
+                    setHistory(h => [...h, t('term.usage_ipinfo')]);
                     setHistory(h => [...h, 'Example: ipinfo 8.8.8.8']);
                     return;
                 }
                 // Show loading message
-                setHistory(h => [...h, `Querying information for ${arg}...`]);
+                setHistory(h => [...h, t('term.querying', { ip: arg })]);
 
                 // Check for mission-specific data
                 if (activeMission && activeMission.moduleData?.Terminal?.ipdata?.[arg]) {
@@ -394,18 +396,18 @@ const TerminalConsole = () => {
                     setHistory(h => {
                         const newHistory = [...h];
                         newHistory.pop();
-                        return [...newHistory, `Error: Failed to get IP info - ${error.message}`];
+                        return [...newHistory, t('term.error_ipinfo', { error: error.message })];
                     });
                 });
                 break;
             case 'trace':
                 if (!arg) {
-                    setHistory(h => [...h, 'Usage: trace <ip_address>']);
+                    setHistory(h => [...h, t('term.usage_trace')]);
                     setHistory(h => [...h, 'Example: trace 8.8.8.8']);
                     return;
                 }
                 // Show loading message
-                setHistory(h => [...h, `Tracing route to ${arg}...`]);
+                setHistory(h => [...h, t('term.tracing', { ip: arg })]);
 
                 // Check for mission-specific data
                 if (activeMission && activeMission.moduleData?.Terminal?.ipdata?.[arg]?.trace) {
@@ -414,7 +416,7 @@ const TerminalConsole = () => {
                         setHistory(h => {
                             const newHistory = [...h];
                             newHistory.pop();
-                            const traceOutput = [`\nTraceroute to ${arg}:`, ...missionTrace];
+                            const traceOutput = [t('term.traceroute_to', { ip: arg }), ...missionTrace];
                             return [...newHistory, ...traceOutput];
                         });
                         // Emit event
@@ -425,7 +427,7 @@ const TerminalConsole = () => {
 
                 // Simulate traceroute asynchronously
                 simulateTraceroute(arg, 8).then(route => {
-                    const traceOutput: string[] = [`\nTraceroute to ${arg}:`];
+                    const traceOutput: string[] = [t('term.traceroute_to', { ip: arg })];
                     route.forEach((hop, index) => {
                         const hopNum = (index + 1).toString().padStart(2, ' ');
                         const location = `${hop.city || 'Unknown'}, ${hop.country || '??'}`;
@@ -445,7 +447,7 @@ const TerminalConsole = () => {
                     setHistory(h => {
                         const newHistory = [...h];
                         newHistory.pop();
-                        return [...newHistory, `Error: Failed to trace route - ${error.message}`];
+                        return [...newHistory, t('term.error_trace', { error: error.message })];
                     });
                 });
                 break;
@@ -453,7 +455,7 @@ const TerminalConsole = () => {
                 setHistory([]);
                 break;
             default:
-                setHistory(h => [...h, `Command not found: ${command}`]);
+                setHistory(h => [...h, t('term.command_not_found', { cmd: command })]);
         }
     };
 
@@ -476,7 +478,7 @@ const TerminalConsole = () => {
         // @ts-ignore
         setEditor({ active: false, file: null, content: '' });
         // @ts-ignore
-        setHistory(h => [...h, `Saved file: ${editor.file}`]);
+        setHistory(h => [...h, t('term.saved_file', { file: editor.file })]);
     };
 
     if (editor.active) {

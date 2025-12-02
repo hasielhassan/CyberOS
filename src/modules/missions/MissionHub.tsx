@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Target, CheckCircle, Clock } from 'lucide-react';
 import { useMissions } from './MissionsContext';
 import { Mission } from './types';
+import { useLanguage } from '../../core/registry';
 import { AcceptMissionDialog } from './components/AcceptMissionDialog';
 import { MissionDetail } from './components/MissionDetail';
 import MissionVerificationDialog from './components/MissionVerificationDialog';
@@ -15,6 +16,7 @@ const MissionHub = () => {
         abandonMission,
         isMissionCompleted
     } = useMissions();
+    const { t } = useLanguage();
 
     const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
     const [missionToAccept, setMissionToAccept] = useState<Mission | null>(null);
@@ -63,7 +65,7 @@ const MissionHub = () => {
             {/* Mission List */}
             <div className="w-1/3 flex flex-col gap-2 overflow-y-auto custom-scrollbar pr-2">
                 <h2 className="text-green-500 font-bold text-lg border-b border-green-900 pb-2 mb-2 flex items-center gap-2">
-                    <Target size={20} /> MISSION CONTRACTS
+                    <Target size={20} /> {t('mission.contracts')}
                 </h2>
                 {missions.map(mission => {
                     const status = getMissionStatus(mission);
@@ -82,7 +84,7 @@ const MissionHub = () => {
                                 </div>
                                 <div className={`text-[10px] px-2 py-0.5 border ${statusColors[status]} flex items-center gap-1`}>
                                     {status === 'COMPLETED' && <CheckCircle size={10} />}
-                                    {status}
+                                    {t(`mission.status.${status.toLowerCase()}`)}
                                 </div>
                             </div>
                             <div className="flex justify-between items-center text-[10px] font-code text-green-600">
@@ -121,7 +123,7 @@ const MissionHub = () => {
                                     className="w-full py-3 bg-green-600 text-black hover:bg-green-500 transition-colors text-sm font-bold uppercase animate-pulse"
                                     disabled={activeMissionId !== null}
                                 >
-                                    {activeMissionId !== null ? 'COMPLETE ACTIVE MISSION FIRST' : 'ACCEPT MISSION'}
+                                    {activeMissionId !== null ? t('mission.complete_active_first') : t('mission.accept')}
                                 </button>
                             </div>
                         )}
@@ -129,7 +131,7 @@ const MissionHub = () => {
                 ) : (
                     <div className="h-full flex flex-col items-center justify-center text-green-800 opacity-50">
                         <Target size={48} className="mb-4 animate-pulse" />
-                        <div className="text-sm font-code">SELECT A MISSION FILE</div>
+                        <div className="text-sm font-code">{t('mission.select_file')}</div>
                     </div>
                 )}
             </div>

@@ -96,6 +96,11 @@ Built with modern web technologies for speed and scalability:
     - **Windy** (Webcams)
 - **Icons**: [Lucide React](https://lucide.dev/)
 
+### 🌐 Internationalization (i18n)
+CyberOS supports multiple languages (currently English and Spanish) via a custom lightweight i18n system.
+- **Locale Files**: `src/locales/en.ts` & `src/locales/es.ts`
+- **Guide**: See [TRANSLATION_GUIDE.md](./TRANSLATION_GUIDE.md) for instructions on adding new translations and handling dynamic data.
+
 ---
 
 ## ⚡ Getting Started

@@ -3,8 +3,10 @@ import { useDirectory } from '../DirectoryContext';
 import { Shield, Lock, FileText, Eye, EyeOff, Bookmark, MapPin, Activity, Database } from 'lucide-react';
 import { DocumentViewer } from './DocumentViewer';
 import { Document } from '../types';
+import { useLanguage } from '../../../core/registry';
 
 export const ProfileDetail = () => {
+    const { t } = useLanguage();
     const { profiles, selectedProfileId, bookmarks, toggleBookmark } = useDirectory();
     const [showHidden, setShowHidden] = useState(false);
     const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
@@ -15,7 +17,7 @@ export const ProfileDetail = () => {
         return (
             <div className="flex-1 flex items-center justify-center bg-black/80 text-green-900/50 flex-col gap-4">
                 <Shield size={64} className="animate-pulse opacity-20" />
-                <div className="text-sm tracking-widest">SELECT A TARGET TO VIEW DOSSIER</div>
+                <div className="text-sm tracking-widest">{t('dir.select_target')}</div>
             </div>
         );
     }
@@ -47,10 +49,10 @@ export const ProfileDetail = () => {
                         </div>
 
                         <div className="border border-green-900 bg-black/40 p-4 space-y-3">
-                            <div className="text-[10px] text-green-700 uppercase font-bold border-b border-green-900 pb-1 mb-2">Core Metrics</div>
+                            <div className="text-[10px] text-green-700 uppercase font-bold border-b border-green-900 pb-1 mb-2">{t('dir.core_metrics')}</div>
 
                             <div className="flex justify-between items-center text-xs">
-                                <span className="text-green-800">THREAT LEVEL</span>
+                                <span className="text-green-800">{t('dir.threat_level')}</span>
                                 <div className="flex gap-0.5">
                                     {[1, 2, 3, 4, 5].map(i => (
                                         <div key={i} className={`w-1.5 h-3 ${i <= (profile.role === 'CRIMINAL' ? 5 : profile.role === 'AGENT' ? 4 : 1) ? 'bg-red-500' : 'bg-green-900/30'}`}></div>
@@ -59,7 +61,7 @@ export const ProfileDetail = () => {
                             </div>
 
                             <div className="flex justify-between items-center text-xs">
-                                <span className="text-green-800">INTEL RELIABILITY</span>
+                                <span className="text-green-800">{t('dir.intel_reliability')}</span>
                                 <span className="text-green-500 font-mono">98.4%</span>
                             </div>
                         </div>
@@ -67,12 +69,12 @@ export const ProfileDetail = () => {
                         <button
                             onClick={() => toggleBookmark(profile.id)}
                             className={`w-full py-2 border flex items-center justify-center gap-2 text-xs font-bold transition-all ${isBookmarked
-                                    ? 'bg-green-500 text-black border-green-500 hover:bg-green-400'
-                                    : 'bg-transparent text-green-500 border-green-500 hover:bg-green-900/20'
+                                ? 'bg-green-500 text-black border-green-500 hover:bg-green-400'
+                                : 'bg-transparent text-green-500 border-green-500 hover:bg-green-900/20'
                                 }`}
                         >
                             <Bookmark size={14} fill={isBookmarked ? "currentColor" : "none"} />
-                            {isBookmarked ? 'BOOKMARKED' : 'BOOKMARK TARGET'}
+                            {isBookmarked ? t('dir.bookmarked') : t('dir.bookmark_target')}
                         </button>
                     </div>
 
@@ -90,15 +92,15 @@ export const ProfileDetail = () => {
                             <div className="flex gap-6 text-xs text-green-500 font-mono">
                                 <div className="flex items-center gap-2">
                                     <Activity size={14} />
-                                    <span>AGE: {profile.details.age}</span>
+                                    <span>{t('dir.age')}: {profile.details.age}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <MapPin size={14} />
-                                    <span>LOC: {profile.details.location}</span>
+                                    <span>{t('dir.loc')}: {profile.details.location}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Database size={14} />
-                                    <span>OCC: {profile.details.occupation}</span>
+                                    <span>{t('dir.occ')}: {profile.details.occupation}</span>
                                 </div>
                             </div>
                         </div>
@@ -108,14 +110,14 @@ export const ProfileDetail = () => {
                             <div className="flex items-center justify-between p-3 bg-green-900/20 border-b border-green-900/50">
                                 <div className="flex items-center gap-2 text-xs font-bold text-green-400">
                                     <Lock size={12} />
-                                    CLASSIFIED INFORMATION
+                                    {t('dir.classified')}
                                 </div>
                                 <button
                                     onClick={() => setShowHidden(!showHidden)}
                                     className="text-[10px] flex items-center gap-1 text-green-600 hover:text-green-400 transition-colors"
                                 >
                                     {showHidden ? <EyeOff size={12} /> : <Eye size={12} />}
-                                    {showHidden ? 'CONCEAL DATA' : 'DECRYPT DATA'}
+                                    {showHidden ? t('dir.conceal') : t('dir.decrypt')}
                                 </button>
                             </div>
 
@@ -123,31 +125,31 @@ export const ProfileDetail = () => {
                                 {!showHidden && (
                                     <div className="absolute inset-0 backdrop-blur-sm bg-black/50 z-10 flex items-center justify-center">
                                         <div className="text-xs text-red-500 font-bold border border-red-900 bg-black/80 px-4 py-2 animate-pulse">
-                                            ENCRYPTED // AUTHORIZATION REQUIRED
+                                            {t('dir.encrypted_auth')}
                                         </div>
                                     </div>
                                 )}
                                 <div className={`grid grid-cols-2 gap-4 text-sm ${!showHidden ? 'blur-sm select-none opacity-50' : ''}`}>
                                     <div>
-                                        <div className="text-[10px] text-green-800 uppercase mb-1">Real Name</div>
-                                        <div className="text-green-400 font-mono">{profile.hiddenInfo?.realName || 'UNKNOWN'}</div>
+                                        <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.real_name')}</div>
+                                        <div className="text-green-400 font-mono">{profile.hiddenInfo?.realName || t('dir.unknown')}</div>
                                     </div>
                                     <div>
-                                        <div className="text-[10px] text-green-800 uppercase mb-1">Clearance</div>
-                                        <div className="text-green-400 font-mono">{profile.hiddenInfo?.clearanceLevel || 'RESTRICTED'}</div>
+                                        <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.clearance')}</div>
+                                        <div className="text-green-400 font-mono">{profile.hiddenInfo?.clearanceLevel || t('dir.restricted')}</div>
                                     </div>
                                     <div className="col-span-2">
-                                        <div className="text-[10px] text-green-800 uppercase mb-1">Notes</div>
-                                        <div className="text-green-400 font-mono leading-relaxed">{profile.hiddenInfo?.notes || 'No data available.'}</div>
+                                        <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.notes')}</div>
+                                        <div className="text-green-400 font-mono leading-relaxed">{profile.hiddenInfo?.notes || t('dir.no_data')}</div>
                                     </div>
                                     <div className="col-span-2">
-                                        <div className="text-[10px] text-green-800 uppercase mb-1">Known Associates</div>
+                                        <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.known_associates')}</div>
                                         <div className="flex flex-wrap gap-2">
                                             {profile.hiddenInfo?.knownAssociates?.map((assoc, i) => (
                                                 <span key={i} className="px-2 py-1 bg-green-900/20 border border-green-900/50 text-xs text-green-500">
                                                     {assoc}
                                                 </span>
-                                            )) || <span className="text-green-700 italic">None recorded</span>}
+                                            )) || <span className="text-green-700 italic">{t('dir.none_recorded')}</span>}
                                         </div>
                                     </div>
                                 </div>
@@ -158,7 +160,7 @@ export const ProfileDetail = () => {
                         <div>
                             <div className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2">
                                 <FileText size={14} />
-                                LINKED ASSETS ({profile.documents.length})
+                                {t('dir.linked_assets')} ({profile.documents.length})
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 {profile.documents.map((doc, i) => (
@@ -172,7 +174,7 @@ export const ProfileDetail = () => {
                                         </div>
                                         <div>
                                             <div className="text-xs font-bold text-green-400 group-hover:text-green-300">{doc.title}</div>
-                                            <div className="text-[10px] text-green-700 uppercase">{doc.type} // {doc.meta.date || 'UNDATED'}</div>
+                                            <div className="text-[10px] text-green-700 uppercase">{doc.type} // {doc.meta.date || t('dir.undated')}</div>
                                         </div>
                                     </button>
                                 ))}

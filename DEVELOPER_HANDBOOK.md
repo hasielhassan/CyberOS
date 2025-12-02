@@ -165,6 +165,47 @@ Want to add a "Drone Control" module? Follow these steps:
 *   **[Aladin Lite v3](https://aladin.cds.unistra.fr/AladinLite/)**: Interactive sky atlas for `AstroView` in Sat Uplink.
 *   **[Three.js](https://threejs.org/)**: 3D library used for the globe visualization in `SatUplink`.
 *   **LocalStorage**: We persist state to `cyberos_mission_state` and `cyberos_mission_progress`.
+*   **i18n (Internationalization)**: Custom context-based system (`src/core/registry.tsx`) using `en.ts` and `es.ts` for locale definitions.
+
+---
+
+## 7. Internationalization (i18n)
+
+CyberOS supports multiple languages (currently English and Spanish).
+
+### How to Translate a Component
+1.  **Import the Hook**:
+    ```typescript
+    import { useLanguage } from '../../core/registry';
+    ```
+2.  **Use the `t` Function**:
+    ```typescript
+    const { t } = useLanguage();
+    return <div>{t('module.key_name')}</div>;
+    ```
+3.  **Add Keys**:
+    Add your keys to `src/locales/en.ts` and `src/locales/es.ts`.
+    ```typescript
+    // en.ts
+    'module.key_name': 'Hello World',
+    // es.ts
+    'module.key_name': 'Hola Mundo',
+    ```
+
+### Dynamic Content & Templates
+For content that requires translation but is structured as data (like file system templates or mission data), **avoid using JSON files**. Instead, use TypeScript files that export a function accepting the `t` translator.
+
+**Example (`fs_templates.ts`):**
+```typescript
+export const getTemplates = (t: (key: string) => string) => [
+    { name: t('template.name'), content: "..." }
+];
+```
+
+Then in your component:
+```typescript
+const templates = useMemo(() => getTemplates(t), [t]);
+```
 
 ---
 

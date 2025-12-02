@@ -3,6 +3,7 @@ import { X, Key, Activity, Search, Crosshair, Lock, Unlock, ShieldAlert, Termina
 import { SatelliteData, ObjectType } from '../types';
 import { CATEGORY_COLORS } from '../constants';
 import { missionEventBus } from '../../missions/MissionEventBus';
+import { useLanguage } from '../../../core/registry';
 
 // --- GENERIC MODAL ---
 export const Modal = ({ title, onClose, children, danger = false, wide = false, full = false }: any) => (
@@ -21,6 +22,7 @@ export const Modal = ({ title, onClose, children, danger = false, wide = false, 
 
 // --- AUTH MODAL ---
 export const AuthModal = ({ title, onClose, onSuccess, danger = false, validationKey }: { title: string, onClose: () => void, onSuccess: () => void, danger?: boolean, validationKey?: string }) => {
+    const { t } = useLanguage();
     const [code, setCode] = useState('');
     const [error, setError] = useState(false);
 
@@ -41,7 +43,7 @@ export const AuthModal = ({ title, onClose, onSuccess, danger = false, validatio
         <Modal title={title} onClose={onClose} danger={danger}>
             <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
                 <div className={`text-xs font-mono ${danger ? 'text-red-400' : 'text-green-400'}`}>
-                    SECURE CLEARANCE REQUIRED. ENTER AUTHORIZATION CODE.
+                    {t('sat.modal.secure_clearance')}
                 </div>
                 <div className="relative">
                     <Lock className={`absolute left-3 top-2.5 w-4 h-4 ${danger ? 'text-red-700' : 'text-green-700'}`} />
@@ -51,12 +53,12 @@ export const AuthModal = ({ title, onClose, onSuccess, danger = false, validatio
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
                         className={`w-full bg-black border ${error ? 'border-red-500 animate-shake' : (danger ? 'border-red-900/50' : 'border-green-900/50')} pl-10 pr-4 py-2 text-xs ${danger ? 'text-red-100 focus:border-red-500' : 'text-green-100 focus:border-green-500'} focus:outline-none rounded font-mono tracking-widest`}
-                        placeholder="ACCESS CODE"
+                        placeholder={t('sat.modal.access_code')}
                     />
                 </div>
                 <button type="submit" className={`w-full py-2 ${danger ? 'bg-red-600 hover:bg-red-500' : 'bg-green-600 hover:bg-green-500'} text-black font-bold text-xs rounded transition-colors flex items-center justify-center gap-2`}>
                     {danger ? <ShieldAlert size={14} /> : <Unlock size={14} />}
-                    AUTHENTICATE
+                    {t('sat.modal.authenticate')}
                 </button>
             </form>
         </Modal>
@@ -65,6 +67,7 @@ export const AuthModal = ({ title, onClose, onSuccess, danger = false, validatio
 
 // --- PROGRESS MODAL ---
 export const ProgressModal = ({ title, action, duration = 3000, onComplete, danger = false }: { title: string, action: string, duration?: number, onComplete: () => void, danger?: boolean }) => {
+    const { t } = useLanguage();
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
@@ -97,7 +100,7 @@ export const ProgressModal = ({ title, action, duration = 3000, onComplete, dang
                     </div>
                 </div>
                 <div className="font-mono text-[10px] text-gray-500">
-                    DO NOT CLOSE TERMINAL
+                    {t('sat.modal.do_not_close')}
                 </div>
             </div>
         </Modal>
@@ -106,6 +109,7 @@ export const ProgressModal = ({ title, action, duration = 3000, onComplete, dang
 
 // --- RESTART MODAL ---
 export const RestartModal = ({ onClose, onComplete, isMissionTarget = false, satellite }: { onClose: () => void, onComplete: () => void, isMissionTarget?: boolean, satellite?: SatelliteData }) => {
+    const { t } = useLanguage();
     const [stage, setStage] = useState(0);
     const [status, setStatus] = useState<'IDLE' | 'RUNNING' | 'WAITING_INPUT' | 'COMPLETE'>('IDLE');
     const [progress, setProgress] = useState(0);
@@ -113,9 +117,9 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false, sat
     const [error, setError] = useState(false);
 
     const STAGES = [
-        { name: 'SYSTEM DIAGNOSTICS', action: 'RUN DIAGNOSTICS', duration: 2000 },
-        { name: 'FIRMWARE PATCH', action: 'UPLOAD PATCH', duration: 3000 },
-        { name: 'REBOOT SEQUENCE', action: 'INITIATE REBOOT', duration: 4000 }
+        { name: t('sat.modal.sys_diag'), action: t('sat.modal.run_diag'), duration: 2000 },
+        { name: t('sat.modal.firmware_patch'), action: t('sat.modal.upload_patch'), duration: 3000 },
+        { name: t('sat.modal.reboot_seq'), action: t('sat.modal.init_reboot'), duration: 4000 }
     ];
 
     const runStage = () => {
@@ -183,7 +187,7 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false, sat
     };
 
     return (
-        <Modal title="SYSTEM RESTORATION SEQUENCE" onClose={onClose} wide>
+        <Modal title={t('sat.modal.sys_restore')} onClose={onClose} wide>
             <div className="p-6 flex flex-col gap-6 h-full min-h-[500px]">
                 <div className="grid grid-cols-3 gap-4">
                     {STAGES.map((s, i) => (
@@ -201,7 +205,7 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false, sat
                         <div className="absolute inset-0 bg-green-900/5 flex flex-col items-center justify-center z-0">
                             <div className="w-full max-w-md space-y-2 px-8">
                                 <div className="flex justify-between text-[10px] font-mono text-green-500">
-                                    <span>EXECUTING {STAGES[stage].name}...</span>
+                                    <span>{t('sat.modal.executing')} {STAGES[stage].name}...</span>
                                     <span>{Math.floor(progress)}%</span>
                                 </div>
                                 <div className="w-full h-1 bg-gray-900 rounded-full overflow-hidden">
@@ -215,17 +219,17 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false, sat
                         <div className="absolute inset-0 bg-black/95 flex flex-col items-center justify-center z-50 p-6">
                             <div className="w-full max-w-md space-y-4 animate-in fade-in zoom-in duration-300">
                                 <div className="text-xs font-mono text-green-400 text-center animate-pulse">
-                                    MANUAL OVERRIDE REQUIRED // UPLOAD PATCH DATA
+                                    {t('sat.modal.manual_override')}
                                 </div>
                                 <textarea
                                     value={patchInput}
                                     onChange={(e) => setPatchInput(e.target.value)}
                                     className={`w-full h-32 bg-black border ${error ? 'border-red-500 animate-shake' : 'border-green-900/50'} p-2 text-[10px] font-mono text-green-300 focus:outline-none focus:border-green-500 rounded resize-none`}
-                                    placeholder="PASTE BINARY BLOB HERE..."
+                                    placeholder={t('sat.modal.paste_blob')}
                                     autoFocus
                                 />
                                 <button onClick={handlePatchSubmit} className="w-full py-2 bg-green-600 hover:bg-green-500 text-black font-bold text-xs rounded transition-colors border border-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]">
-                                    VERIFY & UPLOAD
+                                    {t('sat.modal.verify_upload')}
                                 </button>
                             </div>
                         </div>
@@ -233,10 +237,10 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false, sat
 
                     <div className="z-10 text-center space-y-4">
                         <div className="text-sm font-mono text-green-400">
-                            {status === 'IDLE' ? `READY TO ${STAGES[stage].action}` :
-                                status === 'RUNNING' ? 'PROCESSING...' :
-                                    status === 'WAITING_INPUT' ? 'AWAITING MANUAL INPUT...' :
-                                        (isMissionTarget && stage === 2 ? 'ORBIT STABILIZED // MISSION OBJECTIVE COMPLETE' : 'STAGE COMPLETE')}
+                            {status === 'IDLE' ? `${t('sat.modal.ready_to')} ${STAGES[stage].action}` :
+                                status === 'RUNNING' ? t('sat.modal.processing') :
+                                    status === 'WAITING_INPUT' ? t('sat.modal.awaiting_input') :
+                                        (isMissionTarget && stage === 2 ? t('sat.modal.orbit_stabilized') : t('sat.modal.stage_complete'))}
                         </div>
                         {status === 'IDLE' && (
                             <button onClick={runStage} className="px-6 py-2 bg-green-600 hover:bg-green-500 text-black font-bold text-xs rounded transition-colors flex items-center gap-2 mx-auto">
@@ -246,10 +250,10 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false, sat
                         {status === 'COMPLETE' && isMissionTarget && stage === 2 && (
                             <div className="animate-in fade-in zoom-in duration-500 space-y-4">
                                 <div className="text-xs text-green-300 max-w-md mx-auto border border-green-500/30 bg-green-900/10 p-4 rounded">
-                                    {satellite?.completionMessage || "MISSION ACCOMPLISHED. SYSTEM RESTORED."}
+                                    {satellite?.completionMessage || t('sat.modal.mission_accomplished')}
                                 </div>
                                 <button onClick={onComplete} className="px-8 py-2 bg-green-500 hover:bg-green-400 text-black font-bold text-sm rounded shadow-[0_0_15px_rgba(34,197,94,0.5)] transition-all hover:scale-105">
-                                    CLOSE & CONFIRM
+                                    {t('sat.modal.close_confirm')}
                                 </button>
                             </div>
                         )}
@@ -262,15 +266,16 @@ export const RestartModal = ({ onClose, onComplete, isMissionTarget = false, sat
 
 // --- SETTINGS MODAL ---
 export const SettingsModal = ({ onClose, apiKey, setApiKey }: { onClose: () => void, apiKey: string, setApiKey: (key: string) => void }) => {
+    const { t } = useLanguage();
     const [inputKey, setInputKey] = useState(apiKey);
     return (
-        <Modal title="SYSTEM CONFIGURATION // API KEYS" onClose={onClose}>
+        <Modal title={t('sat.modal.sys_config')} onClose={onClose}>
             <div className="p-6 space-y-4">
                 <div className="text-xs text-green-500 font-mono">
-                    Valid API key required for real-time Deep Space Network telemetry.
+                    {t('sat.modal.api_req')}
                 </div>
                 <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-green-600 tracking-wider">NASA OPEN API KEY</label>
+                    <label className="text-[10px] font-bold text-green-600 tracking-wider">{t('sat.modal.nasa_key')}</label>
                     <div className="flex gap-2">
                         <div className="relative flex-1">
                             <Key className="absolute left-3 top-2.5 w-4 h-4 text-green-700" />
@@ -279,17 +284,17 @@ export const SettingsModal = ({ onClose, apiKey, setApiKey }: { onClose: () => v
                                 value={inputKey}
                                 onChange={(e) => setInputKey(e.target.value)}
                                 className="w-full bg-black border border-green-900/50 pl-10 pr-4 py-2 text-xs text-green-100 focus:outline-none focus:border-green-500 rounded font-mono"
-                                placeholder="DEMO_KEY"
+                                placeholder={t('sat.modal.demo_key')}
                             />
                         </div>
                     </div>
                 </div>
                 <div className="p-3 bg-green-900/10 border border-green-900/30 rounded text-[10px] text-green-400 leading-relaxed">
-                    Don't have a key? <a href="https://api.nasa.gov/" target="_blank" rel="noreferrer" className="underline text-green-300 hover:text-white">Generate one here</a>.
-                    <br />Using 'DEMO_KEY' has strict limits (30 req/hour) and may cause data failures.
+                    {t('sat.modal.no_key')} <a href="https://api.nasa.gov/" target="_blank" rel="noreferrer" className="underline text-green-300 hover:text-white">{t('sat.modal.gen_here')}</a>.
+                    <br />{t('sat.modal.demo_limits')}
                 </div>
                 <button onClick={() => { setApiKey(inputKey); onClose(); }} className="w-full py-2 bg-green-600 hover:bg-green-500 text-black font-bold text-xs rounded transition-colors">
-                    SAVE CONFIGURATION
+                    {t('sat.modal.save_config')}
                 </button>
             </div>
         </Modal>
@@ -302,11 +307,11 @@ import AstroView from './AstroView';
 import EarthView from './EarthView';
 
 export const SensorFeedModal = ({ onClose, satellite, missionImage, missionMeta }: { onClose: () => void, satellite: SatelliteData, missionImage?: string, missionMeta?: string }) => {
-
+    const { t } = useLanguage();
     const isSpaceTarget = satellite.type === 'TELESCOPE' || satellite.type === 'DEBRIS' || satellite.apiQueryType === 'SPACE';
 
     return (
-        <Modal title={`SENSOR FEED LINK // ${satellite.name}`} onClose={onClose} full>
+        <Modal title={`${t('sat.modal.sensor_feed')} ${satellite.name}`} onClose={onClose} full>
             <div className="w-full h-full bg-black relative overflow-hidden flex flex-col">
                 <div className="flex-1 relative">
                     {isSpaceTarget ? (
@@ -328,6 +333,7 @@ export const SensorFeedModal = ({ onClose, satellite, missionImage, missionMeta 
 
 // --- TELEMETRY MODAL ---
 export const TelemetryModal = ({ onClose, missionTelemetry, satellite }: { onClose: () => void, missionTelemetry?: any[], satellite?: SatelliteData }) => {
+    const { t } = useLanguage();
     const [lines, setLines] = useState<string[]>([]);
     const [isPaused, setIsPaused] = useState(false);
     const [step, setStep] = useState<'STREAM' | 'AUTH' | 'DECRYPTING' | 'DECRYPTED'>('STREAM');
@@ -345,11 +351,11 @@ export const TelemetryModal = ({ onClose, missionTelemetry, satellite }: { onClo
     }, [isPaused, step, missionTelemetry]);
 
     if (step === 'AUTH') {
-        return <AuthModal title="DECRYPTION AUTHORIZATION" onClose={() => setStep('STREAM')} onSuccess={() => setStep('DECRYPTING')} validationKey={satellite?.telemetryKey} />;
+        return <AuthModal title={t('sat.modal.decrypt_auth')} onClose={() => setStep('STREAM')} onSuccess={() => setStep('DECRYPTING')} validationKey={satellite?.telemetryKey} />;
     }
 
     if (step === 'DECRYPTING') {
-        return <ProgressModal title="DECRYPTING LOGS" action="CRACKING ENCRYPTION KEY" onComplete={() => {
+        return <ProgressModal title={t('sat.modal.decrypting_logs')} action={t('sat.modal.cracking_key')} onComplete={() => {
             setStep('DECRYPTED');
             missionEventBus.emit('SAT_DECRYPT', { target: satellite?.id });
         }} />;
@@ -357,53 +363,53 @@ export const TelemetryModal = ({ onClose, missionTelemetry, satellite }: { onClo
 
     if (step === 'DECRYPTED') {
         return (
-            <Modal title="DECRYPTED TELEMETRY DATA" onClose={onClose} wide>
+            <Modal title={t('sat.modal.decrypted_data')} onClose={onClose} wide>
                 <div className="p-6 grid grid-cols-2 gap-6 h-full">
                     <div className="space-y-4">
                         <div className="bg-green-900/10 border border-green-900/30 p-4 rounded">
-                            <h4 className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2"><MapPin size={14} /> GEOLOCATION DATA</h4>
+                            <h4 className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2"><MapPin size={14} /> {t('sat.modal.geo_data')}</h4>
                             <div className="space-y-2 font-mono text-[10px] text-green-300">
-                                <div className="flex justify-between border-b border-green-900/30 pb-1"><span>LATITUDE</span><span>34.0522° N</span></div>
-                                <div className="flex justify-between border-b border-green-900/30 pb-1"><span>LONGITUDE</span><span>118.2437° W</span></div>
-                                <div className="flex justify-between border-b border-green-900/30 pb-1"><span>ALTITUDE</span><span>408.2 KM</span></div>
-                                <div className="flex justify-between"><span>VELOCITY</span><span>7.66 KM/S</span></div>
+                                <div className="flex justify-between border-b border-green-900/30 pb-1"><span>{t('sat.modal.lat')}</span><span>34.0522° N</span></div>
+                                <div className="flex justify-between border-b border-green-900/30 pb-1"><span>{t('sat.modal.long')}</span><span>118.2437° W</span></div>
+                                <div className="flex justify-between border-b border-green-900/30 pb-1"><span>{t('sat.modal.altitude')}</span><span>408.2 KM</span></div>
+                                <div className="flex justify-between"><span>{t('sat.modal.velocity')}</span><span>7.66 KM/S</span></div>
                             </div>
                         </div>
                         <div className="bg-green-900/10 border border-green-900/30 p-4 rounded">
-                            <h4 className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2"><Activity size={14} /> SYSTEM STATUS</h4>
+                            <h4 className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2"><Activity size={14} /> {t('sat.modal.sys_status')}</h4>
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="bg-black/40 p-2 rounded text-center border border-green-900/20">
-                                    <div className="text-[9px] text-gray-500">TEMP</div>
+                                    <div className="text-[9px] text-gray-500">{t('sat.modal.temp')}</div>
                                     <div className="text-green-400 font-mono font-bold">245 K</div>
                                 </div>
                                 <div className="bg-black/40 p-2 rounded text-center border border-green-900/20">
-                                    <div className="text-[9px] text-gray-500">POWER</div>
+                                    <div className="text-[9px] text-gray-500">{t('sat.modal.power')}</div>
                                     <div className="text-green-400 font-mono font-bold">98%</div>
                                 </div>
                             </div>
                             {satellite?.collisionTarget && (
                                 <div className="mt-4 pt-4 border-t border-green-900/30">
-                                    <h4 className="text-xs font-bold text-red-500 mb-2 flex items-center gap-2 animate-pulse"><Crosshair size={14} /> COLLISION TARGET</h4>
+                                    <h4 className="text-xs font-bold text-red-500 mb-2 flex items-center gap-2 animate-pulse"><Crosshair size={14} /> {t('sat.modal.collision_target')}</h4>
                                     <div className="bg-red-900/10 border border-red-900/30 p-2 rounded text-center">
                                         <div className="text-xl font-mono font-bold text-red-500">{satellite.collisionTarget}</div>
-                                        <div className="text-[9px] text-red-400 mt-1">IMPACT TRAJECTORY CONFIRMED</div>
+                                        <div className="text-[9px] text-red-400 mt-1">{t('sat.modal.impact_confirmed')}</div>
                                     </div>
                                 </div>
                             )}
                             <div className="grid grid-cols-2 gap-2 mt-2">
                                 <div className="bg-black/40 p-2 rounded text-center border border-green-900/20">
-                                    <div className="text-[9px] text-gray-500">SIGNAL</div>
+                                    <div className="text-[9px] text-gray-500">{t('sat.modal.signal')}</div>
                                     <div className="text-green-400 font-mono font-bold">-82 dBm</div>
                                 </div>
                                 <div className="bg-black/40 p-2 rounded text-center border border-green-900/20">
-                                    <div className="text-[9px] text-gray-500">UPTIME</div>
+                                    <div className="text-[9px] text-gray-500">{t('sat.modal.uptime')}</div>
                                     <div className="text-green-400 font-mono font-bold">412D</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="flex flex-col h-full">
-                        <h4 className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2"><Terminal size={14} /> ACCESS LOGS</h4>
+                        <h4 className="text-xs font-bold text-green-500 mb-3 flex items-center gap-2"><Terminal size={14} /> {t('sat.modal.access_logs')}</h4>
                         <div className="flex-1 bg-black border border-green-900/30 rounded p-3 font-mono text-[10px] overflow-y-auto space-y-2">
                             {(missionTelemetry || [
                                 { time: '12:44:01', user: 'ADMIN', action: 'AUTH_HANDSHAKE', ip: '192.168.4.22' },
@@ -428,7 +434,7 @@ export const TelemetryModal = ({ onClose, missionTelemetry, satellite }: { onClo
                             ))}
                         </div>
                         <button onClick={() => setStep('STREAM')} className="mt-4 w-full py-2 bg-green-900/20 border border-green-500/50 text-green-400 rounded hover:bg-green-500 hover:text-black transition-colors text-xs font-bold">
-                            RETURN TO RAW STREAM
+                            {t('sat.modal.return_stream')}
                         </button>
                     </div>
                 </div>
@@ -437,17 +443,17 @@ export const TelemetryModal = ({ onClose, missionTelemetry, satellite }: { onClo
     }
 
     return (
-        <Modal title="RAW TELEMETRY STREAM" onClose={onClose}>
+        <Modal title={t('sat.modal.raw_stream')} onClose={onClose}>
             <div className="flex flex-col h-full bg-black p-4 font-mono text-xs">
                 <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-1 text-green-500 mb-4 h-64 border border-green-900/30 p-2">
                     {lines.map((l, i) => <div key={i}>{l}</div>)}
                 </div>
                 <div className="flex gap-2">
                     <button onClick={() => setIsPaused(!isPaused)} className={`flex-1 py-2 border rounded transition-colors ${isPaused ? 'bg-yellow-900/20 border-yellow-500/50 text-yellow-500' : 'bg-green-900/30 border-green-500/50 text-green-400 hover:bg-green-500 hover:text-black'}`}>
-                        {isPaused ? 'RESUME STREAM' : 'PAUSE STREAM'}
+                        {isPaused ? t('sat.modal.resume_stream') : t('sat.modal.pause_stream')}
                     </button>
                     <button onClick={() => setStep('AUTH')} className="flex-1 py-2 bg-green-600 text-black font-bold rounded hover:bg-green-500 transition-colors">
-                        DECRYPT LOGS
+                        {t('sat.modal.decrypt_logs')}
                     </button>
                 </div>
             </div>
@@ -457,6 +463,7 @@ export const TelemetryModal = ({ onClose, missionTelemetry, satellite }: { onClo
 
 // --- CATALOG MODAL ---
 export const CatalogModal = ({ onClose, onTrack, satellites }: { onClose: () => void, onTrack: (id: string) => void, satellites: Record<string, SatelliteData> }) => {
+    const { t } = useLanguage();
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState<ObjectType | 'ALL'>('ALL');
 
@@ -467,12 +474,12 @@ export const CatalogModal = ({ onClose, onTrack, satellites }: { onClose: () => 
     });
 
     return (
-        <Modal title="GLOBAL ASSET DATABASE" onClose={onClose} full>
+        <Modal title={t('sat.modal.global_db')} onClose={onClose} full>
             <div className="flex flex-col h-full gap-4 p-6">
                 <div className="flex flex-col md:flex-row gap-4 p-4 bg-green-900/10 border border-green-900/30 rounded">
                     <div className="flex-1 relative">
                         <Search className="absolute left-3 top-2.5 w-4 h-4 text-green-600" />
-                        <input type="text" placeholder="SEARCH ID, NAME, OR OWNER..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full bg-black border border-green-900/50 pl-10 pr-4 py-2 text-xs text-green-100 focus:outline-none focus:border-green-500 rounded" />
+                        <input type="text" placeholder={t('sat.modal.search_placeholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="w-full bg-black border border-green-900/50 pl-10 pr-4 py-2 text-xs text-green-100 focus:outline-none focus:border-green-500 rounded" />
                     </div>
                     <div className="flex gap-2 overflow-x-auto">
                         {['ALL', 'CIVIL', 'MILITARY', 'TELESCOPE', 'STATION', 'DEBRIS', 'WILDFIRE', 'STORM'].map(f => (
@@ -481,11 +488,11 @@ export const CatalogModal = ({ onClose, onTrack, satellites }: { onClose: () => 
                     </div>
                 </div>
                 <div className="grid grid-cols-12 gap-2 text-[10px] font-bold text-green-600 px-4 border-b border-green-900/30 pb-2">
-                    <div className="col-span-3">DESIGNATION</div>
-                    <div className="col-span-2">TYPE</div>
-                    <div className="col-span-2">OWNER</div>
-                    <div className="col-span-2">ORBIT</div>
-                    <div className="col-span-3 text-right">ACTION</div>
+                    <div className="col-span-3">{t('sat.modal.designation')}</div>
+                    <div className="col-span-2">{t('sat.modal.type')}</div>
+                    <div className="col-span-2">{t('sat.modal.owner')}</div>
+                    <div className="col-span-2">{t('sat.modal.orbit')}</div>
+                    <div className="col-span-3 text-right">{t('sat.modal.action')}</div>
                 </div>
                 <div className="flex-1 overflow-y-auto space-y-1 pr-2">
                     {filtered.map(sat => (
@@ -502,7 +509,7 @@ export const CatalogModal = ({ onClose, onTrack, satellites }: { onClose: () => 
                             <div className="col-span-2 text-[10px] text-green-500">{sat.owner}</div>
                             <div className="col-span-2 text-[10px] text-green-600 font-mono">{sat.orbit}</div>
                             <div className="col-span-3 flex justify-end gap-2">
-                                <button onClick={() => { onTrack(sat.id); onClose(); }} className="flex items-center gap-1 px-3 py-1 bg-green-900/20 hover:bg-green-500 hover:text-black text-green-400 border border-green-900/50 text-[10px] rounded transition-colors"><Crosshair size={10} /> TRACK</button>
+                                <button onClick={() => { onTrack(sat.id); onClose(); }} className="flex items-center gap-1 px-3 py-1 bg-green-900/20 hover:bg-green-500 hover:text-black text-green-400 border border-green-900/50 text-[10px] rounded transition-colors"><Crosshair size={10} /> {t('sat.modal.track')}</button>
                             </div>
                         </div>
                     ))}
