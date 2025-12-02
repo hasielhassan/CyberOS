@@ -190,9 +190,7 @@ moduleData: {
             },
             // ... standard Person fields
         }
-# 🏗️ Mission Architect Handbook
-
-Welcome to the **CyberOS Mission Architect Handbook**. This guide details how to create, structure, and debug missions using the new **Event-Driven Architecture**.
+```
 
 ---
 
