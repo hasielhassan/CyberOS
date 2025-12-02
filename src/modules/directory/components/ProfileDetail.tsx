@@ -89,7 +89,7 @@ export const ProfileDetail = () => {
                                     ID: {profile.id}
                                 </span>
                             </h1>
-                            <div className="flex gap-6 text-xs text-green-500 font-mono">
+                            <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-green-500 font-mono">
                                 <div className="flex items-center gap-2">
                                     <Activity size={14} />
                                     <span>{t('dir.age')}: {profile.details.age}</span>
@@ -102,6 +102,32 @@ export const ProfileDetail = () => {
                                     <Database size={14} />
                                     <span>{t('dir.occ')}: {profile.details.occupation}</span>
                                 </div>
+                                {profile.details.nationality && (
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-base">
+                                            {profile.details.nationality.length === 2
+                                                ? profile.details.nationality.toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0) + 127397))
+                                                : '🏳️'}
+                                        </span>
+                                        <span>{t('dir.nationality')}: {profile.details.nationality}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Extended Personal Info */}
+                            <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-green-600 font-mono border-t border-green-900/30 pt-2">
+                                {profile.email && (
+                                    <div><span className="text-green-800">{t('dir.email')}:</span> {profile.email}</div>
+                                )}
+                                {profile.phone && (
+                                    <div><span className="text-green-800">{t('dir.phone')}:</span> {profile.phone}</div>
+                                )}
+                                {profile.cell && (
+                                    <div><span className="text-green-800">{t('dir.cell')}:</span> {profile.cell}</div>
+                                )}
+                                {profile.dob && (
+                                    <div><span className="text-green-800">{t('dir.dob')}:</span> {profile.dob}</div>
+                                )}
                             </div>
                         </div>
 

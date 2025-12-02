@@ -64,6 +64,7 @@ src/
 │   ├── terminal/       # Terminal module logic & UI
 │   ├── geo_tracker/    # Map module
 │   ├── missions/       # Mission System Core (Engine, Data, Context)
+│   ├── directory/      # Directory module (Profiles, Random User Logic)
 │   └── ...
 ├── layout/             # Main app shell (Sidebar, Header)
 └── styles/             # Global Tailwind & CSS

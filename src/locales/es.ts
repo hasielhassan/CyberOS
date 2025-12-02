@@ -454,6 +454,11 @@ export const es: Language = {
         'dir.linked_assets': 'ACTIVOS VINCULADOS',
         'dir.undated': 'SIN FECHA',
         'dir.unknown_format': 'FORMATO DE DOCUMENTO DESCONOCIDO',
+        'dir.email': 'CORREO',
+        'dir.phone': 'TELÉFONO',
+        'dir.cell': 'MÓVIL',
+        'dir.dob': 'F. NAC',
+        'dir.nationality': 'NACIONALIDAD',
 
         // Directory Roles
         'dir.role.agent': 'AGENTE',

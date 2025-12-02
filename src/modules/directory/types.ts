@@ -20,6 +20,10 @@ export interface Person {
         location: string;
         nationality?: string;
     };
+    email?: string;
+    phone?: string;
+    cell?: string;
+    dob?: string;
     hiddenInfo?: {
         realName?: string;
         clearanceLevel?: string;

@@ -62,6 +62,10 @@ Tap into the world's cameras.
 Crack the code.
 - **Widgets**: Brute Force Visualizer, Hash Cracker, Cipher Solver.
 
+### 🗂️ Directory
+Global citizen database.
+- **Features**: 100+ Live Profiles, Role Distribution (Agents, Criminals, Scientists), Detailed Dossiers (Email, Phone, Nationality).
+
 ### 🧬 Bio_Lab
 A simulation of biological threat monitoring.
 - **Widgets**: DNA Sequencer, Global Infection Map, Viral Database.

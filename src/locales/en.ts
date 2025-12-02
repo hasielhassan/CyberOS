@@ -455,6 +455,11 @@ export const en: Language = {
         'dir.linked_assets': 'LINKED ASSETS',
         'dir.undated': 'UNDATED',
         'dir.unknown_format': 'UNKNOWN DOCUMENT FORMAT',
+        'dir.email': 'EMAIL',
+        'dir.phone': 'PHONE',
+        'dir.cell': 'CELL',
+        'dir.dob': 'DOB',
+        'dir.nationality': 'NATIONALITY',
 
         // Directory Roles
         'dir.role.agent': 'AGENT',
