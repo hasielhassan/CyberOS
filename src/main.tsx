@@ -17,7 +17,7 @@ import { DecryptionPlugin } from './modules/decryption';
 import { MissionsPlugin } from './modules/missions';
 import { SurveillancePlugin } from './modules/surveillance';
 import { BioLabPlugin } from './modules/bio_lab';
-import { HealthMonitorPlugin } from './modules/health_monitor';
+
 import { DirectoryPlugin } from './modules/directory';
 import { MissionsProvider } from './modules/missions/MissionsContext';
 import { GlobalMissionEngine } from './modules/missions/GlobalMissionEngine';
@@ -32,15 +32,14 @@ const App = () => {
     useEffect(() => {
         // Register all plugins
         registerPlugin(SysOverviewPlugin);
+        registerPlugin(MissionsPlugin);
         registerPlugin(TerminalPlugin);
         registerPlugin(GeoTrackerPlugin);
         registerPlugin(SatUplinkPlugin);
         registerPlugin(NetWarfarePlugin);
-        registerPlugin(DecryptionPlugin);
-        registerPlugin(MissionsPlugin);
         registerPlugin(SurveillancePlugin);
+        registerPlugin(DecryptionPlugin);
         registerPlugin(BioLabPlugin);
-        registerPlugin(HealthMonitorPlugin);
         registerPlugin(DirectoryPlugin);
     }, []);
 

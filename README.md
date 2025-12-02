@@ -28,45 +28,41 @@ As it evolves, it will become a gamified platform for learning geography, crypto
 
 ## 🖥️ Modules & Widgets
 
-### 📡 Sat_Uplink
-A fully interactive **3D Globe** tracking simulated satellite orbits.
-- **Widgets**: Orbit Visualization, Object List, Satellite Details.
-
-### 🌍 Geo_Tracker
-A "God's Eye" view of global movement.
-- **Widgets**: Live Map (Leaflet), Flight Tracker, Train Network, Storm Systems, Thermal Layer.
-
-### 🧬 Bio_Lab
-A simulation of biological threat monitoring.
-- **Widgets**: DNA Sequencer, Global Infection Map, Viral Database.
-
-### 👁️ Surveillance
-Tap into the world's cameras.
-- **Widgets**: 16-Channel CCTV Grid, Camera Metadata, Live/Sim Toggle.
-
-### 💻 Sys_Overview
+### � Sys_Overview
 The heartbeat of your rig.
 - **Widgets**: CPU/RAM Graphs, Network Activity, Signal Gain Sliders, Nuclear Launch Protocol.
+
+### 💼 Missions
+Mission control for operatives.
+- **Widgets**: Mission List, Target Profiles, Reward Claims.
 
 ### >_ Terminal_Bash
 A simulated command line interface.
 - **Widgets**: Command Input, System Logs, ASCII Art Output.
 
+### 🌍 Geo_Tracker
+A "God's Eye" view of global movement.
+- **Widgets**: Live Map (Leaflet), Flight Tracker, Train Network, Storm Systems, Thermal Layer.
+
+### 📡 Sat_Uplink
+A fully interactive **3D Globe** tracking simulated satellite orbits.
+- **Widgets**: Orbit Visualization, Object List, Satellite Details.
+
 ### 📶 Net_Warfare
 Visualizing cyber threats.
 - **Widgets**: Packet Sniffer, DDoS Attack Map, Firewall Status.
+
+### 👁️ Surveillance
+Tap into the world's cameras.
+- **Widgets**: 16-Channel CCTV Grid, Camera Metadata, Live/Sim Toggle.
 
 ### 🔓 Decryption
 Crack the code.
 - **Widgets**: Brute Force Visualizer, Hash Cracker, Cipher Solver.
 
-### 💼 Contracts
-Mission control for operatives.
-- **Widgets**: Mission List, Target Profiles, Reward Claims.
-
-### 💓 Vitals
-Personal health monitoring.
-- **Widgets**: Heart Rate Monitor (ECG), Brain Activity, Audio Spectrum.
+### 🧬 Bio_Lab
+A simulation of biological threat monitoring.
+- **Widgets**: DNA Sequencer, Global Infection Map, Viral Database.
 
 ---
 
