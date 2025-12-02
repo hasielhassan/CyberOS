@@ -12,6 +12,8 @@ const ScannedDocumentWrapper = ({ children, seed = 0, type }: { children: React.
         newspaper: "max-w-2xl mx-auto bg-[#f4f1ea] shadow-2xl p-0",
         mission: "max-w-2xl mx-auto bg-[#fffdf5] shadow-[0_5px_15px_rgba(0,0,0,0.3)] p-8",
         certificate: "max-w-3xl mx-auto bg-[#fffaf0] shadow-lg p-1 border-[16px] border-[#fffaf0]",
+        intel: "max-w-2xl mx-auto bg-[#f0f0f0] shadow-lg p-8 border-t-8 border-gray-800",
+        transcript: "max-w-2xl mx-auto bg-white shadow-md p-8",
     };
 
     return (
@@ -290,6 +292,76 @@ const CertificateRenderer = ({ data, meta }: Document) => {
     );
 };
 
+const IntelRenderer = ({ data, meta }: Document) => {
+    return (
+        <ScannedDocumentWrapper type="intel" seed={data.content.length}>
+            <div className="font-mono text-sm text-gray-800 relative h-full">
+                {/* Header */}
+                <div className="border-b-2 border-gray-800 pb-4 mb-6 flex justify-between items-end">
+                    <div>
+                        <div className="text-xs uppercase font-bold tracking-widest text-gray-500">INTERCEPTED TRANSMISSION</div>
+                        <div className="text-xl font-black uppercase tracking-tighter">SIGNAL LOG</div>
+                    </div>
+                    <div className="text-right text-xs">
+                        <div><span className="font-bold">DATE:</span> {meta.date}</div>
+                        <div><span className="font-bold">SOURCE:</span> {meta.source}</div>
+                    </div>
+                </div>
+
+                {/* Body */}
+                <div className="bg-gray-200 p-4 border border-gray-300 font-typewriter whitespace-pre-wrap leading-relaxed">
+                    {data.content}
+                </div>
+
+                {/* Footer */}
+                <div className="mt-8 text-[10px] text-center text-gray-400 uppercase tracking-widest">
+                    /// END OF TRANSMISSION ///
+                </div>
+
+                {/* Stamp */}
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-4 border-red-500 text-red-500 px-8 py-4 font-black text-4xl uppercase -rotate-12 opacity-20 pointer-events-none">
+                    CONFIDENTIAL
+                </div>
+            </div>
+        </ScannedDocumentWrapper>
+    );
+};
+
+const TranscriptRenderer = ({ data, meta }: Document) => {
+    return (
+        <ScannedDocumentWrapper type="transcript" seed={meta.caseId?.length || 0}>
+            <div className="font-sans text-gray-900 h-full">
+                {/* Header */}
+                <div className="text-center mb-8 border-b border-gray-300 pb-4">
+                    <h1 className="text-2xl font-bold uppercase tracking-wide mb-1">Official Transcript</h1>
+                    <div className="text-xs text-gray-500 uppercase tracking-widest">Case ID: {meta.caseId}</div>
+                    <div className="text-xs text-gray-500 uppercase tracking-widest">Date: {meta.date}</div>
+                    <div className="text-xs text-gray-500 uppercase tracking-widest mt-1">Participants: {meta.participants}</div>
+                </div>
+
+                {/* Content */}
+                <div className="space-y-4 font-mono text-sm">
+                    {data.lines.map((line: any, i: number) => (
+                        <div key={i} className="flex gap-4">
+                            <div className="w-20 shrink-0 text-gray-400 text-xs pt-1 text-right">{line.timestamp}</div>
+                            <div className="flex-1">
+                                <span className="font-bold uppercase text-gray-700 mr-2">{line.speaker}:</span>
+                                <span className="text-gray-900">{line.text}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Footer */}
+                <div className="mt-12 border-t border-gray-300 pt-2 flex justify-between text-[10px] text-gray-400 uppercase">
+                    <div>Page 1 of 1</div>
+                    <div>Verified by: SYSTEM</div>
+                </div>
+            </div>
+        </ScannedDocumentWrapper>
+    );
+};
+
 export const DocumentViewer = ({ document, onClose }: { document: Document, onClose: () => void }) => {
     const { t } = useLanguage();
     return (
@@ -306,8 +378,10 @@ export const DocumentViewer = ({ document, onClose }: { document: Document, onCl
                 {document.type === 'newspaper' && <NewspaperRenderer {...document} />}
                 {document.type === 'mission' && <MissionRenderer {...document} />}
                 {document.type === 'certificate' && <CertificateRenderer {...document} />}
+                {document.type === 'intel' && <IntelRenderer {...document} />}
+                {document.type === 'transcript' && <TranscriptRenderer {...document} />}
 
-                {!['identity', 'newspaper', 'mission', 'certificate'].includes(document.type) && (
+                {!['identity', 'newspaper', 'mission', 'certificate', 'intel', 'transcript'].includes(document.type) && (
                     <div className="border border-red-500 p-8 text-center text-red-500 bg-black">
                         <AlertTriangle className="mx-auto mb-4" size={48} />
                         {t('dir.unknown_format')}

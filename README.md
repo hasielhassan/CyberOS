@@ -65,6 +65,8 @@ Crack the code.
 ### 🗂️ Directory
 Global citizen database.
 - **Features**: 100+ Live Profiles, Role Distribution, Mission Injection, Encrypted Profiles & Decryption Mechanics.
+- **Document Viewer**: Procedurally generates realistic documents (IDs, Newspapers, Classified Briefs) from JSON data.
+
 
 ### 🧬 Bio_Lab
 A simulation of biological threat monitoring.
@@ -156,6 +158,11 @@ npm run deploy
 - [ ] **Mobile**: Ensure proper mobile compatibility and layout.
 - [ ] **PWA**: Add compatibility with "Trusted Web Activity (TWA)" on Chrome for a native-like feel.
 - [ ] **Multi-Language**: Full translation support for Spanish, French, and Japanese.
+- [ ] **More Document Types**:
+    - [ ] **Blueprint**: Technical schematics for devices or buildings.
+    - [ ] **Medical Report**: Bio-lab patient analysis and virus stats.
+    - [ ] **Email Thread**: Outlook-style printed email chains.
+
 
 ---
 

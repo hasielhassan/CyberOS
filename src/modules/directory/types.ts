@@ -2,7 +2,7 @@ export type Role = 'AGENT' | 'CRIMINAL' | 'SCIENTIST' | 'CITIZEN';
 export type Status = 'ACTIVE' | 'MIA' | 'KIA' | 'WANTED' | 'INCARCERATED' | 'NEUTRAL' | 'RESEARCH';
 
 export interface Document {
-    type: 'identity' | 'newspaper' | 'mission' | 'certificate' | 'intel';
+    type: 'identity' | 'newspaper' | 'mission' | 'certificate' | 'intel' | 'transcript';
     meta: any;
     data: any;
     title: string; // Display title for the list
