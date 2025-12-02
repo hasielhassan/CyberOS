@@ -262,7 +262,6 @@ export default function SatUplink() {
                 <SensorFeedModal
                     satellite={selectedSat || neoAsSat!}
                     onClose={() => setModalType(null)}
-                    apiKey={apiKey}
                     missionImage={activeMission?.moduleData?.Satellite?.sensorFeed?.[selectedSat?.id || '']?.image}
                     missionMeta={activeMission?.moduleData?.Satellite?.sensorFeed?.[selectedSat?.id || '']?.meta}
                 />

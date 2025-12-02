@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, Key, Activity, Aperture, Search, Crosshair, Lock, Unlock, ShieldAlert, Terminal, MapPin } from 'lucide-react';
+import { X, Key, Activity, Search, Crosshair, Lock, Unlock, ShieldAlert, Terminal, MapPin } from 'lucide-react';
 import { SatelliteData, ObjectType } from '../types';
-import { NASA_BASE_URL, IMAGE_ASSETS, CATEGORY_COLORS } from '../constants';
+import { CATEGORY_COLORS } from '../constants';
 import { missionEventBus } from '../../missions/MissionEventBus';
 
 // --- GENERIC MODAL ---
 export const Modal = ({ title, onClose, children, danger = false, wide = false, full = false }: any) => (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-        <div className={`w-full ${full ? 'h-full max-h-[90vh]' : ''} ${wide || full ? 'max-w-4xl' : 'max-w-md'} bg-[#030605] border ${danger ? 'border-red-900/60 shadow-[0_0_30px_rgba(239,68,68,0.15)]' : 'border-green-900/60 shadow-[0_0_30px_rgba(16,185,129,0.15)]'} rounded-lg overflow-hidden flex flex-col`}>
+        <div className={`w-full ${full ? 'h-full max-h-[90vh]' : ''} ${wide ? 'max-w-4xl' : (full ? 'max-w-[95vw]' : 'max-w-md')} bg-[#030605] border ${danger ? 'border-red-900/60 shadow-[0_0_30px_rgba(239,68,68,0.15)]' : 'border-green-900/60 shadow-[0_0_30px_rgba(16,185,129,0.15)]'} rounded-lg overflow-hidden flex flex-col`}>
             <div className={`px-4 py-3 border-b ${danger ? 'border-red-900/30 bg-red-900/10' : 'border-green-900/30 bg-green-900/10'} flex justify-between items-center flex-shrink-0`}>
                 <h3 className={`font-mono text-sm font-bold ${danger ? 'text-red-400' : 'text-green-400'}`}>{title}</h3>
                 <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors"><X size={16} /></button>
@@ -297,114 +297,28 @@ export const SettingsModal = ({ onClose, apiKey, setApiKey }: { onClose: () => v
 };
 
 // --- SENSOR FEED MODAL ---
-export const SensorFeedModal = ({ onClose, satellite, apiKey, missionImage, missionMeta }: { onClose: () => void, satellite: SatelliteData, apiKey: string, missionImage?: string, missionMeta?: string }) => {
-    const [loading, setLoading] = useState(false);
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
-    const [target, setTarget] = useState<string>(satellite.supportedTargets[0]);
-    const [mode, setMode] = useState<'OPTICAL' | 'INFRARED' | 'RADAR' | 'EPIC'>('OPTICAL');
-    const [meta, setMeta] = useState<string>('');
+// --- SENSOR FEED MODAL ---
+import AstroView from './AstroView';
+import EarthView from './EarthView';
 
-    const executeCapture = async () => {
-        setLoading(true);
-        setImageUrl(null);
-        setMeta('');
+export const SensorFeedModal = ({ onClose, satellite, missionImage, missionMeta }: { onClose: () => void, satellite: SatelliteData, missionImage?: string, missionMeta?: string }) => {
 
-        try {
-            if (missionImage) {
-                // Mission Override
-                await new Promise(r => setTimeout(r, 1500)); // Cinematic delay
-                setImageUrl(missionImage);
-                setMeta(missionMeta || "MISSION TARGET IDENTIFIED");
-            } else if (mode === 'EPIC') {
-                const res = await fetch(`${NASA_BASE_URL}/EPIC/api/natural/images?api_key=${apiKey}`);
-                const data = await res.json();
-                if (data && data.length > 0) {
-                    const img = data[0];
-                    const date = img.date.split(' ')[0].replaceAll('-', '/');
-                    const url = `https://api.nasa.gov/EPIC/archive/natural/${date}/png/${img.image}.png?api_key=${apiKey}`;
-                    setImageUrl(url);
-                    setMeta(`DSCOVR SATELLITE // ${img.date}`);
-                } else { throw new Error("No EPIC data"); }
-            } else if (satellite.type === 'TELESCOPE' || satellite.apiQueryType === 'SPACE') {
-                const res = await fetch(`https://images-api.nasa.gov/search?q=${encodeURIComponent(target)}&media_type=image`);
-                const data = await res.json();
-                const items = data.collection.items;
-                if (items.length > 0) {
-                    setImageUrl(items[0].links[0].href);
-                    setMeta(items[0].data[0].title);
-                } else { throw new Error("No NASA Library data"); }
-            } else {
-                // Fallback static dictionary or satellite specific image
-                await new Promise(r => setTimeout(r, 1000));
-                const fallback = satellite.imageUrl || IMAGE_ASSETS[target.toUpperCase()] || IMAGE_ASSETS['DEFAULT_EARTH'];
-                setImageUrl(fallback);
-                setMeta(`TARGET: ${target.toUpperCase()}`);
-            }
-        } catch (e) {
-            console.log("Sensor Feed Error, using fallback", e);
-            const fallback = satellite.imageUrl || (satellite.apiQueryType === 'SPACE' ? IMAGE_ASSETS['DEFAULT_SPACE'] : IMAGE_ASSETS['DEFAULT_EARTH']);
-            setImageUrl(fallback);
-            setMeta("SIGNAL DEGRADED // ARCHIVE FOOTAGE");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const isSpaceTarget = satellite.type === 'TELESCOPE' || satellite.type === 'DEBRIS' || satellite.apiQueryType === 'SPACE';
 
     return (
-        <Modal title={`SENSOR FEED LINK // ${satellite.name}`} onClose={onClose} wide>
-            <div className="flex flex-col md:flex-row gap-4 h-full p-6">
-                <div className="w-full md:w-1/3 flex flex-col gap-4">
-                    <div className="p-3 bg-green-900/10 border border-green-900/30 rounded">
-                        <div className="text-[10px] text-green-600 font-bold mb-2">TARGETING_PARAMETERS</div>
-                        <div className="space-y-3">
-                            <div>
-                                <label className="text-[9px] text-green-500 block mb-1">PRIMARY TARGET</label>
-                                <select value={target} onChange={(e) => setTarget(e.target.value)} className="w-full bg-black border border-green-900/50 text-green-400 text-xs p-2 rounded focus:outline-none focus:border-green-500">
-                                    {satellite.supportedTargets.map(t => <option key={t} value={t}>{t.toUpperCase()}</option>)}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-[9px] text-green-500 block mb-1">SENSOR MODE</label>
-                                <div className="grid grid-cols-2 gap-1">
-                                    {['OPTICAL', 'INFRARED', 'RADAR', 'EPIC'].map(m => (
-                                        <button key={m} onClick={() => setMode(m as any)} className={`text-[9px] border py-1 transition-all ${mode === m ? 'bg-green-500 text-black border-green-500' : 'bg-transparent text-green-600 border-green-900/30 hover:border-green-500'}`}>{m}</button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button onClick={executeCapture} disabled={loading} className="w-full py-3 bg-green-600 hover:bg-green-500 text-black font-bold text-xs rounded transition-colors flex items-center justify-center gap-2">
-                        {loading ? <Activity className="w-4 h-4 animate-spin" /> : <Aperture className="w-4 h-4" />}
-                        {loading ? 'ACQUIRING SIGNAL...' : 'EXECUTE CAPTURE'}
-                    </button>
-                </div>
-                <div className="w-full md:w-2/3 aspect-video bg-black border border-green-900/30 relative overflow-hidden flex items-center justify-center rounded group">
-                    {loading ? (
-                        <div className="flex flex-col items-center gap-2">
-                            <div className="w-16 h-16 border-4 border-green-900/30 border-t-green-500 rounded-full animate-spin"></div>
-                            <div className="text-xs font-mono text-green-500 animate-pulse mt-2">DECRYPTING DOWNLINK...</div>
-                        </div>
-                    ) : imageUrl ? (
-                        <>
-                            <img src={imageUrl} alt="Satellite Feed" className={`w-full h-full object-cover transition-all duration-500 ${mode === 'INFRARED' ? 'contrast-[1.5] brightness-75 hue-rotate-180 invert sepia' : ''}`} />
-                            <div className="absolute inset-0 pointer-events-none p-4 flex flex-col justify-between">
-                                <div className="flex justify-between items-start">
-                                    <div className="bg-red-500/90 text-white text-[9px] font-bold px-2 py-0.5 animate-pulse">LIVE FEED</div>
-                                    <div className="text-[10px] font-mono text-green-400 bg-black/60 px-1">{meta}</div>
-                                </div>
-                                <div className="absolute inset-0 flex items-center justify-center opacity-40">
-                                    <div className="w-24 h-24 border border-green-400/50 rounded-full flex items-center justify-center"><div className="w-1 h-1 bg-green-500 rounded-full"></div></div>
-                                    <div className="w-full h-px bg-green-400/20 absolute"></div>
-                                    <div className="h-full w-px bg-green-400/20 absolute"></div>
-                                </div>
-                            </div>
-                            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_2px,3px_100%] pointer-events-none z-10"></div>
-                        </>
+        <Modal title={`SENSOR FEED LINK // ${satellite.name}`} onClose={onClose} full>
+            <div className="w-full h-full bg-black relative overflow-hidden flex flex-col">
+                <div className="flex-1 relative">
+                    {isSpaceTarget ? (
+                        <AstroView
+                            satellite={satellite}
+                            missionOverride={missionImage ? { image: missionImage, meta: missionMeta } : undefined}
+                        />
                     ) : (
-                        <div className="text-center opacity-30">
-                            <Search className="w-16 h-16 mx-auto mb-2" />
-                            <div className="text-xs font-mono">WAITING FOR TARGET ASSIGNMENT</div>
-                        </div>
+                        <EarthView
+                            satellite={satellite}
+                            missionOverride={missionImage ? { image: missionImage, meta: missionMeta } : undefined}
+                        />
                     )}
                 </div>
             </div>
