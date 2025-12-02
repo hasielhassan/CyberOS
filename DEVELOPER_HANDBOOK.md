@@ -252,6 +252,7 @@ Used in the **Surveillance** module.
 ---
 
 ## 9. Directory Module
+```
 src/
 ├── components/         # Shared UI components (Buttons, Modals, etc.)
 ├── hooks/              # Global hooks (useMissionState, useSound)
