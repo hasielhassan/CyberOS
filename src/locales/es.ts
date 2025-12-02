@@ -459,6 +459,8 @@ export const es: Language = {
         'dir.cell': 'MÓVIL',
         'dir.dob': 'F. NAC',
         'dir.nationality': 'NACIONALIDAD',
+        'dir.restricted_access': 'ACCESO RESTRINGIDO',
+        'dir.decrypt_success': 'DESENCRIPTACIÓN EXITOSA',
 
         // Directory Roles
         'dir.role.agent': 'AGENTE',

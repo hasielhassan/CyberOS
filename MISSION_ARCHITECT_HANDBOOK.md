@@ -166,3 +166,36 @@ The mission system uses **Scoped Persistence**.
 *   **Console Logs:** The `useMissionEngine` hook logs all received events and matching objectives.
 *   **Event Bus:** Check `MissionEventBus.ts` to see raw event emissions.
 *   **State:** Check Application > Local Storage > `cyberos_mission_state` to see raw persistence data.
+
+---
+
+## 7. Directory Injection
+
+Missions can inject specific profiles into the global Directory. These profiles can be encrypted and require a decryption key found during gameplay.
+
+### Data Structure
+```typescript
+moduleData: {
+    Directory: [
+        {
+            id: "target-id",
+            name: "John Doe",
+            role: "AGENT",
+            status: "ACTIVE",
+            encrypted: true, // Optional: Locks the profile
+            decryptionKey: "SECRET-KEY", // Required if encrypted
+            hiddenInfo: {
+                realName: "Jane Smith",
+                notes: "Classified intel..."
+            },
+            // ... standard Person fields
+        }
+    ]
+}
+```
+
+### Events
+- `DIRECTORY_VIEW_PROFILE`: Triggered when a user views a specific profile.
+  - Target: Profile ID (e.g., `target-id`)
+- `DIRECTORY_DECRYPT`: Triggered when a user successfully decrypts a profile.
+  - Target: Profile ID

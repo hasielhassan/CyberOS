@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Person, Role } from './types';
 import { getDirectoryData } from './directory_data';
 import { useLanguage } from '../../core/registry';
+import { useMissions } from '../missions/MissionsContext';
+import { missionEventBus } from '../missions/MissionEventBus';
 
 interface DirectoryContextType {
     profiles: Person[];
@@ -14,12 +16,14 @@ interface DirectoryContextType {
     bookmarks: string[];
     toggleBookmark: (id: string) => void;
     isLoading: boolean;
+    decryptProfile: (id: string, code: string) => void;
 }
 
 const DirectoryContext = createContext<DirectoryContextType | undefined>(undefined);
 
 export const DirectoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { t } = useLanguage();
+    const { activeMission } = useMissions();
     const [profiles, setProfiles] = useState<Person[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState<Role | 'ALL'>('ALL');
@@ -32,7 +36,7 @@ export const DirectoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             try {
                 // Load local data first
                 // @ts-ignore
-                const localProfiles: Person[] = getDirectoryData(t);
+                let allProfiles: Person[] = getDirectoryData(t) as unknown as Person[];
 
                 // Fetch random citizens
                 const response = await fetch('https://randomuser.me/api/?results=100');
@@ -61,12 +65,12 @@ export const DirectoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                     return {
                         id: user.login.uuid,
                         name: `${user.name.first} ${user.name.last}`,
-                        role: role,
+                        role: role as Role,
                         status: status,
                         avatar: user.picture.large,
-                        email: user.email,
-                        phone: user.phone,
-                        cell: user.cell,
+                        email: user.email || undefined,
+                        phone: user.phone || undefined,
+                        cell: user.cell || undefined,
                         dob: new Date(user.dob.date).toISOString().split('T')[0],
                         details: {
                             age: user.dob.age,
@@ -104,24 +108,55 @@ export const DirectoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                     };
                 });
 
-                setProfiles([...localProfiles, ...citizenProfiles]);
+                allProfiles = [...allProfiles, ...citizenProfiles];
+
+                // Inject Mission Profiles
+                if (activeMission?.moduleData?.Directory) {
+                    const missionProfiles = activeMission.moduleData.Directory as Person[];
+                    // Merge or append. For now, we append.
+                    // Check for duplicates by ID to allow overriding
+                    const missionIds = new Set(missionProfiles.map(p => p.id));
+                    allProfiles = allProfiles.filter(p => !missionIds.has(p.id));
+                    allProfiles = [...missionProfiles, ...allProfiles];
+                }
+
+                setProfiles(allProfiles);
             } catch (error) {
                 console.error("Failed to fetch citizens:", error);
                 // Fallback to just local data
                 // @ts-ignore
-                setProfiles(getDirectoryData(t));
+                let localProfiles: Person[] = getDirectoryData(t) as unknown as Person[];
+
+                if (activeMission?.moduleData?.Directory) {
+                    const missionProfiles = activeMission.moduleData.Directory as Person[];
+                    const missionIds = new Set(missionProfiles.map(p => p.id));
+                    localProfiles = localProfiles.filter(p => !missionIds.has(p.id));
+                    localProfiles = [...missionProfiles, ...localProfiles];
+                }
+
+                setProfiles(localProfiles);
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchCitizens();
-    }, [t]);
+    }, [t, activeMission]);
 
     const toggleBookmark = (id: string) => {
         setBookmarks(prev =>
             prev.includes(id) ? prev.filter(b => b !== id) : [...prev, id]
         );
+    };
+
+    const decryptProfile = (id: string, code: string) => {
+        setProfiles(prev => prev.map(p => {
+            if (p.id === id && p.encrypted && p.decryptionKey === code) {
+                missionEventBus.emit('DIRECTORY_DECRYPT', { id });
+                return { ...p, isDecrypted: true };
+            }
+            return p;
+        }));
     };
 
     return (
@@ -135,7 +170,8 @@ export const DirectoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             setSelectedProfileId,
             bookmarks,
             toggleBookmark,
-            isLoading
+            isLoading,
+            decryptProfile
         }}>
             {children}
         </DirectoryContext.Provider>

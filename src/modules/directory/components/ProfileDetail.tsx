@@ -4,14 +4,24 @@ import { Shield, Lock, FileText, Eye, EyeOff, Bookmark, MapPin, Activity, Databa
 import { DocumentViewer } from './DocumentViewer';
 import { Document } from '../types';
 import { useLanguage } from '../../../core/registry';
+import { missionEventBus } from '../../missions/MissionEventBus';
+import { useEffect } from 'react';
 
 export const ProfileDetail = () => {
     const { t } = useLanguage();
-    const { profiles, selectedProfileId, bookmarks, toggleBookmark } = useDirectory();
+    const { profiles, selectedProfileId, bookmarks, toggleBookmark, decryptProfile } = useDirectory();
     const [showHidden, setShowHidden] = useState(false);
     const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
 
     const profile = profiles.find(p => p.id === selectedProfileId);
+
+    const isBookmarked = profile ? bookmarks.includes(profile.id) : false;
+
+    useEffect(() => {
+        if (profile) {
+            missionEventBus.emit('DIRECTORY_VIEW_PROFILE', { id: profile.id });
+        }
+    }, [profile]);
 
     if (!profile) {
         return (
@@ -21,8 +31,6 @@ export const ProfileDetail = () => {
             </div>
         );
     }
-
-    const isBookmarked = bookmarks.includes(profile.id);
 
     return (
         <div className="flex-1 flex bg-black/80 relative overflow-hidden">
@@ -138,47 +146,76 @@ export const ProfileDetail = () => {
                                     <Lock size={12} />
                                     {t('dir.classified')}
                                 </div>
-                                <button
-                                    onClick={() => setShowHidden(!showHidden)}
-                                    className="text-[10px] flex items-center gap-1 text-green-600 hover:text-green-400 transition-colors"
-                                >
-                                    {showHidden ? <EyeOff size={12} /> : <Eye size={12} />}
-                                    {showHidden ? t('dir.conceal') : t('dir.decrypt')}
-                                </button>
+                                {!profile.encrypted || profile.isDecrypted ? (
+                                    <button
+                                        onClick={() => setShowHidden(!showHidden)}
+                                        className="text-[10px] flex items-center gap-1 text-green-600 hover:text-green-400 transition-colors"
+                                    >
+                                        {showHidden ? <EyeOff size={12} /> : <Eye size={12} />}
+                                        {showHidden ? t('dir.conceal') : t('dir.decrypt')}
+                                    </button>
+                                ) : null}
                             </div>
 
                             <div className="p-4 relative min-h-[100px]">
-                                {!showHidden && (
-                                    <div className="absolute inset-0 backdrop-blur-sm bg-black/50 z-10 flex items-center justify-center">
-                                        <div className="text-xs text-red-500 font-bold border border-red-900 bg-black/80 px-4 py-2 animate-pulse">
+                                {profile.encrypted && !profile.isDecrypted ? (
+                                    <div className="flex flex-col items-center justify-center gap-4 py-8">
+                                        <div className="text-red-500 font-bold tracking-widest animate-pulse">
+                                            ENCRYPTED PROFILE
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
+                                                placeholder="ENTER DECRYPTION KEY"
+                                                className="bg-black border border-green-900 text-green-500 px-3 py-1 text-xs font-mono focus:border-green-500 outline-none w-48 text-center"
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        const target = e.target as HTMLInputElement;
+                                                        decryptProfile(profile.id, target.value);
+                                                        target.value = '';
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="text-[10px] text-green-800">
                                             {t('dir.encrypted_auth')}
                                         </div>
                                     </div>
-                                )}
-                                <div className={`grid grid-cols-2 gap-4 text-sm ${!showHidden ? 'blur-sm select-none opacity-50' : ''}`}>
-                                    <div>
-                                        <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.real_name')}</div>
-                                        <div className="text-green-400 font-mono">{profile.hiddenInfo?.realName || t('dir.unknown')}</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.clearance')}</div>
-                                        <div className="text-green-400 font-mono">{profile.hiddenInfo?.clearanceLevel || t('dir.restricted')}</div>
-                                    </div>
-                                    <div className="col-span-2">
-                                        <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.notes')}</div>
-                                        <div className="text-green-400 font-mono leading-relaxed">{profile.hiddenInfo?.notes || t('dir.no_data')}</div>
-                                    </div>
-                                    <div className="col-span-2">
-                                        <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.known_associates')}</div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {profile.hiddenInfo?.knownAssociates?.map((assoc, i) => (
-                                                <span key={i} className="px-2 py-1 bg-green-900/20 border border-green-900/50 text-xs text-green-500">
-                                                    {assoc}
-                                                </span>
-                                            )) || <span className="text-green-700 italic">{t('dir.none_recorded')}</span>}
+                                ) : (
+                                    <>
+                                        {!showHidden && (
+                                            <div className="absolute inset-0 backdrop-blur-sm bg-black/50 z-10 flex items-center justify-center">
+                                                <div className="text-xs text-green-500 font-bold border border-green-900 bg-black/80 px-4 py-2">
+                                                    {t('dir.restricted_access')}
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className={`grid grid-cols-2 gap-4 text-sm ${!showHidden ? 'blur-sm select-none opacity-50' : ''}`}>
+                                            <div>
+                                                <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.real_name')}</div>
+                                                <div className="text-green-400 font-mono">{profile.hiddenInfo?.realName || t('dir.unknown')}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.clearance')}</div>
+                                                <div className="text-green-400 font-mono">{profile.hiddenInfo?.clearanceLevel || t('dir.restricted')}</div>
+                                            </div>
+                                            <div className="col-span-2">
+                                                <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.notes')}</div>
+                                                <div className="text-green-400 font-mono leading-relaxed">{profile.hiddenInfo?.notes || t('dir.no_data')}</div>
+                                            </div>
+                                            <div className="col-span-2">
+                                                <div className="text-[10px] text-green-800 uppercase mb-1">{t('dir.known_associates')}</div>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {profile.hiddenInfo?.knownAssociates?.map((assoc, i) => (
+                                                        <span key={i} className="px-2 py-1 bg-green-900/20 border border-green-900/50 text-xs text-green-500">
+                                                            {assoc}
+                                                        </span>
+                                                    )) || <span className="text-green-700 italic">{t('dir.none_recorded')}</span>}
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </>
+                                )}
                             </div>
                         </div>
 

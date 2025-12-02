@@ -64,7 +64,7 @@ Crack the code.
 
 ### 🗂️ Directory
 Global citizen database.
-- **Features**: 100+ Live Profiles, Role Distribution (Agents, Criminals, Scientists), Detailed Dossiers (Email, Phone, Nationality).
+- **Features**: 100+ Live Profiles, Role Distribution, Mission Injection, Encrypted Profiles & Decryption Mechanics.
 
 ### 🧬 Bio_Lab
 A simulation of biological threat monitoring.

@@ -2,7 +2,7 @@ export type Role = 'AGENT' | 'CRIMINAL' | 'SCIENTIST' | 'CITIZEN';
 export type Status = 'ACTIVE' | 'MIA' | 'KIA' | 'WANTED' | 'INCARCERATED' | 'NEUTRAL' | 'RESEARCH';
 
 export interface Document {
-    type: 'identity' | 'newspaper' | 'mission' | 'certificate';
+    type: 'identity' | 'newspaper' | 'mission' | 'certificate' | 'intel';
     meta: any;
     data: any;
     title: string; // Display title for the list
@@ -24,6 +24,9 @@ export interface Person {
     phone?: string;
     cell?: string;
     dob?: string;
+    encrypted?: boolean;
+    decryptionKey?: string;
+    isDecrypted?: boolean;
     hiddenInfo?: {
         realName?: string;
         clearanceLevel?: string;

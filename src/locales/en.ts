@@ -460,6 +460,8 @@ export const en: Language = {
         'dir.cell': 'CELL',
         'dir.dob': 'DOB',
         'dir.nationality': 'NATIONALITY',
+        'dir.restricted_access': 'RESTRICTED ACCESS',
+        'dir.decrypt_success': 'DECRYPTION SUCCESSFUL',
 
         // Directory Roles
         'dir.role.agent': 'AGENT',

@@ -249,3 +249,14 @@ Used in the **Surveillance** module.
 *   **Mission Debugging**: Open the browser console. The `GlobalMissionEngine` logs every event it receives.
 *   **State Reset**: If things get weird, clear your Application > Local Storage. The system is robust enough to regenerate default state.
 
+---
+
+## 9. Directory Module
+
+The Directory module serves as a global citizen database.
+
+- **Data Source**: Fetches 100 random users from `randomuser.me` API at startup.
+- **Mission Override**: Mission-specific profiles (injected via `DirectoryContext`) take precedence over random users if IDs match, or are appended to the list.
+- **Encryption**: Profiles can be marked as `encrypted`. The `DirectoryContext` handles the decryption logic and emits `DIRECTORY_DECRYPT` events.
+
+
