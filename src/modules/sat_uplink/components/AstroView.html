@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAST CyberOS Interface</title>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            black: '#000000',
+                            dark: '#050a05',
+                            dim: '#143314',
+                            green: '#4ade80', // bright neon green
+                            bright: '#22c55e'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"Share Tech Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Aladin Lite V3 CSS -->
+    <link rel="stylesheet" href="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.min.css" />
+
+    <!-- Google Fonts: Share Tech Mono for that Cyberpunk/Terminal look -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: #000000;
+            color: #4ade80;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Scanline Effect */
+        .scanlines {
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0) 50%,
+                    rgba(0, 0, 0, 0.2) 50%,
+                    rgba(0, 0, 0, 0.2));
+            background-size: 100% 4px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Custom Scrollbar */
+        .cyber-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .cyber-scroll::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        .cyber-scroll::-webkit-scrollbar-thumb {
+            background: #4ade80;
+        }
+
+        /* Aladin Override for Cyber Look */
+        .aladin-zoomControl {
+            display: none !important;
+        }
+
+        /* Utility for blinking cursor effect */
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .animate-blink {
+            animation: blink 1s step-end infinite;
+        }
+
+        /* Remove rounded corners from Aladin canvas if any */
+        #aladin-lite-div canvas {
+            border-radius: 0 !important;
+        }
+
+        /* Focus outlines */
+        input:focus,
+        select:focus,
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 1px #4ade80;
+        }
+    </style>
+
+    <!-- Aladin Lite V3 Script (Unminified for stability) -->
+    <script type="text/javascript" src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js"
+        charset="utf-8"></script>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const AVAILABLE_SURVEYS = [
+            { id: "P/DSS2/color", name: "OPTICAL // DSS2 COLOR", type: "OPTICAL" },
+            { id: "P/PanSTARRS/DR1/color-z-zg-g", name: "OPTICAL // PANSTARRS DR1", type: "OPTICAL" },
+            { id: "P/2MASS/color", name: "INFRARED // 2MASS", type: "INFRARED" },
+            { id: "P/allWISE/color", name: "INFRARED // ALLWISE", type: "INFRARED" },
+            { id: "P/GALEXGR6/AIS/color", name: "UV // GALEX AIS", type: "UV" },
+            { id: "P/XMM/PN/color", name: "X-RAY // XMM NEWTON", type: "X-RAY" },
+        ];
+
+        const App = () => {
+            // --- State ---
+            const [aladinInstance, setAladinInstance] = useState(null);
+            const [targetInput, setTargetInput] = useState("CARINA NEBULA");
+            const [currentSurvey, setCurrentSurvey] = useState(AVAILABLE_SURVEYS[0].id);
+            const [fov, setFov] = useState(0.5);
+            const [coords, setCoords] = useState({ ra: "00.0000", dec: "+00.0000" });
+            const [statusMsg, setStatusMsg] = useState("SYSTEM INITIALIZED");
+            const [showFootprints, setShowFootprints] = useState(false);
+            const [showTelemetry, setShowTelemetry] = useState(false);
+
+            const aladinContainerRef = useRef(null);
+            const overlayLayerRef = useRef(null);
+            const fileInputRef = useRef(null);
+
+            // --- Initialization ---
+            useEffect(() => {
+                let aladin;
+                let intervalId;
+                let attempts = 0;
+                const maxAttempts = 50;
+
+                const initAladin = () => {
+                    if (window.A && window.A.init) {
+                        window.A.init.then(() => {
+                            if (!aladinContainerRef.current) return;
+
+                            aladin = window.A.aladin(aladinContainerRef.current, {
+                                survey: currentSurvey,
+                                fov: fov,
+                                target: targetInput,
+                                cooFrame: 'J2000',
+                                showReticle: true,
+                                showZoomControl: false,
+                                showFullscreenControl: false,
+                                showLayersControl: false,
+                                showGotoControl: false,
+                            });
+
+                            setAladinInstance(aladin);
+
+                            aladin.on('positionChanged', (position) => {
+                                if (position) {
+                                    setCoords({
+                                        ra: position.ra.toFixed(4),
+                                        dec: position.dec.toFixed(4)
+                                    });
+                                }
+                            });
+
+                            aladin.on('zoomChanged', (newFov) => {
+                                setFov(newFov);
+                            });
+
+                            setStatusMsg("SATELLITE LINK ESTABLISHED");
+                        }).catch(err => {
+                            console.error("Init Error:", err);
+                            setStatusMsg("ERR: LINK FAILURE");
+                        });
+                        return true;
+                    }
+                    return false;
+                };
+
+                if (!initAladin()) {
+                    intervalId = setInterval(() => {
+                        attempts++;
+                        if (initAladin()) {
+                            clearInterval(intervalId);
+                        } else if (attempts >= maxAttempts) {
+                            clearInterval(intervalId);
+                            setStatusMsg("ERR: TIMEOUT");
+                        }
+                    }, 100);
+                }
+
+                return () => { if (intervalId) clearInterval(intervalId); };
+            }, []);
+
+            // --- Handlers ---
+            const handleSearch = (e) => {
+                e.preventDefault();
+                if (!aladinInstance) return;
+
+                setStatusMsg(`SEARCH PROTOCOL: "${targetInput.toUpperCase()}"`);
+
+                aladinInstance.gotoObject(targetInput, {
+                    success: (pos) => {
+                        setStatusMsg(`TARGET ACQUIRED: ${targetInput.toUpperCase()}`);
+                        setCoords({ ra: pos[0].toFixed(4), dec: pos[1].toFixed(4) });
+                    },
+                    error: () => {
+                        setStatusMsg(`ERR: TARGET NOT FOUND`);
+                    }
+                });
+            };
+
+            const handleSurveyChange = (e) => {
+                const surveyId = e.target.value;
+                setCurrentSurvey(surveyId);
+                if (aladinInstance) {
+                    aladinInstance.setImageSurvey(surveyId);
+                    const surveyName = AVAILABLE_SURVEYS.find(s => s.id === surveyId).name;
+                    setStatusMsg(`FILTER SWITCH: ${surveyName}`);
+                }
+            };
+
+            const toggleFootprints = () => {
+                if (!aladinInstance) return;
+                const newState = !showFootprints;
+                setShowFootprints(newState);
+
+                if (newState) {
+                    if (!overlayLayerRef.current) {
+                        if (window.A && window.A.graphicOverlay) {
+                            overlayLayerRef.current = window.A.graphicOverlay({ color: '#4ade80', lineWidth: 1, name: "HST_HUD" });
+                            aladinInstance.addOverlay(overlayLayerRef.current);
+                        }
+                    }
+
+                    if (overlayLayerRef.current) {
+                        const center = aladinInstance.getRaDec();
+                        const offset = 0.05;
+                        if (window.A && window.A.polygon) {
+                            // Draw a "reticle" box
+                            const footprint = window.A.polygon([
+                                [center[0] - offset, center[1] - offset],
+                                [center[0] + offset, center[1] - offset],
+                                [center[0] + offset, center[1] + offset],
+                                [center[0] - offset, center[1] + offset]
+                            ]);
+                            overlayLayerRef.current.add(footprint);
+                            setStatusMsg("HUD OVERLAY: ACTIVE");
+                        }
+                    }
+                } else {
+                    if (overlayLayerRef.current) {
+                        overlayLayerRef.current.removeAll();
+                        setStatusMsg("HUD OVERLAY: OFFLINE");
+                    }
+                }
+            };
+
+            // --- Upload Handler ---
+            const handleFileUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                setStatusMsg("READING MISSION DATA...");
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+
+                        // Basic Validation
+                        if (!data.coordinates || !data.fov) {
+                            throw new Error("Invalid Mission File");
+                        }
+
+                        // Update State
+                        if (data.target) setTargetInput(data.target);
+                        if (data.coordinates) setCoords(data.coordinates);
+                        if (data.fov) setFov(data.fov);
+                        if (data.surveyId) setCurrentSurvey(data.surveyId);
+
+                        // Update Aladin Instance
+                        if (aladinInstance) {
+                            // Move to coordinates
+                            aladinInstance.gotoRaDec(data.coordinates.ra, data.coordinates.dec);
+                            // Set FOV
+                            aladinInstance.setFov(data.fov);
+
+                            // Restore Survey Layer
+                            if (data.surveyId) {
+                                aladinInstance.setImageSurvey(data.surveyId);
+                            } else if (data.surveyName) {
+                                // Fallback for older files: try to match by name
+                                const survey = AVAILABLE_SURVEYS.find(s => s.name === data.surveyName);
+                                if (survey) {
+                                    setCurrentSurvey(survey.id);
+                                    aladinInstance.setImageSurvey(survey.id);
+                                }
+                            }
+                            setStatusMsg("MISSION DATA LOADED");
+                        }
+                    } catch (err) {
+                        console.error("Upload Error:", err);
+                        setStatusMsg("ERR: CORRUPT DATA FILE");
+                    }
+                };
+                reader.readAsText(file);
+                // Reset file input so same file can be selected again if needed
+                e.target.value = null;
+            };
+
+            const triggerUpload = () => {
+                fileInputRef.current.click();
+            };
+
+            // --- Download Handlers ---
+            const downloadMetadata = () => {
+                const data = {
+                    target: targetInput,
+                    coordinates: coords,
+                    fov: fov,
+                    surveyId: currentSurvey,
+                    surveyName: AVAILABLE_SURVEYS.find(s => s.id === currentSurvey)?.name || currentSurvey,
+                    timestamp: new Date().toISOString(),
+                    system: "MAST CyberOS v4.0.4"
+                };
+
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `MAST_LOG_${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                setStatusMsg("TELEMETRY LOG DOWNLOADED");
+            };
+
+            const downloadImage = () => {
+                if (!aladinInstance) return;
+
+                setStatusMsg("INITIATING SECURE DOWNLINK...");
+
+                const center = aladinInstance.getRaDec(); // [ra, dec]
+
+                // Construct CDS Hips2FITS URL for server-side generation
+                // API: https://alasky.cds.unistra.fr/hips-image-services/hips2fits
+                const baseUrl = "https://alasky.cds.unistra.fr/hips-image-services/hips2fits";
+                const params = new URLSearchParams({
+                    hips: currentSurvey,
+                    width: 1920, // High Res
+                    height: 1080,
+                    fov: fov,
+                    projection: "SIN",
+                    coordsys: "icrs",
+                    ra: center[0],
+                    dec: center[1],
+                    format: "png",
+                    stretch: "linear"
+                });
+
+                const url = `${baseUrl}?${params.toString()}`;
+
+                // Fetch data internally (Blob) instead of opening new tab
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) throw new Error("Server rejected connection");
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        const blobUrl = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = blobUrl;
+                        a.download = `MAST_CAPTURE_${Date.now()}.png`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(blobUrl);
+
+                        setStatusMsg("VISUAL DATA SECURED");
+                    })
+                    .catch(err => {
+                        console.error("Telemetry Download Error:", err);
+                        setStatusMsg("ERR: DOWNLINK INTERRUPTED");
+                    });
+            };
+
+            return (
+                <div className="flex h-screen w-screen bg-cyber-black text-cyber-green overflow-hidden relative selection:bg-cyber-green selection:text-black">
+
+                    {/* CRT Scanline Overlay */}
+                    <div className="scanlines pointer-events-none"></div>
+
+                    {/* Hidden File Input */}
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        accept=".json"
+                        className="hidden"
+                        style={{ display: 'none' }}
+                    />
+
+                    {/* Center Stage - Main Viewport (Full width now, left sidebar removed) */}
+                    <div className="flex-1 flex flex-col relative z-10">
+
+                        {/* Top Bar */}
+                        <div className="h-14 border-b border-cyber-green/30 flex items-center justify-between px-6 bg-cyber-black/90 backdrop-blur-sm">
+                            <div className="flex items-center gap-4">
+                                <div className="border border-cyber-green px-2 py-0.5">
+                                    <i className="fa-solid fa-shield-halved text-sm"></i>
+                                </div>
+                                <h1 className="text-lg font-bold tracking-[0.2em] text-white">CYBER<span className="text-cyber-green">OS</span></h1>
+                                <div className="h-4 w-px bg-cyber-green/30"></div>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-cyber-green animate-pulse"></div>
+                                    <span className="text-xs tracking-widest font-bold">LIVE FEED // ASSET ACTIVE</span>
+                                </div>
+                            </div>
+
+                            {/* Search Box - Top Right */}
+                            <form onSubmit={handleSearch} className="flex items-center border border-cyber-green/50 bg-black group focus-within:border-cyber-green transition-colors w-64">
+                                <span className="pl-3 text-xs text-cyber-green/70">></span>
+                                <input
+                                    type="text"
+                                    value={targetInput}
+                                    onChange={(e) => setTargetInput(e.target.value)}
+                                    className="bg-transparent border-none text-cyber-green text-xs p-2 w-full focus:ring-0 placeholder-cyber-green/30 uppercase font-mono"
+                                    placeholder="ENTER COORDINATES"
+                                />
+                                <button type="submit" className="px-3 hover:text-white transition-colors">
+                                    <i className="fa-solid fa-magnifying-glass text-xs"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        {/* Main Content Area */}
+                        <div className="flex-1 flex relative">
+
+                            {/* The Map (Aladin) */}
+                            <div className="flex-1 relative border-r border-cyber-green/30">
+                                {/* Crosshairs Overlay */}
+                                <div className="absolute inset-0 pointer-events-none z-10 opacity-30">
+                                    <div className="absolute top-1/2 left-0 w-full h-px bg-cyber-green"></div>
+                                    <div className="absolute left-1/2 top-0 h-full w-px bg-cyber-green"></div>
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 border border-cyber-green"></div>
+                                </div>
+
+                                {/* Status Overlay on Map */}
+                                <div className="absolute bottom-0 left-0 right-0 bg-black/80 border-t border-cyber-green/30 p-2 text-[10px] flex gap-4 font-mono z-20">
+                                    <span className="text-cyber-green/60">> SYSTEM LOG:</span>
+                                    <span className="text-cyber-green">{statusMsg}</span>
+                                    <span className="ml-auto text-cyber-green/60">FOV: {fov.toFixed(2)}°</span>
+                                </div>
+
+                                <div ref={aladinContainerRef} className="w-full h-full cursor-crosshair bg-black grayscale-[20%] contrast-125"></div>
+                            </div>
+
+                            {/* Right Sidebar - Analysis Panel */}
+                            <div className="w-72 bg-cyber-black flex flex-col z-20 border-l border-cyber-green/30">
+                                <div className="p-4 border-b border-cyber-green/30 flex justify-between items-center">
+                                    <h2 className="text-sm font-bold uppercase tracking-widest border-b-2 border-cyber-green pb-1">Target Analysis</h2>
+                                    <i className="fa-solid fa-lock text-xs"></i>
+                                </div>
+
+                                <div className="p-6 space-y-8 flex-1 overflow-y-auto cyber-scroll">
+
+                                    {/* Data Block 1 */}
+                                    <div>
+                                        <div className="text-[10px] text-cyber-green/50 uppercase mb-1">Designation</div>
+                                        <div className="text-xl font-bold uppercase text-white tracking-widest">{targetInput}</div>
+                                    </div>
+
+                                    {/* Coordinates Grid */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <div className="text-[10px] text-cyber-green/50 uppercase">Right Asc</div>
+                                            <div className="text-sm">{coords.ra}</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-[10px] text-cyber-green/50 uppercase">Declination</div>
+                                            <div className="text-sm">{coords.dec}</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Filter / Instrument */}
+                                    <div>
+                                        <div className="text-[10px] text-cyber-green/50 uppercase mb-2">Instrument // Filter</div>
+                                        <div className="relative border border-cyber-green/50">
+                                            <select
+                                                value={currentSurvey}
+                                                onChange={handleSurveyChange}
+                                                className="w-full bg-black text-cyber-green text-xs p-2 uppercase appearance-none focus:outline-none cursor-pointer"
+                                            >
+                                                {AVAILABLE_SURVEYS.map(s => (
+                                                    <option key={s.id} value={s.id}>{s.name}</option>
+                                                ))}
+                                            </select>
+                                            <div className="absolute right-2 top-2 pointer-events-none">
+                                                <i className="fa-solid fa-caret-down text-xs"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div>
+                                        <div className="text-[10px] text-cyber-green/50 uppercase mb-2">Available Actions</div>
+                                        <div className="space-y-2">
+                                            <button
+                                                type="button"
+                                                onClick={toggleFootprints}
+                                                className={`w-full border border-cyber-green p-2 text-xs uppercase tracking-wider transition-all hover:bg-cyber-green hover:text-black flex justify-between items-center ${showFootprints ? 'bg-cyber-green/20' : ''}`}
+                                            >
+                                                <span>REFRESH SENSOR</span>
+                                                <i className="fa-solid fa-bolt text-[10px]"></i>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (aladinInstance) {
+                                                        const currentFov = aladinInstance.getFov()[0];
+                                                        aladinInstance.setFov(currentFov * 0.8);
+                                                    }
+                                                }}
+                                                className="w-full border border-cyber-green p-2 text-xs uppercase tracking-wider transition-all hover:bg-cyber-green hover:text-black flex justify-between items-center"
+                                            >
+                                                <span>ENHANCE ZOOM</span>
+                                                <i className="fa-solid fa-plus text-[10px]"></i>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={triggerUpload}
+                                                className="w-full border border-cyber-green p-2 text-xs uppercase tracking-wider transition-all hover:bg-cyber-green hover:text-black flex justify-between items-center"
+                                            >
+                                                <span>UPLOAD COORDINATES</span>
+                                                <i className="fa-solid fa-upload text-[10px]"></i>
+                                            </button>
+
+                                            {/* Telemetry Button */}
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowTelemetry(!showTelemetry)}
+                                                className={`w-full border p-2 text-xs uppercase tracking-wider transition-all flex justify-between items-center ${showTelemetry ? 'border-cyber-green bg-cyber-green/10 text-cyber-green' : 'border-cyber-green/50 text-cyber-green hover:border-cyber-green'}`}
+                                            >
+                                                <span>DOWNLOAD TELEMETRY</span>
+                                                <i className={`fa-solid ${showTelemetry ? 'fa-chevron-up' : 'fa-download'} text-[10px]`}></i>
+                                            </button>
+
+                                            {/* Telemetry Expansion Panel */}
+                                            {showTelemetry && (
+                                                <div className="border border-t-0 border-cyber-green/30 bg-cyber-dim/20 p-3 space-y-2 animate-pulse-once">
+                                                    <button type="button" onClick={downloadMetadata} className="w-full text-left text-[10px] uppercase hover:text-white flex items-center gap-2">
+                                                        <i className="fa-regular fa-file-code"></i> Metadata Log (.JSON)
+                                                    </button>
+                                                    <button type="button" onClick={downloadImage} className="w-full text-left text-[10px] uppercase hover:text-white flex items-center gap-2">
+                                                        <i className="fa-regular fa-image"></i> Visual Capture (.PNG)
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Encryption Key Decoration */}
+                                    <div className="pt-4 border-t border-cyber-green/20 text-[8px] text-cyber-green/40 break-all font-mono leading-3">
+                                        0x4F 0x9A 0x12 0xBB 0x7C 0x88 0x00 ... END OF STREAM
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

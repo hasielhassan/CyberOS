@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAT_FEED_V3.4 // PATCHED</title>
+
+    <!-- OpenLayers CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css" type="text/css">
+
+    <style>
+        :root {
+            --term-green: #0f0;
+            --term-bg: #000;
+            --term-dim: #003300;
+            --alert-color: #ff3333;
+            --warning-color: #ffcc00;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--term-bg);
+            color: var(--term-green);
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+        }
+
+        /* --- CRT OVERLAYS --- */
+        #screen-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.9);
+        }
+
+        #scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: rgba(0, 255, 0, 0.3);
+            opacity: 0.4;
+            animation: scan 6s linear infinite;
+            pointer-events: none;
+            z-index: 1001;
+        }
+
+        @keyframes scan {
+            0% {
+                top: -5%;
+            }
+
+            100% {
+                top: 105%;
+            }
+        }
+
+        /* --- LAYER VISUAL MODES (ISOLATED) --- */
+        #map {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+
+        /* 1. SCIENCE LAYER FILTERS (Satellite Data Only) */
+        body.mode-standard .science-layer canvas {
+            filter: contrast(1.1) brightness(1.1) sepia(0.1);
+        }
+
+        body.mode-night .science-layer canvas {
+            filter: contrast(1.4) brightness(1.6) sepia(1) hue-rotate(-15deg) saturate(1.6);
+        }
+
+        body.mode-chem .science-layer canvas {
+            filter: contrast(1.1) saturate(1.4);
+        }
+
+        body.mode-relief .science-layer canvas {
+            filter: grayscale(1) contrast(1.4) brightness(1.1);
+        }
+
+        /* 2. TACTICAL LAYER FILTERS (Overlays Only) */
+        .tactical-layer canvas {
+            filter: sepia(1) hue-rotate(60deg) saturate(5) brightness(1.2) drop-shadow(0 0 3px #0f0);
+        }
+
+        /* --- HUD PANELS --- */
+        .hud-panel {
+            position: absolute;
+            background: rgba(0, 10, 0, 0.9);
+            border: 1px solid var(--term-green);
+            padding: 10px;
+            z-index: 100;
+            box-shadow: 0 0 10px var(--term-dim);
+        }
+
+        #top-bar {
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #search-box {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--term-green);
+            color: var(--term-green);
+            font-family: inherit;
+            font-size: 1.2rem;
+            width: 300px;
+            text-transform: uppercase;
+        }
+
+        #search-box:focus {
+            outline: none;
+            box-shadow: 0 5px 10px -5px var(--term-green);
+        }
+
+        #right-stack {
+            top: 80px;
+            right: 20px;
+            width: 240px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 85vh;
+            /* Increased slightly for new panel */
+        }
+
+        #layer-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            overflow-y: auto;
+            max-height: 250px;
+            padding-right: 5px;
+        }
+
+        #console-output {
+            height: 100px;
+            overflow-y: auto;
+            font-size: 0.6rem;
+            border-top: 1px dashed var(--term-green);
+            padding-top: 5px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .btn-terminal {
+            background: transparent;
+            border: 1px solid var(--term-green);
+            color: var(--term-green);
+            padding: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .btn-terminal:hover {
+            background: var(--term-green);
+            color: black;
+        }
+
+        .btn-terminal.active {
+            background: var(--term-green);
+            color: black;
+            box-shadow: 0 0 15px var(--term-green);
+        }
+
+        .sat-name {
+            font-size: 0.6rem;
+            opacity: 0.7;
+        }
+
+        #time-panel {
+            bottom: 30px;
+            left: 20px;
+            width: 450px;
+        }
+
+        #timeline-header {
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #date-picker {
+            background: black;
+            color: var(--term-green);
+            border: 1px solid var(--term-green);
+            font-family: inherit;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-wrapper input {
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border: 1px solid var(--term-green);
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input:checked {
+            background: var(--term-green);
+        }
+
+        .log-entry {
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+
+        .log-err {
+            color: var(--alert-color);
+        }
+
+        .log-warn {
+            color: var(--warning-color);
+        }
+
+        .log-sys {
+            color: #0088ff;
+        }
+
+        .log-ok {
+            color: var(--term-green);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            margin: 0;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 24px;
+            cursor: pointer;
+            background: rgba(0, 50, 0, 0.5);
+            border: 1px solid var(--term-green);
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            height: 24px;
+            width: 15px;
+            background: var(--term-green);
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -1px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--term-bg);
+            border-left: 1px solid var(--term-dim);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--term-dim);
+            border: 1px solid var(--term-green);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--term-green);
+            cursor: pointer;
+        }
+
+        #data-warning {
+            position: absolute;
+            bottom: 150px;
+            right: 280px;
+            color: var(--warning-color);
+            font-size: 0.8rem;
+            border: 1px solid var(--warning-color);
+            padding: 5px;
+            display: none;
+            z-index: 90;
+            background: rgba(0, 0, 0, 0.9);
+            text-align: right;
+        }
+
+        #loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--term-green);
+            font-size: 2rem;
+            display: none;
+            z-index: 200;
+            background: black;
+            padding: 20px;
+            border: 1px solid var(--term-green);
+        }
+
+        .ol-zoom {
+            top: auto !important;
+            bottom: 120px !important;
+            right: 20px !important;
+            left: auto !important;
+        }
+
+        .ol-control button {
+            background-color: black !important;
+            color: var(--term-green) !important;
+            border: 1px solid var(--term-green) !important;
+            border-radius: 0 !important;
+        }
+
+        .ol-scale-line {
+            background: transparent !important;
+            border: 1px solid var(--term-green);
+            bottom: 70px;
+            right: 480px;
+            left: auto;
+        }
+
+        .ol-scale-line-inner {
+            color: var(--term-green) !important;
+            border-color: var(--term-green) !important;
+        }
+
+        .ol-rotate {
+            display: none;
+        }
+
+        .ol-graticule {
+            border: none;
+        }
+    </style>
+</head>
+
+<body class="mode-standard">
+
+    <div id="screen-overlay"></div>
+    <div id="scanline"></div>
+    <div id="loading-indicator">ACQUIRING SIGNAL...</div>
+
+    <div id="map"></div>
+
+    <div id="top-bar" class="hud-panel">
+        <div>
+            <span>TARGET_LOCK: </span>
+            <input type="text" id="search-box" placeholder="ENTER COORDINATES OR SECTOR..." autofocus>
+        </div>
+        <div id="coords-display">LAT: 00.0000 | LON: 00.0000</div>
+    </div>
+
+    <!-- RIGHT STACK -->
+    <div id="right-stack" class="hud-panel">
+        <div style="margin-bottom: 5px; border-bottom: 1px solid var(--term-green); font-size: 0.8rem;">SENSOR FEED
+        </div>
+        <div id="layer-panel"></div>
+
+        <div style="margin-top: 10px; border-bottom: 1px solid var(--term-green); font-size: 0.8rem;">TACTICAL OVERLAYS
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px; padding-top: 5px;">
+            <label class="checkbox-wrapper">
+                <input type="checkbox" id="roads-toggle" onchange="toggleOverlay('roads')">
+                BORDERS / ROADS / CITIES
+            </label>
+            <label class="checkbox-wrapper">
+                <input type="checkbox" id="grid-toggle" onchange="toggleOverlay('grid')">
+                TAC-GRID (LAT/LON)
+            </label>
+        </div>
+
+        <div style="margin-top: 10px; border-bottom: 1px solid var(--term-green); font-size: 0.8rem;">DATA UPLINK /
+            DOWNLINK</div>
+        <div style="display: flex; gap: 5px; padding-top: 5px;">
+            <button class="btn-terminal" style="flex: 1; justify-content: center;" onclick="downloadState()">[SAVE
+                CFG]</button>
+            <button class="btn-terminal" style="flex: 1; justify-content: center;" onclick="triggerUpload()">[LOAD
+                CFG]</button>
+        </div>
+        <button class="btn-terminal" style="width: 100%; margin-top: 5px; justify-content: center;"
+            onclick="downloadSnapshot()">[CAPTURE VISUAL]</button>
+        <input type="file" id="file-input" style="display: none;" onchange="handleFileUpload(this)">
+
+        <div style="margin-top: 10px; border-bottom: 1px solid var(--term-green); font-size: 0.8rem;">SYSTEM DIAGNOSTICS
+        </div>
+        <div id="console-output">
+            <div class="log-entry log-sys">Waiting for telemetry...</div>
+        </div>
+    </div>
+
+    <div id="time-panel" class="hud-panel">
+        <div id="timeline-header">
+            <span>TEMPORAL_DATA:</span>
+            <input type="date" id="date-picker">
+            <label class="checkbox-wrapper">
+                <input type="checkbox" id="persist-toggle">
+                [PERSISTENT]
+            </label>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="btn-terminal" id="play-btn" style="flex: 0 0 100px;" onclick="toggleTimelapse()">[INIT
+                SEQ]</button>
+            <div style="flex: 1; display: flex; align-items: center;">
+                <input type="range" id="scrubber" min="0" max="13" value="13" step="1">
+            </div>
+        </div>
+    </div>
+
+    <div id="data-warning">SIGNAL WEAK / SEARCHING...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+
+    <script>
+        function log(msg, type = 'log-ok') {
+            const panel = document.getElementById('console-output');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+            entry.innerText = `[${time}] ${msg}`;
+            panel.prepend(entry);
+            if (panel.children.length > 50) panel.lastChild.remove();
+        }
+
+        const GIBS_WMS = 'https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi';
+
+        const LAYERS = [
+            {
+                id: 'VIIRS_SNPP_CorrectedReflectance_TrueColor',
+                name: 'VISIBLE EARTH', sat: 'VIIRS/SNPP', latency: 1, type: 'standard'
+            },
+            {
+                id: 'VIIRS_SNPP_DayNightBand_At_Sensor_Radiance',
+                name: 'NIGHT LIGHTS', sat: 'VIIRS/DNB', latency: 2, type: 'night'
+            },
+            {
+                id: 'GPW_Population_Density_2020',
+                name: 'HUMAN DENSITY', sat: 'GPW/CENSUS', latency: 0, type: 'chem'
+            },
+            {
+                id: 'ASTER_GDEM_Color_Shaded_Relief',
+                name: 'TERRAIN SCOUT', sat: 'ASTER/GDEM', latency: 0, type: 'relief'
+            },
+            {
+                id: 'MODIS_Terra_NDVI_8Day',
+                name: 'BIO-VIGOR (NDVI)', sat: 'MODIS/TERRA', latency: 8, type: 'chem'
+            },
+            {
+                id: 'MODIS_Terra_Land_Surface_Temp_Day',
+                name: 'LAND TEMP', sat: 'MODIS/TERRA', latency: 1, type: 'chem'
+            },
+            {
+                id: 'MODIS_Terra_CorrectedReflectance_Bands721',
+                name: 'FALSE COLOR', sat: 'MODIS/TERRA', latency: 1, type: 'standard'
+            },
+            {
+                id: 'OMPS_Ozone_Total_Column',
+                name: 'OZONE', sat: 'OMPS/NPP', latency: 2, type: 'chem'
+            },
+            {
+                id: 'VIIRS_SNPP_L2_Chlorophyll_A',
+                name: 'CHLOROPHYLL', sat: 'VIIRS/OCEAN', latency: 2, type: 'chem'
+            },
+            {
+                id: 'MODIS_Terra_NDSI_Snow_Cover',
+                name: 'SNOW COVER', sat: 'MODIS/TERRA', latency: 1, type: 'standard'
+            },
+            {
+                id: 'IMERG_Precipitation_Rate',
+                name: 'PRECIPITATION', sat: 'GPM/IMERG', latency: 2, type: 'chem'
+            },
+            {
+                id: 'MODIS_Terra_Cloud_Top_Temp_Day',
+                name: 'CLOUD TEMP', sat: 'MODIS/TERRA', latency: 1, type: 'chem'
+            },
+            {
+                id: 'MODIS_Terra_Aerosol',
+                name: 'AEROSOLS', sat: 'MODIS/TERRA', latency: 1, type: 'chem'
+            }
+        ];
+
+        let currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() - 1);
+
+        let activeLayerConfig = LAYERS[0];
+        let timer = null;
+        let signalSearchActive = false;
+        let isSequenceMode = false;
+        const daysToLoop = 14;
+
+        const layerPanel = document.getElementById('layer-panel');
+        LAYERS.forEach(l => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-terminal';
+            btn.innerHTML = `<span>${l.name}</span> <span class="sat-name">${l.sat}</span>`;
+            btn.onclick = () => switchLayer(l);
+            if (l.id === activeLayerConfig.id) btn.classList.add('active');
+            layerPanel.appendChild(btn);
+        });
+
+        const datePicker = document.getElementById('date-picker');
+        const scrubber = document.getElementById('scrubber');
+        const playBtn = document.getElementById('play-btn');
+        const persistToggle = document.getElementById('persist-toggle');
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        datePicker.value = formatDate(currentDate);
+        datePicker.max = formatDate(new Date());
+
+        const view = new ol.View({
+            center: ol.proj.fromLonLat([0, 0]),
+            zoom: 3, minZoom: 3, maxZoom: 12
+        });
+
+        const map = new ol.Map({
+            target: 'map',
+            layers: [],
+            view: view,
+            controls: ol.control.defaults.defaults({ attribution: false, zoom: true, rotate: false })
+                .extend([new ol.control.ScaleLine()]),
+        });
+
+        // FIX: Add crossOrigin: 'anonymous' to prevent tainted canvas error
+        const baseLayer = new ol.layer.Tile({
+            source: new ol.source.TileWMS({
+                url: GIBS_WMS,
+                crossOrigin: 'anonymous',
+                params: { 'LAYERS': 'BlueMarble_NextGeneration', 'FORMAT': 'image/jpeg', 'TRANSPARENT': false }
+            }),
+            zIndex: 0
+        });
+        map.addLayer(baseLayer);
+
+        // FIX: Add crossOrigin: 'anonymous' to prevent tainted canvas error
+        const roadsLayer = new ol.layer.Tile({
+            className: 'tactical-layer',
+            source: new ol.source.TileWMS({
+                url: GIBS_WMS,
+                crossOrigin: 'anonymous',
+                params: {
+                    'LAYERS': 'Reference_Features_15m',
+                    'FORMAT': 'image/png',
+                    'TRANSPARENT': true
+                }
+            }),
+            zIndex: 1000,
+            visible: false
+        });
+        map.addLayer(roadsLayer);
+
+        const graticule = new ol.layer.Graticule({
+            className: 'tactical-layer',
+            strokeStyle: new ol.style.Stroke({
+                color: 'rgba(0, 255, 0, 0.9)',
+                width: 2,
+                lineDash: [10, 10]
+            }),
+            showLabels: true,
+            zIndex: 1001,
+            visible: false
+        });
+        map.addLayer(graticule);
+
+        function toggleOverlay(type) {
+            if (type === 'roads') {
+                const isOn = document.getElementById('roads-toggle').checked;
+                roadsLayer.setVisible(isOn);
+                log(isOn ? "OVERLAY: BORDERS/ROADS ACTIVE" : "OVERLAY: BORDERS/ROADS DISABLED", 'log-sys');
+            } else if (type === 'grid') {
+                const isOn = document.getElementById('grid-toggle').checked;
+                graticule.setVisible(isOn);
+                log(isOn ? "OVERLAY: TACTICAL GRID ACTIVE" : "OVERLAY: TACTICAL GRID DISABLED", 'log-sys');
+            }
+        }
+
+        // --- DATA I/O MODULE ---
+
+        function downloadState() {
+            const center = ol.proj.toLonLat(view.getCenter());
+            const state = {
+                lat: center[1],
+                lon: center[0],
+                zoom: view.getZoom(),
+                date: formatDate(currentDate),
+                activeLayerId: activeLayerConfig.id,
+                overlays: {
+                    roads: document.getElementById('roads-toggle').checked,
+                    grid: document.getElementById('grid-toggle').checked
+                }
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `SAT_CONFIG_${formatDate(currentDate)}.json`);
+            document.body.appendChild(downloadAnchorNode); // Required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            log("CONFIG EXPORTED SUCCESSFULLY", 'log-ok');
+        }
+
+        function triggerUpload() {
+            document.getElementById('file-input').click();
+        }
+
+        function handleFileUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const cfg = JSON.parse(e.target.result);
+                    applyConfiguration(cfg);
+                    log("CONFIG IMPORTED. RETASKING...", 'log-ok');
+                } catch (err) {
+                    log("IMPORT ERROR: CORRUPT FILE", 'log-err');
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+            input.value = ''; // Reset
+        }
+
+        function applyConfiguration(cfg) {
+            // 1. View
+            view.animate({
+                center: ol.proj.fromLonLat([cfg.lon, cfg.lat]),
+                zoom: cfg.zoom,
+                duration: 1000
+            });
+
+            // 2. Date
+            currentDate = new Date(cfg.date);
+            datePicker.value = formatDate(currentDate);
+
+            // 3. Layer
+            const layerCfg = LAYERS.find(l => l.id === cfg.activeLayerId) || LAYERS[0];
+            switchLayer(layerCfg); // This handles date latency logic too, might shift date slightly if latency rules apply
+
+            // 4. Overlays
+            const roadCheck = document.getElementById('roads-toggle');
+            roadCheck.checked = cfg.overlays.roads;
+            toggleOverlay('roads');
+
+            const gridCheck = document.getElementById('grid-toggle');
+            gridCheck.checked = cfg.overlays.grid;
+            toggleOverlay('grid');
+        }
+
+        function downloadSnapshot() {
+            log("CAPTURING VISUAL FEED...", 'log-sys');
+            map.once('rendercomplete', function () {
+                const mapCanvas = document.createElement('canvas');
+                const size = map.getSize();
+                mapCanvas.width = size[0];
+                mapCanvas.height = size[1];
+                const mapContext = mapCanvas.getContext('2d');
+
+                // Apply filters based on active mode to capture the "Look"
+                if (document.body.classList.contains('mode-night')) {
+                    mapContext.filter = 'contrast(1.4) brightness(1.6) sepia(1) hue-rotate(-15deg) saturate(1.6)';
+                } else if (document.body.classList.contains('mode-chem')) {
+                    mapContext.filter = 'contrast(1.1) saturate(1.4)';
+                } else if (document.body.classList.contains('mode-relief')) {
+                    mapContext.filter = 'grayscale(1) contrast(1.4) brightness(1.1)';
+                } else {
+                    mapContext.filter = 'contrast(1.1) brightness(1.1) sepia(0.1)';
+                }
+
+                // Draw Science Layers (Filtered)
+                Array.prototype.forEach.call(
+                    document.querySelectorAll('.science-layer canvas'),
+                    function (canvas) {
+                        if (canvas.width > 0) {
+                            const opacity = canvas.parentNode.style.opacity;
+                            mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+                            const transform = canvas.style.transform;
+                            // Simple draw - assumes no rotation/scaling artifacts for now
+                            mapContext.drawImage(canvas, 0, 0);
+                        }
+                    }
+                );
+
+                // Draw Tactical Layers (Different Filter)
+                mapContext.filter = 'sepia(1) hue-rotate(60deg) saturate(5) brightness(1.2) drop-shadow(0 0 3px #0f0)';
+                Array.prototype.forEach.call(
+                    document.querySelectorAll('.tactical-layer canvas'),
+                    function (canvas) {
+                        if (canvas.width > 0) {
+                            mapContext.globalAlpha = 1;
+                            mapContext.drawImage(canvas, 0, 0);
+                        }
+                    }
+                );
+
+                const link = document.createElement('a');
+                link.download = `SAT_VISUAL_${formatDate(currentDate)}.png`;
+                link.href = mapCanvas.toDataURL();
+                link.click();
+                log("SNAPSHOT DOWNLOADED", 'log-ok');
+            });
+            map.renderSync();
+        }
+
+        // --- CORE LOGIC ---
+
+        function createGibsLayer(config, date, visible = true) {
+            const source = new ol.source.TileWMS({
+                url: GIBS_WMS,
+                crossOrigin: 'anonymous', // FIX: Added crossOrigin to allow canvas export
+                params: {
+                    'LAYERS': config.id,
+                    'FORMAT': 'image/png',
+                    'TIME': formatDate(date),
+                    'TRANSPARENT': true
+                },
+                attributions: 'NASA GIBS',
+            });
+
+            source.on('tileloaderror', (e) => {
+                if (visible && !isSequenceMode && !signalSearchActive && !persistToggle.checked) {
+                    log(`[404] ${config.id} MISSING @ ${formatDate(date)}`, 'log-err');
+                    if (config.latency > 0) handleSignalLoss();
+                }
+            });
+
+            const layer = new ol.layer.Tile({
+                source: source,
+                className: 'science-layer', // ISOLATED CSS CLASS
+                zIndex: 10,
+                visible: visible
+            });
+
+            layer.set('isScience', true);
+            return layer;
+        }
+
+        function clearScienceLayers() {
+            const layersToRemove = [];
+            map.getLayers().forEach(layer => {
+                if (layer.get('isScience')) {
+                    layersToRemove.push(layer);
+                }
+            });
+            layersToRemove.forEach(l => map.removeLayer(l));
+        }
+
+        function loadStaticLayer() {
+            if (!persistToggle.checked) {
+                clearScienceLayers();
+            }
+
+            const dateStr = formatDate(currentDate);
+            log(`REQUEST: ${activeLayerConfig.name} [${dateStr}]`, 'log-sys');
+
+            const layer = createGibsLayer(activeLayerConfig, currentDate, true);
+            map.addLayer(layer);
+
+            scrubber.value = 13;
+        }
+
+        function handleSignalLoss() {
+            log("DATA HOLE DETECTED. AUTO-TUNING...", 'log-warn');
+            signalSearchActive = true;
+            document.getElementById('data-warning').style.display = 'block';
+            document.getElementById('data-warning').innerText = "SEARCHING ARCHIVES...";
+
+            let attempt = 0;
+            const searchInterval = setInterval(() => {
+                attempt++;
+                currentDate.setDate(currentDate.getDate() - 1);
+
+                const newDate = formatDate(currentDate);
+                log(`TRYING T-${attempt} DAY: ${newDate}...`, 'log-warn');
+                datePicker.value = newDate;
+
+                loadStaticLayer();
+
+                clearInterval(searchInterval);
+                signalSearchActive = false;
+                document.getElementById('data-warning').style.display = 'none';
+
+            }, 1000);
+        }
+
+        function switchLayer(config) {
+            activeLayerConfig = config;
+
+            let mode = 'mode-standard';
+            if (config.type === 'night') mode = 'mode-night';
+            else if (config.type === 'chem') mode = 'mode-chem';
+            else if (config.type === 'relief') mode = 'mode-relief';
+            document.body.className = mode;
+
+            if (config.latency > 0) {
+                const today = new Date();
+                const safeDate = new Date();
+                safeDate.setDate(today.getDate() - config.latency);
+                currentDate = safeDate;
+                datePicker.value = formatDate(currentDate);
+                log(`SWITCH: ${config.name}. LATENCY: ${config.latency}d`, 'log-sys');
+            } else {
+                log(`SWITCH: ${config.name}. (STATIC LAYER)`, 'log-sys');
+            }
+
+            if (isSequenceMode) stopPlayback();
+            loadStaticLayer();
+
+            document.querySelectorAll('.btn-terminal').forEach(btn => btn.classList.remove('active'));
+            const buttons = document.querySelectorAll('#layer-panel .btn-terminal');
+            buttons.forEach(btn => {
+                if (btn.innerHTML.includes(config.name)) btn.classList.add('active');
+            });
+        }
+
+        datePicker.addEventListener('change', (e) => {
+            currentDate = new Date(e.target.value);
+            if (isSequenceMode && !persistToggle.checked) stopPlayback();
+            loadStaticLayer();
+        });
+
+        // --- TIMELAPSE ---
+        function buildSequenceStack() {
+            if (!persistToggle.checked) clearScienceLayers();
+
+            playBtn.innerText = "[BUFFERING]";
+            log("INITIALIZING TIMELAPSE STACK...", 'log-sys');
+
+            window.currentSequence = [];
+
+            for (let i = 0; i < daysToLoop; i++) {
+                let tempDate = new Date(currentDate);
+                tempDate.setDate(tempDate.getDate() - i);
+                let layer = createGibsLayer(activeLayerConfig, tempDate, false);
+                layer.setZIndex(100);
+                map.addLayer(layer);
+                window.currentSequence.push(layer);
+            }
+        }
+
+        function updateTimelineVisuals(scrubberVal) {
+            if (!window.currentSequence) return;
+
+            const arrayIndex = (daysToLoop - 1) - scrubberVal;
+            window.currentSequence.forEach((layer, i) => {
+                layer.setVisible(i === arrayIndex);
+            });
+            let displayDate = new Date(currentDate);
+            displayDate.setDate(displayDate.getDate() - arrayIndex);
+            datePicker.value = formatDate(displayDate);
+        }
+
+        function toggleTimelapse() {
+            if (isSequenceMode) stopPlayback();
+            else startPlayback();
+        }
+
+        function startPlayback() {
+            isSequenceMode = true;
+            playBtn.classList.add('active');
+            if (!window.currentSequence || window.currentSequence.length === 0) buildSequenceStack();
+
+            playBtn.innerText = "[HALT SEQ]";
+
+            timer = setInterval(() => {
+                let currentVal = parseInt(scrubber.value);
+                currentVal++;
+                if (currentVal >= daysToLoop) currentVal = 0;
+                scrubber.value = currentVal;
+                updateTimelineVisuals(currentVal);
+            }, 800);
+        }
+
+        function stopPlayback() {
+            isSequenceMode = false;
+            clearInterval(timer);
+            playBtn.classList.remove('active');
+            playBtn.innerText = "[RESUME]";
+        }
+
+        scrubber.addEventListener('input', (e) => {
+            if (!isSequenceMode) {
+                isSequenceMode = true;
+                buildSequenceStack();
+                playBtn.classList.add('active');
+                playBtn.innerText = "[RESUME]";
+            }
+            clearInterval(timer);
+            updateTimelineVisuals(parseInt(e.target.value));
+        });
+
+        // --- SEARCH ---
+        const searchBox = document.getElementById('search-box');
+        const loader = document.getElementById('loading-indicator');
+        searchBox.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const query = searchBox.value;
+                if (!query) return;
+                loader.style.display = 'block';
+                log(`SEARCH: ${query}`, 'log-sys');
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        loader.style.display = 'none';
+                        if (data && data.length > 0) {
+                            const lat = parseFloat(data[0].lat);
+                            const lon = parseFloat(data[0].lon);
+                            view.animate({ center: ol.proj.fromLonLat([lon, lat]), zoom: 9, duration: 2000 });
+                            log(`LOCK: ${lat.toFixed(2)}, ${lon.toFixed(2)}`);
+                        } else { alert("SECTOR NOT FOUND"); }
+                    })
+                    .catch(err => { loader.style.display = 'none'; });
+            }
+        });
+
+        map.on('pointermove', function (evt) {
+            const coords = ol.proj.toLonLat(evt.coordinate);
+            document.getElementById('coords-display').innerText =
+                `LAT: ${coords[1].toFixed(4)} | LON: ${coords[0].toFixed(4)}`;
+        });
+
+        log("SYSTEM BOOT. CONNECTING...", 'log-sys');
+        loadStaticLayer();
+
+    </script>
+</body>
+
+</html>
