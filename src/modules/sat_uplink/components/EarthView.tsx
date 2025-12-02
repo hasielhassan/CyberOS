@@ -267,6 +267,10 @@ const EarthView: React.FC<EarthViewProps> = ({ satellite, missionOverride }) => 
     // --- TIMELINE LOGIC ---
     const buildSequenceStack = () => {
         if (!olMap) return;
+
+        // Only build if not already built
+        if (sequenceLayersRef.current.length > 0) return;
+
         if (!isPersistent) {
             const toRemove: any[] = [];
             olMap.getLayers().forEach((l: any) => {
@@ -282,7 +286,7 @@ const EarthView: React.FC<EarthViewProps> = ({ satellite, missionOverride }) => 
             let tempDate = new Date(currentDate);
             tempDate.setDate(tempDate.getDate() - i);
             let layer = createGibsLayer(activeLayerConfig, tempDate, false);
-            layer.setZIndex(100);
+            layer.setZIndex(100 + i);
             olMap.addLayer(layer);
             sequenceLayersRef.current.push(layer);
         }
@@ -327,11 +331,17 @@ const EarthView: React.FC<EarthViewProps> = ({ satellite, missionOverride }) => 
     const handleScrubberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = parseInt(e.target.value);
         setScrubberValue(val);
-        if (!isSequenceMode) {
-            setIsSequenceMode(true); // Enter sequence mode state but paused
+
+        // If we are dragging, we are in sequence mode effectively
+        if (!isSequenceMode || sequenceLayersRef.current.length === 0) {
+            setIsSequenceMode(true);
             buildSequenceStack();
         }
-        stopPlayback(); // Ensure not auto-playing
+
+        // Don't stop playback if we are just scrubbing? 
+        // Usually scrubbing pauses playback.
+        if (timerRef.current) clearInterval(timerRef.current);
+
         updateTimelineVisuals(val);
     };
 
@@ -359,6 +369,37 @@ const EarthView: React.FC<EarthViewProps> = ({ satellite, missionOverride }) => 
     };
 
     // --- DATA I/O ---
+    const applyConfiguration = (cfg: any) => {
+        if (!olMap) return;
+        const ol = (window as any).ol;
+
+        // 1. View
+        olMap.getView().animate({
+            center: ol.proj.fromLonLat([cfg.lon, cfg.lat]),
+            zoom: cfg.zoom,
+            duration: 1000
+        });
+
+        // 2. Date
+        const newDate = new Date(cfg.date);
+        setCurrentDate(newDate);
+
+        // 3. Layer
+        const layerCfg = LAYERS.find(l => l.id === cfg.activeLayerId) || LAYERS[0];
+        setActiveLayerConfig(layerCfg);
+        loadStaticLayer(olMap, layerCfg, newDate);
+
+        // 4. Overlays
+        setOverlays(cfg.overlays);
+        // Apply overlays
+        olMap.getLayers().forEach((l: any) => {
+            if (l.get('id') === 'roads') l.setVisible(cfg.overlays.roads);
+            if (l.get('id') === 'grid') l.setVisible(cfg.overlays.grid);
+        });
+
+        addLog(`CONFIG IMPORTED: ${cfg.date}`, 'log-ok');
+    };
+
     const downloadState = () => {
         if (!olMap) return;
         const ol = (window as any).ol;
@@ -440,7 +481,7 @@ const EarthView: React.FC<EarthViewProps> = ({ satellite, missionOverride }) => 
             <div className="flex-1 relative border-r border-green-900/30">
 
                 {/* Top Bar - Target Lock */}
-                <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center pointer-events-none">
+                <div className="absolute top-4 left-12 right-4 z-20 flex justify-between items-center pointer-events-none">
                     <div className="bg-black/80 border border-green-500/30 p-2 text-xs pointer-events-auto flex items-center gap-2">
                         <span className="font-bold">TARGET_LOCK:</span>
                         <form onSubmit={handleSearch}>
@@ -471,7 +512,7 @@ const EarthView: React.FC<EarthViewProps> = ({ satellite, missionOverride }) => 
                 )}
 
                 {/* Bottom Left - Temporal Data Panel */}
-                <div className="absolute bottom-4 left-4 z-20 bg-black/90 border border-green-500/30 p-3 w-[450px]">
+                <div className="absolute bottom-8 left-4 z-20 bg-black/90 border border-green-500/30 p-3 w-[450px]">
                     <div className="flex justify-between items-center mb-2 text-xs border-b border-green-900/50 pb-1">
                         <span>TEMPORAL_DATA:</span>
                         <input
@@ -561,8 +602,7 @@ const EarthView: React.FC<EarthViewProps> = ({ satellite, missionOverride }) => 
                                     reader.onload = (ev) => {
                                         try {
                                             const cfg = JSON.parse(ev.target?.result as string);
-                                            addLog(`CONFIG IMPORTED: ${cfg.date}`, 'log-ok');
-                                            // TODO: Apply full config state (lat/lon/zoom/layers)
+                                            applyConfiguration(cfg);
                                         } catch (err) { addLog("IMPORT ERROR", 'log-err'); }
                                     };
                                     reader.readAsText(file);
