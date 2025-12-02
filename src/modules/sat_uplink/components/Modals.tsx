@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, Key, Activity, Aperture, Search, Crosshair, Lock, Unlock, ShieldAlert, Terminal, MapPin } from 'lucide-react';
 import { SatelliteData, ObjectType } from '../types';
 import { NASA_BASE_URL, IMAGE_ASSETS, CATEGORY_COLORS } from '../constants';
+import { missionEventBus } from '../../missions/MissionEventBus';
 
 // --- GENERIC MODAL ---
 export const Modal = ({ title, onClose, children, danger = false, wide = false, full = false }: any) => (
@@ -434,7 +435,10 @@ export const TelemetryModal = ({ onClose, missionTelemetry, satellite }: { onClo
     }
 
     if (step === 'DECRYPTING') {
-        return <ProgressModal title="DECRYPTING LOGS" action="CRACKING ENCRYPTION KEY" onComplete={() => setStep('DECRYPTED')} />;
+        return <ProgressModal title="DECRYPTING LOGS" action="CRACKING ENCRYPTION KEY" onComplete={() => {
+            setStep('DECRYPTED');
+            missionEventBus.emit('SAT_DECRYPT', { target: satellite?.id });
+        }} />;
     }
 
     if (step === 'DECRYPTED') {

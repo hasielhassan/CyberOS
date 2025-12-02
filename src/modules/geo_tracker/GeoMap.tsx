@@ -5,6 +5,7 @@ import { Plane, Train, CloudRain, Search, Layers, Map as MapIcon, Globe } from '
 import geoData from './geo_data.json';
 import placesData from './places.json';
 import { useMissions } from '../missions/MissionsContext';
+import { missionEventBus } from '../missions/MissionEventBus';
 
 // Custom Icons
 const createIcon = (svg: string, color: string, rotation: number = 0) => new L.DivIcon({
@@ -524,6 +525,7 @@ const GeoMap = () => {
                                         setSelectedPlace(place);
                                         setSelectedItem(null); // Clear other selection
                                         setPlacesSearchTerm(''); // Optional: clear search after selection
+                                        missionEventBus.emit('MAP_SELECT_LOCATION', { target: place.name });
                                     }}
                                     className="p-2 text-xs text-cyan-500 hover:bg-cyan-900/30 cursor-pointer border-b border-cyan-900/50 last:border-0"
                                 >

@@ -161,6 +161,42 @@
         "Where is the impact target?": "London",
         "What is the name of the patch file?": "stabilize_orbit.exe"
     },
+    "objectives": [
+        {
+            "id": "decrypt_telemetry",
+            "description": "Decrypt Satellite Telemetry",
+            "trigger": {
+                "event": "SAT_DECRYPT",
+                "target": "KOSMOS-2499"
+            },
+            "on_complete": {
+                "message": "Telemetry decrypted. Coordinates acquired."
+            }
+        },
+        {
+            "id": "jam_satellite",
+            "description": "Jam KOSMOS-2499 Signal",
+            "trigger": {
+                "event": "SAT_JAM",
+                "target": "KOSMOS-2499"
+            },
+            "on_complete": {
+                "message": "Signal jammed. Satellite control severed."
+            }
+        },
+        {
+            "id": "recover_kosmos",
+            "description": "Stabilize KOSMOS-2499 Orbit",
+            "trigger": {
+                "event": "SAT_RESTORE",
+                "target": "KOSMOS-2499"
+            },
+            "on_complete": {
+                "message": "Orbit stabilized. Mission accomplished.",
+                "mission_success": true
+            }
+        }
+    ],
     "checklist": [
         {
             "id": "decrypt_telemetry",

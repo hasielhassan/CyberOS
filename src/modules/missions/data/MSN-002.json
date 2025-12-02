@@ -50,6 +50,31 @@
         "Which city is the target in?": "London",
         "What is the name of the facility?": "Canary Wharf Financial Hub"
     },
+    "objectives": [
+        {
+            "id": "trace_signal",
+            "description": "Trace Signal Source",
+            "trigger": {
+                "event": "TERMINAL_TRACE",
+                "target": "212.58.244.23"
+            },
+            "on_complete": {
+                "message": "Signal traced to London. Coordinates acquired."
+            }
+        },
+        {
+            "id": "identify_facility",
+            "description": "Identify Target Facility",
+            "trigger": {
+                "event": "MAP_SELECT_LOCATION",
+                "target": "Canary Wharf Financial Hub"
+            },
+            "on_complete": {
+                "message": "Target identified: Canary Wharf Financial Hub.",
+                "mission_success": true
+            }
+        }
+    ],
     "checklist": [
         {
             "id": "trace_signal",

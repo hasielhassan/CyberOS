@@ -4,6 +4,7 @@ import {
     ChevronLeft, ChevronRight, AlertTriangle, Activity
 } from 'lucide-react';
 import { useMissions } from '../missions/MissionsContext';
+import { missionEventBus } from '../missions/MissionEventBus';
 import { useMissionState } from '../../hooks/useMissionState';
 import CyberGlobe3D from './components/CyberGlobe3D';
 import { SettingsModal, SensorFeedModal, TelemetryModal, CatalogModal, AuthModal, ProgressModal, RestartModal } from './components/Modals';
@@ -218,6 +219,7 @@ export default function SatUplink() {
         if (selectedSat) {
             setJammedSats(prev => [...prev, selectedSat.id]);
             setJammingStep('COMPLETE');
+            missionEventBus.emit('SAT_JAM', { target: selectedSat.id });
             setTimeout(() => {
                 setModalType(null);
                 setJammingStep('AUTH');
@@ -247,6 +249,7 @@ export default function SatUplink() {
                 }));
             }
 
+            missionEventBus.emit('SAT_RESTORE', { target: selectedSat.id });
             setModalType(null);
             setRestartStep('AUTH');
         }

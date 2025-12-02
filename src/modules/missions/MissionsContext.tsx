@@ -19,10 +19,9 @@ const MissionsContext = createContext<MissionsContextType | undefined>(undefined
 const STORAGE_KEY = 'cyberos_mission_progress';
 
 export const MissionsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [missions] = useState<Mission[]>(() => {
-        const modules = import.meta.glob('./data/*.json', { eager: true });
-        return Object.values(modules).map((mod: any) => mod.default || mod);
-    });
+    // Load missions dynamically
+    const modules = import.meta.glob('./data/*.json', { eager: true });
+    const missions = Object.values(modules).map((mod: any) => mod.default || mod) as Mission[];
 
     // Initialize state from localStorage to avoid race conditions
     const [activeMissionId, setActiveMissionId] = useState<string | null>(() => {

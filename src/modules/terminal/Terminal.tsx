@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { getIpInfo, simulateTraceroute, formatIpInfo } from '../../utils/ipUtils';
 import { useMissions } from '../missions/MissionsContext';
+import { missionEventBus } from '../missions/MissionEventBus';
 
 const initialFileSystem = {
     '/': { type: 'dir', children: ['home', 'bin', 'var', 'missions'] },
@@ -50,8 +51,8 @@ const TerminalConsole = () => {
     const runCommand = (cmd: string) => {
         const args = cmd.split(' ');
         const command = args[0].toLowerCase();
-        const arg = args[1];
-        const arg2 = args[2];
+        const arg = args[1]?.trim();
+        const arg2 = args[2]?.trim();
 
         const prompt = sshSession ? `root@${sshSession.domain}:${path}#` : `${path}>`;
         setHistory(h => [...h, `${prompt} ${cmd}`]);
@@ -302,6 +303,7 @@ const TerminalConsole = () => {
                 const catFile = files[catPath];
                 if (catFile && catFile.type === 'file') {
                     setHistory(h => [...h, catFile.content]);
+                    missionEventBus.emit('TERMINAL_OPEN', { target: arg });
                 } else {
                     setHistory(h => [...h, `File not found: ${arg}`]);
                 }
@@ -334,6 +336,7 @@ const TerminalConsole = () => {
                         setSshSession({ index: targetHostIndex, domain: host.domain, ip: host.ip, user: 'root' });
                         setFiles(host.fileSystem || { '/': { type: 'dir', children: [] } });
                         setPath('/');
+                        missionEventBus.emit('TERMINAL_SSH_LOGIN', { target: host.ip });
                     }, 800);
                 }, 600);
                 break;
@@ -368,6 +371,9 @@ const TerminalConsole = () => {
                             newHistory.pop();
                             return [...newHistory, ...formattedInfo];
                         });
+                        // Emit event
+                        console.log('Terminal: Emitting TERMINAL_IPINFO (Mission Data)', { target: arg });
+                        missionEventBus.emit('TERMINAL_IPINFO', { target: arg });
                     }, 800); // Fake delay for realism
                     return;
                 }
@@ -381,6 +387,9 @@ const TerminalConsole = () => {
                         newHistory.pop(); // Remove loading message
                         return [...newHistory, ...formattedInfo];
                     });
+                    // Emit event
+                    console.log('Terminal: Emitting TERMINAL_IPINFO', { target: arg });
+                    missionEventBus.emit('TERMINAL_IPINFO', { target: arg });
                 }).catch(error => {
                     setHistory(h => {
                         const newHistory = [...h];
@@ -408,6 +417,8 @@ const TerminalConsole = () => {
                             const traceOutput = [`\nTraceroute to ${arg}:`, ...missionTrace];
                             return [...newHistory, ...traceOutput];
                         });
+                        // Emit event
+                        missionEventBus.emit('TERMINAL_TRACE', { target: arg });
                     }, 1500); // Fake delay
                     return;
                 }
@@ -428,6 +439,8 @@ const TerminalConsole = () => {
                         newHistory.pop(); // Remove loading message
                         return [...newHistory, ...traceOutput];
                     });
+                    // Emit event
+                    missionEventBus.emit('TERMINAL_TRACE', { target: arg });
                 }).catch(error => {
                     setHistory(h => {
                         const newHistory = [...h];

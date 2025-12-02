@@ -20,6 +20,7 @@ import { BioLabPlugin } from './modules/bio_lab';
 import { HealthMonitorPlugin } from './modules/health_monitor';
 import { DirectoryPlugin } from './modules/directory';
 import { MissionsProvider } from './modules/missions/MissionsContext';
+import { GlobalMissionEngine } from './modules/missions/GlobalMissionEngine';
 
 import { en } from './locales/en';
 import { es } from './locales/es';
@@ -53,6 +54,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 <LanguageProvider initialLanguages={[en, es]}>
                     <PluginProvider>
                         <MissionsProvider>
+                            <GlobalMissionEngine />
                             <App />
                         </MissionsProvider>
                     </PluginProvider>

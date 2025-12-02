@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { FileText, CheckCircle, XCircle, CheckSquare, Square } from 'lucide-react';
 import { Mission } from '../types';
-import { useMissionState } from '../../../hooks/useMissionState';
+
+import { useMissionEngine } from '../hooks/useMissionEngine';
 import { DocumentViewer } from '../../directory/components/DocumentViewer';
 import { Document } from '../../directory/types';
 
@@ -23,8 +24,10 @@ export const MissionDetail = ({ mission, isActive, isCompleted, onComplete, onAb
         EXPERT: 'text-red-500'
     };
 
-    const { isTaskCompleted, areAllTasksCompleted } = useMissionState();
-    const allTasksCompleted = areAllTasksCompleted(mission);
+    const { objectives } = useMissionEngine();
+
+    // Check if all required objectives are completed
+    const allObjectivesCompleted = objectives.length > 0 && objectives.every(obj => obj.status === 'COMPLETED');
 
     return (
         <div className="h-full flex flex-col p-6 overflow-y-auto custom-scrollbar">
@@ -58,17 +61,19 @@ export const MissionDetail = ({ mission, isActive, isCompleted, onComplete, onAb
                 </p>
             </div>
 
-            {/* Mission Checklist */}
-            {mission.checklist && mission.checklist.length > 0 && (
+            {/* Mission Checklist (Objectives) */}
+            {objectives.length > 0 && (
                 <div className="mb-6">
-                    <h2 className="text-sm font-bold text-green-500 mb-3 uppercase">Mission Checklist</h2>
+                    <h2 className="text-sm font-bold text-green-500 mb-3 uppercase">Mission Objectives</h2>
                     <div className="space-y-2 bg-green-900/10 p-3 border border-green-900/30">
-                        {mission.checklist.map((task) => {
-                            const completed = isTaskCompleted(task.id);
+                        {objectives.map((obj) => {
+                            const completed = obj.status === 'COMPLETED';
+                            const locked = obj.status === 'LOCKED';
                             return (
-                                <div key={task.id} className={`flex items-center gap-3 p-2 border ${completed ? 'border-green-500/50 bg-green-500/10' : 'border-green-900/30'} transition-colors`}>
+                                <div key={obj.id} className={`flex items-center gap-3 p-2 border ${completed ? 'border-green-500/50 bg-green-500/10' : locked ? 'border-green-900/10 opacity-50' : 'border-green-900/30'} transition-colors`}>
                                     {completed ? <CheckSquare size={16} className="text-green-400" /> : <Square size={16} className="text-green-800" />}
-                                    <span className={`text-sm ${completed ? 'text-green-300 line-through opacity-70' : 'text-green-400'}`}>{task.description}</span>
+                                    <span className={`text-sm ${completed ? 'text-green-300 line-through opacity-70' : 'text-green-400'}`}>{obj.description}</span>
+                                    {locked && <span className="text-[10px] text-green-800 ml-auto uppercase">LOCKED</span>}
                                 </div>
                             );
                         })}
@@ -151,11 +156,11 @@ export const MissionDetail = ({ mission, isActive, isCompleted, onComplete, onAb
                     </button>
                     <button
                         onClick={onComplete}
-                        disabled={!allTasksCompleted}
-                        className={`flex-1 py-2 text-sm font-bold flex items-center justify-center gap-2 transition-colors ${allTasksCompleted ? 'bg-green-600 text-black hover:bg-green-500' : 'bg-green-900/20 text-green-700 cursor-not-allowed border border-green-900'}`}
+                        disabled={!allObjectivesCompleted}
+                        className={`flex-1 py-2 text-sm font-bold flex items-center justify-center gap-2 transition-colors ${allObjectivesCompleted ? 'bg-green-600 text-black hover:bg-green-500' : 'bg-green-900/20 text-green-700 cursor-not-allowed border border-green-900'}`}
                     >
                         <CheckCircle size={16} />
-                        {allTasksCompleted ? 'COMPLETE MISSION' : 'TASKS INCOMPLETE'}
+                        {allObjectivesCompleted ? 'COMPLETE MISSION' : 'TASKS INCOMPLETE'}
                     </button>
                 </div>
             )}
