@@ -109,7 +109,11 @@ Injects satellite data and overrides behavior.
     "satellites": {
         "SAT-999": {
             "tasksUpdate": { "jam_sat_objective": true },
-            "resetData": { "status": "SAFE" }
+            "resetData": { "status": "SAFE" },
+            "missionOverride": {
+                "image": "/missions/assets/target_visual.jpg",
+                "meta": "ANOMALY DETECTED"
+            }
         }
     }
 }

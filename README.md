@@ -45,8 +45,10 @@ A "God's Eye" view of global movement.
 - **Widgets**: Live Map (Leaflet), Flight Tracker, Train Network, Storm Systems, Thermal Layer.
 
 ### 📡 Sat_Uplink
-A fully interactive **3D Globe** tracking simulated satellite orbits.
-- **Widgets**: Orbit Visualization, Object List, Satellite Details.
+A fully interactive **Satellite Command Center** featuring two distinct viewing modes:
+- **EarthView**: Real-time Earth observation using **OpenLayers** and **NASA GIBS** (MODIS, VIIRS) for live weather, thermal, and night-light imagery.
+- **AstroView**: Deep space telescope control using **Aladin Lite v3** to access multi-wavelength surveys (Optical, Infrared, X-Ray, UV) from global observatories.
+- **Widgets**: Orbit Visualization, Sensor Feed Control, Telemetry Analysis.
 
 ### 📶 Net_Warfare
 Visualizing cyber threats.
@@ -86,7 +88,12 @@ Built with modern web technologies for speed and scalability:
 - **Core**: [React 18](https://react.dev/) + [Vite](https://vitejs.dev/)
 - **Styling**: [TailwindCSS](https://tailwindcss.com/)
 - **3D Graphics**: [Three.js](https://threejs.org/)
-- **Mapping**: [Leaflet](https://leafletjs.com/)
+- **Mapping**: [Leaflet](https://leafletjs.com/) (Geo Tracker) & [OpenLayers](https://openlayers.org/) (EarthView)
+- **Astronomy**: [Aladin Lite v3](https://aladin.cds.unistra.fr/AladinLite/) (AstroView)
+- **Data APIs**: 
+    - **NASA GIBS** (Earth Imagery)
+    - **Nominatim** (Geocoding)
+    - **Windy** (Webcams)
 - **Icons**: [Lucide React](https://lucide.dev/)
 
 ---

@@ -161,6 +161,8 @@ Want to add a "Drone Control" module? Follow these steps:
 *   **[TailwindCSS](https://tailwindcss.com/)**: Utility-first CSS framework. We use it for the "Cyberpunk" aesthetic (Green/Black/Red).
 *   **[Lucide React](https://lucide.dev/)**: Beautiful, consistent icons.
 *   **[Leaflet](https://leafletjs.com/)**: Open-source JavaScript library for mobile-friendly interactive maps (`GeoTracker`).
+*   **[OpenLayers](https://openlayers.org/)**: High-performance mapping library used for `EarthView` in Sat Uplink.
+*   **[Aladin Lite v3](https://aladin.cds.unistra.fr/AladinLite/)**: Interactive sky atlas for `AstroView` in Sat Uplink.
 *   **[Three.js](https://threejs.org/)**: 3D library used for the globe visualization in `SatUplink`.
 *   **LocalStorage**: We persist state to `cyberos_mission_state` and `cyberos_mission_progress`.
 
@@ -176,7 +178,18 @@ Used in the **Sat Uplink** module.
 *   **Endpoints**:
     *   `DONKI` (Space Weather Database Of Notifications, Knowledge, Information): For solar flare and geomagnetic storm alerts.
     *   `neo/rest/v1/feed` (Near Earth Object Web Service): For tracking asteroids.
+    *   `GIBS` (Global Imagery Browse Services): WMTS/WMS endpoints for daily satellite imagery (MODIS, VIIRS).
 *   **Key**: Requires an API Key (stored in `localStorage`).
+
+### 🔭 Astronomy APIs
+Used in the **Sat Uplink (AstroView)** module.
+*   **Aladin Lite / HiPS**: Accesses hierarchical progressive surveys from CDS (Strasbourg) and other data centers.
+*   **Surveys**:
+    *   DSS2 (Optical)
+    *   PanSTARRS (Optical)
+    *   2MASS / AllWISE (Infrared)
+    *   GALEX (UV)
+    *   XMM-Newton (X-Ray)
 
 ### 📹 Windy.com API
 Used in the **Surveillance** module.
