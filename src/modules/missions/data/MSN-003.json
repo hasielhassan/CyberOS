@@ -77,6 +77,55 @@
         "Which company does the thief work for?": "Oberon Dynamics",
         "Which transportation did the thief used?": "Plane"
     },
+    "objectives": [
+        {
+            "id": "trace_ip",
+            "description": "Trace the signal source for IP 185.93.180.131",
+            "trigger": {
+                "event": "TERMINAL_TRACE",
+                "target": "185.93.180.131"
+            },
+            "on_complete": {
+                "message": "Signal traced to Frankfurt, Germany."
+            }
+        },
+        {
+            "id": "identify_city",
+            "description": "Get detailed IP information to identify the city",
+            "trigger": {
+                "event": "TERMINAL_IPINFO",
+                "target": "185.93.180.131"
+            },
+            "dependency": "trace_ip",
+            "on_complete": {
+                "message": "Location confirmed: Frankfurt."
+            }
+        },
+        {
+            "id": "locate_target",
+            "description": "Locate Company in Geo Tracker",
+            "trigger": {
+                "event": "MAP_SELECT_LOCATION",
+                "target": "Oberon Dynamics"
+            },
+            "dependency": "identify_city",
+            "on_complete": {
+                "message": "Target location identified."
+            }
+        },
+        {
+            "id": "identify_flight",
+            "description": "Identify the escape transport leaving",
+            "trigger": {
+                "event": "MAP_SELECT_ENTITY",
+                "target": "FLT-3020"
+            },
+            "dependency": "locate_target",
+            "on_complete": {
+                "message": "Escape flight identified."
+            }
+        }
+    ],
     "estimatedTime": "15 min",
     "target": "Unknown Thief",
     "location": "Unknown (Trace Required)",

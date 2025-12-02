@@ -583,6 +583,8 @@ const GeoMap = () => {
                                     if (prev?.id === item.id) {
                                         setTrajectoryAnimationKey(k => k + 1);
                                     }
+                                    // Emit event for mission tracking
+                                    missionEventBus.emit('MAP_SELECT_ENTITY', { target: item.id });
                                     return item;
                                 });
                             }}

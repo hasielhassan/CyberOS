@@ -52,14 +52,14 @@
     },
     "objectives": [
         {
-            "id": "trace_signal",
-            "description": "Trace Signal Source",
+            "id": "trace_ip_signal",
+            "description": "Trace Signal Source Coordinates",
             "trigger": {
-                "event": "TERMINAL_TRACE",
+                "event": "TERMINAL_IPINFO",
                 "target": "212.58.244.23"
             },
             "on_complete": {
-                "message": "Signal traced to London. Coordinates acquired."
+                "message": "Signal traced to 51.5045,-0.0183. Coordinates acquired."
             }
         },
         {
@@ -69,22 +69,10 @@
                 "event": "MAP_SELECT_LOCATION",
                 "target": "Canary Wharf Financial Hub"
             },
+            "dependency": "trace_signal",
             "on_complete": {
-                "message": "Target identified: Canary Wharf Financial Hub.",
-                "mission_success": true
+                "message": "Target facility identified: Canary Wharf Financial Hub."
             }
-        }
-    ],
-    "checklist": [
-        {
-            "id": "trace_signal",
-            "description": "Trace Signal Source",
-            "completed": false
-        },
-        {
-            "id": "identify_facility",
-            "description": "Identify Target Facility",
-            "completed": false
         }
     ],
     "estimatedTime": "10 min",

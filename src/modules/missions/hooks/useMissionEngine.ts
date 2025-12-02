@@ -17,7 +17,7 @@ export const useMissionEngine = () => {
             // Merge with persisted state
             const initializedObjectives = activeMission.objectives.map(obj => ({
                 ...obj,
-                status: isTaskCompleted(obj.id) ? 'COMPLETED' : (obj.status || 'ACTIVE')
+                status: isTaskCompleted(activeMission.id, obj.id) ? 'COMPLETED' : (obj.status || 'ACTIVE')
             }));
             setObjectives(initializedObjectives);
         } else if (activeMission?.checklist) {
@@ -26,7 +26,7 @@ export const useMissionEngine = () => {
                 id: task.id,
                 label: task.description,
                 description: task.description,
-                status: isTaskCompleted(task.id) ? 'COMPLETED' : 'ACTIVE'
+                status: isTaskCompleted(activeMission.id, task.id) ? 'COMPLETED' : 'ACTIVE'
             }));
             setObjectives(fallbackObjectives);
         } else {
@@ -78,8 +78,10 @@ export const useMissionEngine = () => {
     }, [activeMission, objectives]);
 
     const handleObjectiveComplete = (objective: MissionObjective) => {
+        if (!activeMission) return;
+
         // 1. Mark as complete in persistence
-        completeTask(objective.id);
+        completeTask(activeMission.id, objective.id);
 
         // 2. Update local state
         setObjectives(prev => {
@@ -103,7 +105,7 @@ export const useMissionEngine = () => {
                 console.log('Mission Message:', objective.on_complete.message);
             }
             if (objective.on_complete.mission_success) {
-                completeMission(activeMission!.id);
+                completeMission(activeMission.id);
             }
         }
     };

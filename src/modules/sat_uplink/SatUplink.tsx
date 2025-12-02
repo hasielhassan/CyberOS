@@ -48,7 +48,7 @@ export default function SatUplink() {
         Object.entries(missionSatellites).forEach(([id, data]: [string, any]) => {
             if (data.tasksUpdate && data.resetData) {
                 // Check if any of the tasks that trigger this update are completed
-                const shouldReset = Object.keys(data.tasksUpdate).some(taskId => isTaskCompleted(taskId));
+                const shouldReset = activeMission && Object.keys(data.tasksUpdate).some(taskId => isTaskCompleted(activeMission.id, taskId));
                 if (shouldReset) {
                     merged[id] = { ...merged[id], ...data.resetData };
                 }
@@ -232,9 +232,9 @@ export default function SatUplink() {
             setJammedSats(prev => prev.filter(id => id !== selectedSat.id));
 
             // Mark tasks as completed
-            if (selectedSat.tasksUpdate) {
+            if (selectedSat.tasksUpdate && activeMission) {
                 Object.entries(selectedSat.tasksUpdate).forEach(([taskId, shouldComplete]) => {
-                    if (shouldComplete) completeTask(taskId);
+                    if (shouldComplete) completeTask(activeMission.id, taskId);
                 });
             }
 
