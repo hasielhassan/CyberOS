@@ -26,7 +26,13 @@ const AstroView: React.FC<AstroViewProps> = ({ satellite, missionOverride }) => 
     const [coords, setCoords] = useState({ ra: "00.0000", dec: "+00.0000" });
     const [statusMsg, setStatusMsg] = useState("SYSTEM INITIALIZED");
     const [showFootprints, setShowFootprints] = useState(false);
-    const [showTelemetry, setShowTelemetry] = useState(false);
+
+    const [logs, setLogs] = useState<{ msg: string, type: string, time: string }[]>([]);
+
+    const addLog = (msg: string, type: 'log-ok' | 'log-err' | 'log-warn' | 'log-sys' = 'log-ok') => {
+        const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+        setLogs(prev => [{ msg, type, time }, ...prev].slice(0, 50));
+    };
 
     const aladinContainerRef = useRef<HTMLDivElement>(null);
     const overlayLayerRef = useRef<any>(null);
@@ -79,9 +85,14 @@ const AstroView: React.FC<AstroViewProps> = ({ satellite, missionOverride }) => 
                         showFullscreenControl: false,
                         showLayersControl: false,
                         showGotoControl: false,
+                        showFrameControl: false,
+                        showCooGridControl: false,
+                        showSimbadPointerControl: false,
+                        showShareControl: false,
                     });
 
                     setAladinInstance(aladin);
+                    addLog("SYSTEM BOOT. CONNECTING...", 'log-sys');
 
                     aladin.on('positionChanged', (position: any) => {
                         if (position) {
@@ -97,9 +108,11 @@ const AstroView: React.FC<AstroViewProps> = ({ satellite, missionOverride }) => 
                     });
 
                     setStatusMsg("SATELLITE LINK ESTABLISHED");
+                    addLog("LINK ESTABLISHED. READY.", 'log-ok');
                 }).catch((err: any) => {
                     console.error("Init Error:", err);
                     setStatusMsg("ERR: LINK FAILURE");
+                    addLog("LINK FAILURE", 'log-err');
                 });
                 return true;
             }
@@ -114,6 +127,7 @@ const AstroView: React.FC<AstroViewProps> = ({ satellite, missionOverride }) => 
                 } else if (attempts >= maxAttempts) {
                     clearInterval(intervalId);
                     setStatusMsg("ERR: TIMEOUT");
+                    addLog("CONNECTION TIMEOUT", 'log-err');
                 }
             }, 100);
         }
@@ -125,26 +139,29 @@ const AstroView: React.FC<AstroViewProps> = ({ satellite, missionOverride }) => 
         if (!aladinInstance) return;
 
         setStatusMsg(`SEARCH PROTOCOL: "${targetInput.toUpperCase()}"`);
+        addLog(`SEARCH: ${targetInput.toUpperCase()}`, 'log-sys');
 
         aladinInstance.gotoObject(targetInput, {
             success: (pos: any) => {
                 setStatusMsg(`TARGET ACQUIRED: ${targetInput.toUpperCase()}`);
+                addLog(`LOCK ACQUIRED: ${pos[0].toFixed(4)}, ${pos[1].toFixed(4)}`, 'log-ok');
                 setCoords({ ra: pos[0].toFixed(4), dec: pos[1].toFixed(4) });
             },
             error: () => {
                 setStatusMsg(`ERR: TARGET NOT FOUND`);
+                addLog("TARGET NOT FOUND", 'log-err');
             }
         });
     };
 
     // Handle Survey Change
-    const handleSurveyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const surveyId = e.target.value;
+    const handleSurveyChange = (surveyId: string) => {
         setCurrentSurvey(surveyId);
         if (aladinInstance) {
             aladinInstance.setImageSurvey(surveyId);
             const surveyName = AVAILABLE_SURVEYS.find(s => s.id === surveyId)?.name;
             setStatusMsg(`FILTER SWITCH: ${surveyName}`);
+            addLog(`FILTER: ${surveyName}`, 'log-sys');
         }
     };
 
@@ -175,14 +192,71 @@ const AstroView: React.FC<AstroViewProps> = ({ satellite, missionOverride }) => 
                     ]);
                     overlayLayerRef.current.add(footprint);
                     setStatusMsg("HUD OVERLAY: ACTIVE");
+                    addLog("HUD OVERLAY ACTIVATED", 'log-sys');
                 }
             }
         } else {
             if (overlayLayerRef.current) {
                 overlayLayerRef.current.removeAll();
                 setStatusMsg("HUD OVERLAY: OFFLINE");
+                addLog("HUD OVERLAY DEACTIVATED", 'log-sys');
             }
         }
+    };
+
+    // --- DATA I/O ---
+    const downloadState = () => {
+        if (!aladinInstance) return;
+        const state = {
+            target: targetInput,
+            fov: fov,
+            survey: currentSurvey,
+            coords: aladinInstance.getRaDec()
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = `ASTRO_CONFIG_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        addLog("CONFIG EXPORTED SUCCESSFULLY");
+    };
+
+    const applyConfiguration = (cfg: any) => {
+        if (!aladinInstance) return;
+
+        setTargetInput(cfg.target);
+        setFov(cfg.fov);
+        handleSurveyChange(cfg.survey);
+
+        aladinInstance.gotoRaDec(cfg.coords[0], cfg.coords[1]);
+        aladinInstance.setFov(cfg.fov);
+
+        addLog("CONFIG IMPORTED SUCCESSFULLY", 'log-ok');
+    };
+
+    const downloadSnapshot = () => {
+        if (!aladinInstance) return;
+        addLog("CAPTURING VISUAL FEED...", 'log-sys');
+
+        // Aladin Lite v3 canvas capture
+        const canvas = aladinContainerRef.current?.querySelector('canvas');
+        if (canvas) {
+            const link = document.createElement('a');
+            link.download = `ASTRO_VISUAL_${new Date().toISOString().split('T')[0]}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            addLog("SNAPSHOT DOWNLOADED");
+        } else {
+            addLog("CAPTURE FAILED: NO FEED", 'log-err');
+        }
+    };
+
+    const handleZoom = (delta: number) => {
+        if (!aladinInstance) return;
+        const newFov = fov * delta;
+        aladinInstance.setFov(newFov);
+        setFov(newFov);
+        addLog(`ZOOM: ${newFov.toFixed(4)}`, 'log-sys');
     };
 
     return (
@@ -195,6 +269,32 @@ const AstroView: React.FC<AstroViewProps> = ({ satellite, missionOverride }) => 
 
                 {/* The Map (Aladin) */}
                 <div className="flex-1 relative border-r border-green-900/30">
+
+                    {/* Top Left - Target & Zoom */}
+                    <div className="absolute top-4 left-4 z-20 flex gap-2 pointer-events-none">
+                        <div className="bg-black/80 border border-green-500/30 p-2 text-xs pointer-events-auto flex items-center gap-2">
+                            <span className="font-bold">TARGET_LOCK:</span>
+                            <form onSubmit={handleSearch}>
+                                <input
+                                    type="text"
+                                    value={targetInput}
+                                    onChange={(e) => setTargetInput(e.target.value)}
+                                    className="bg-transparent border-b border-green-500 text-green-500 w-48 focus:outline-none uppercase"
+                                    placeholder="ENTER COORDINATES..."
+                                />
+                            </form>
+                        </div>
+                        <div className="flex flex-col gap-0.5 pointer-events-auto">
+                            <button onClick={() => handleZoom(0.8)} className="bg-black/80 border border-green-500/30 w-8 h-8 flex items-center justify-center hover:bg-green-500 hover:text-black transition-colors text-lg font-bold">+</button>
+                            <button onClick={() => handleZoom(1.2)} className="bg-black/80 border border-green-500/30 w-8 h-8 flex items-center justify-center hover:bg-green-500 hover:text-black transition-colors text-lg font-bold">-</button>
+                        </div>
+                    </div>
+
+                    {/* Top Right - Coordinates */}
+                    <div className="absolute top-4 right-16 z-20 bg-black/80 border border-green-500/30 p-2 text-xs text-green-400 font-mono pointer-events-none">
+                        RA: {coords.ra} | DEC: {coords.dec}
+                    </div>
+
                     {/* Crosshairs Overlay */}
                     <div className="absolute inset-0 pointer-events-none z-10 opacity-30">
                         <div className="absolute top-1/2 left-0 w-full h-px bg-green-500"></div>
@@ -221,117 +321,79 @@ const AstroView: React.FC<AstroViewProps> = ({ satellite, missionOverride }) => 
                     )}
                 </div>
 
-                {/* Right Sidebar - Analysis Panel */}
+                {/* Right Sidebar - Controls */}
                 <div className="w-72 bg-[#030605] flex flex-col z-20 border-l border-green-900/30">
-                    <div className="p-4 border-b border-green-900/30 flex justify-between items-center">
-                        <h2 className="text-sm font-bold uppercase tracking-widest border-b-2 border-green-500 pb-1 text-green-400">Target Analysis</h2>
-                        <div className="text-xs text-green-600"><i className="fa-solid fa-lock"></i></div>
+                    <div className="p-3 border-b border-green-900/30">
+                        <h2 className="text-sm font-bold uppercase tracking-widest border-b-2 border-green-500 pb-1 text-green-400">Sensor Feed</h2>
                     </div>
 
-                    <div className="p-6 space-y-8 flex-1 overflow-y-auto custom-scrollbar">
+                    <div className="p-3 flex-1 overflow-y-auto custom-scrollbar space-y-4">
 
-                        {/* Search / Target Input */}
+                        {/* Instruments / Filters */}
                         <div>
-                            <div className="text-[10px] text-green-500/50 uppercase mb-1">Target Designation</div>
-                            <form onSubmit={handleSearch} className="flex items-center border border-green-900/50 bg-black group focus-within:border-green-500 transition-colors">
-                                <span className="pl-3 text-xs text-green-500/70">&gt;</span>
-                                <input
-                                    type="text"
-                                    value={targetInput}
-                                    onChange={(e) => setTargetInput(e.target.value)}
-                                    className="bg-transparent border-none text-green-500 text-xs p-2 w-full focus:outline-none placeholder-green-900/50 uppercase font-mono"
-                                    placeholder="ENTER COORDINATES"
-                                />
-                                <button type="submit" className="px-3 hover:text-white transition-colors text-green-500">
-                                    [SCAN]
-                                </button>
-                            </form>
-                        </div>
-
-                        {/* Coordinates Grid */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <div className="text-[10px] text-green-500/50 uppercase">Right Asc</div>
-                                <div className="text-sm text-green-400">{coords.ra}</div>
-                            </div>
-                            <div>
-                                <div className="text-[10px] text-green-500/50 uppercase">Declination</div>
-                                <div className="text-sm text-green-400">{coords.dec}</div>
-                            </div>
-                        </div>
-
-                        {/* Filter / Instrument */}
-                        <div>
-                            <div className="text-[10px] text-green-500/50 uppercase mb-2">Instrument // Filter</div>
-                            <div className="relative border border-green-900/50">
-                                <select
-                                    value={currentSurvey}
-                                    onChange={handleSurveyChange}
-                                    className="w-full bg-black text-green-500 text-xs p-2 uppercase appearance-none focus:outline-none cursor-pointer"
-                                >
-                                    {AVAILABLE_SURVEYS.map(s => (
-                                        <option key={s.id} value={s.id}>{s.name}</option>
-                                    ))}
-                                </select>
-                                <div className="absolute right-2 top-2 pointer-events-none text-green-500">
-                                    ▼
-                                </div>
+                            <div className="text-[10px] text-green-500/50 uppercase mb-1 border-b border-green-900/30">Instrument // Filter</div>
+                            <div className="space-y-0.5 max-h-48 overflow-y-auto">
+                                {AVAILABLE_SURVEYS.map(s => (
+                                    <button
+                                        key={s.id}
+                                        onClick={() => handleSurveyChange(s.id)}
+                                        className={`w-full text-left p-1.5 text-[10px] border transition-all flex justify-between items-center ${currentSurvey === s.id ? 'bg-green-500 text-black border-green-500' : 'bg-transparent text-green-500 border-green-900/30 hover:border-green-500'}`}
+                                    >
+                                        <span>{s.name.split('//')[1].trim()}</span>
+                                        <span className="opacity-60">{s.type}</span>
+                                    </button>
+                                ))}
                             </div>
                         </div>
 
                         {/* Actions */}
                         <div>
-                            <div className="text-[10px] text-green-500/50 uppercase mb-2">Available Actions</div>
-                            <div className="space-y-2">
+                            <div className="text-[10px] text-green-500/50 uppercase mb-1 border-b border-green-900/30">Available Actions</div>
+                            <div className="space-y-1">
                                 <button
                                     type="button"
                                     onClick={toggleFootprints}
-                                    className={`w-full border border-green-500 p-2 text-xs uppercase tracking-wider transition-all hover:bg-green-500 hover:text-black flex justify-between items-center ${showFootprints ? 'bg-green-500/20' : ''}`}
+                                    className={`w-full border p-1.5 text-[10px] uppercase tracking-wider transition-all flex justify-between items-center ${showFootprints ? 'bg-green-500 text-black border-green-500' : 'border-green-900/50 text-green-500 hover:border-green-500'}`}
                                 >
-                                    <span>REFRESH SENSOR</span>
-                                    <span className="text-[10px]">⚡</span>
+                                    <span>HUD OVERLAY</span>
+                                    <span>{showFootprints ? 'ON' : 'OFF'}</span>
                                 </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        if (aladinInstance) {
-                                            const currentFov = aladinInstance.getFov()[0];
-                                            aladinInstance.setFov(currentFov * 0.8);
-                                        }
-                                    }}
-                                    className="w-full border border-green-500 p-2 text-xs uppercase tracking-wider transition-all hover:bg-green-500 hover:text-black flex justify-between items-center"
-                                >
-                                    <span>ENHANCE ZOOM</span>
-                                    <span className="text-[10px]">+</span>
-                                </button>
-
-                                {/* Telemetry Button */}
-                                <button
-                                    type="button"
-                                    onClick={() => setShowTelemetry(!showTelemetry)}
-                                    className={`w-full border p-2 text-xs uppercase tracking-wider transition-all flex justify-between items-center ${showTelemetry ? 'border-green-500 bg-green-500/10 text-green-500' : 'border-green-900/50 text-green-500 hover:border-green-500'}`}
-                                >
-                                    <span>DOWNLOAD TELEMETRY</span>
-                                    <span className="text-[10px]">{showTelemetry ? '▲' : '▼'}</span>
-                                </button>
-
-                                {/* Telemetry Expansion Panel */}
-                                {showTelemetry && (
-                                    <div className="border border-t-0 border-green-900/30 bg-green-900/10 p-3 space-y-2 animate-pulse">
-                                        <div className="text-[10px] text-green-400">
-                                            DOWNLINKING PACKETS...
-                                            <br />
-                                            {missionOverride?.meta || "NO ANOMALIES DETECTED"}
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         </div>
 
-                        {/* Encryption Key Decoration */}
-                        <div className="pt-4 border-t border-green-900/20 text-[8px] text-green-500/40 break-all font-mono leading-3">
-                            0x4F 0x9A 0x12 0xBB 0x7C 0x88 0x00 ... END OF STREAM
+                        {/* Data I/O */}
+                        <div>
+                            <div className="text-[10px] text-green-500/50 uppercase mb-1 border-b border-green-900/30">Data Uplink / Downlink</div>
+                            <div className="flex gap-1 mb-1">
+                                <button onClick={downloadState} className="flex-1 border border-green-500 p-1 text-[10px] hover:bg-green-500 hover:text-black transition-colors">[SAVE CFG]</button>
+                                <button onClick={() => document.getElementById('astro-cfg-upload')?.click()} className="flex-1 border border-green-500 p-1 text-[10px] hover:bg-green-500 hover:text-black transition-colors">[LOAD CFG]</button>
+                                <input type="file" id="astro-cfg-upload" className="hidden" onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = (ev) => {
+                                            try {
+                                                const cfg = JSON.parse(ev.target?.result as string);
+                                                applyConfiguration(cfg);
+                                            } catch (err) { addLog("IMPORT ERROR", 'log-err'); }
+                                        };
+                                        reader.readAsText(file);
+                                    }
+                                }} />
+                            </div>
+                            <button onClick={downloadSnapshot} className="w-full border border-green-500 p-1 text-[10px] hover:bg-green-500 hover:text-black transition-colors">[CAPTURE VISUAL]</button>
+                        </div>
+
+                        {/* Diagnostics */}
+                        <div className="flex-1 flex flex-col min-h-0">
+                            <div className="text-[10px] text-green-500/50 uppercase mb-1 border-b border-green-900/30">System Diagnostics</div>
+                            <div className="flex-1 border-t border-dashed border-green-900/50 overflow-y-auto h-32 text-[9px] font-mono p-1 flex flex-col-reverse">
+                                {logs.map((log, i) => (
+                                    <div key={i} className={`mb-0.5 ${log.type === 'log-err' ? 'text-red-500' : log.type === 'log-warn' ? 'text-yellow-500' : log.type === 'log-sys' ? 'text-blue-400' : 'text-green-500'}`}>
+                                        <span className="opacity-50">[{log.time}]</span> {log.msg}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                     </div>
