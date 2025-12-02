@@ -151,6 +151,9 @@ npm run deploy
 
 We welcome fellow hackers! Whether you're a code wizard or a design guru, your help is appreciated.
 
+> 🛠️ **Technical Documentation**
+> Before diving into the code, please read the [Developer Contributor Handbook](./DEVELOPER_HANDBOOK.md). It explains the system architecture, event bus, and module structure in detail.
+
 1.  Fork the repo.
 2.  Create a feature branch (`git checkout -b feature/AmazingFeature`).
 3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
