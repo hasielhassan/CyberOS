@@ -227,13 +227,23 @@ export const getMission = (lang: string) => {
                 }
             },
             {
-                title: t.documents.signal.title,
-                type: "binary",
-                meta: t.documents.signal.meta,
+                title: "Orbital Transmission",
+                type: "space_memo",
+                meta: {
+                    transmissionId: "KOSMOS-99-X",
+                    stardate: "2025.305",
+                    origin: "KOSMOS-2499",
+                    destination: "EARTH_STATION_4",
+                    priority: "CRITICAL"
+                },
                 data: {
-                    frequency: "435.5 MHz",
-                    source: "UNKNOWN",
-                    content: t.documents.signal.data.content
+                    missionName: "ORBITAL DECAY",
+                    content: t.documents.signal.data.content,
+                    telemetry: {
+                        velocity: "7.8 km/s",
+                        fuel: "0%",
+                        hull: "CRITICAL"
+                    }
                 }
             },
             {
@@ -245,7 +255,8 @@ export const getMission = (lang: string) => {
                     subhead: t.documents.weather.data.subhead,
                     leadImage: "https://placehold.co/600x300/000/fff?text=WEATHER",
                     imageCaption: t.documents.weather.data.imageCaption,
-                    columns: t.documents.weather.data.columns
+                    columns: t.documents.weather.data.columns,
+                    sidebar: t.documents.weather.data.sidebar
                 }
             }
         ]

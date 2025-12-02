@@ -89,7 +89,11 @@ export const es = {
                 columns: [
                     "Los meteorólogos están desconcertados por picos repentinos en la densidad atmosférica superior. Aunque la actividad solar es baja, estas perturbaciones localizadas podrían afectar los coeficientes de arrastre de los satélites.",
                     "Los expertos aconsejan a los operadores de satélites monitorear de cerca las tasas de decaimiento orbital."
-                ]
+                ],
+                sidebar: {
+                    title: "Clima Espacial",
+                    content: "Velocidad del viento solar: 400 km/s. Flujo de protones: Normal. No se predicen tormentas geomagnéticas."
+                }
             }
         }
     }

@@ -478,3 +478,17 @@ The viewer uses a **Strategy Pattern**:
 *   `newspaper`: Multi-column articles with headlines and ads.
 *   `mission`: Official mission briefings with stamps and typewritten text.
 *   `certificate`: Awards and degrees with seals and ornate borders.
+*   `intel`: Intercepted transmissions and signal logs.
+*   `transcript`: Chat logs, interrogations, and audio transcriptions.
+*   `blueprint`: Technical schematics and engineering plans.
+*   `medical_report`: Patient analysis, diagnosis, and treatment plans.
+*   `email_thread`: Printed email chains with headers and chronological messages.
+*   `dossier`: Personnel files with photos, aliases, and known associates.
+*   `passport`: Official travel documents with gold foil effects and stamps.
+*   `map`: Tactical maps with grids, coordinates, and markers.
+*   `credential`: Access cards and security badges.
+*   `evidence`: Forensic reports with chain of custody and exhibit photos.
+*   `lab_report`: Scientific research findings and chemical structures.
+*   `space_memo`: Interstellar transmissions with starfield backgrounds.
+*   `patent`: Official patent documents with technical drawings.
+*   `finance_report`: Corporate financial statements and balance sheets.

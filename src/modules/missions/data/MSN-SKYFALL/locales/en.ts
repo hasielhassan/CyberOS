@@ -89,7 +89,11 @@ export const en = {
                 columns: [
                     "Meteorologists are puzzled by sudden spikes in upper atmospheric density. While solar activity is low, these localized disturbances could affect satellite drag coefficients.",
                     "Experts advise satellite operators to monitor orbital decay rates closely."
-                ]
+                ],
+                sidebar: {
+                    title: "Space Weather",
+                    content: "Solar wind speed: 400 km/s. Proton flux: Normal. No geomagnetic storms predicted."
+                }
             }
         }
     }

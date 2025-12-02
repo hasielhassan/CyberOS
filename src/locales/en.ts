@@ -522,5 +522,17 @@ export const en: Language = {
         'dir.doc.phd_cert': 'PhD Certificate',
         'dir.doc.phd.header': 'Doctor of Philosophy',
         'dir.doc.phd.body': 'For groundbreaking research in Quantum Cryptography and Artificial Intelligence alignment.',
+        'dir.doc.flux_blueprint': 'Flux Capacitor Schematic',
+        'dir.doc.flux_patent': 'Patent: Flux Capacitor',
+        'dir.doc.dna_report': 'Lab Report: DNA Analysis',
+        'dir.doc.comms_log': 'Encrypted Comms',
+        'dir.doc.interrogation': 'Interrogation Log',
+        'dir.doc.baron_dossier': 'Target Dossier: The Baron',
+        'dir.doc.passport': 'Passport',
+        'dir.doc.berlin_map': 'Tactical Map: Berlin',
+        'dir.doc.access_card': 'Level 5 Access Card',
+        'dir.doc.evidence_knife': 'Evidence #492',
+        'dir.doc.audit_log': 'Financial Audit 2025',
+        'dir.doc.patient_zero': 'Medical Report: Patient Zero',
     }
 };

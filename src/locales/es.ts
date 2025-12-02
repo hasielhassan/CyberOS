@@ -521,5 +521,17 @@ export const es: Language = {
         'dir.doc.phd_cert': 'Certificado de Doctorado',
         'dir.doc.phd.header': 'Doctor en Filosofía',
         'dir.doc.phd.body': 'Por investigación innovadora en Criptografía Cuántica y alineación de Inteligencia Artificial.',
+        'dir.doc.flux_blueprint': 'Esquema del Condensador de Flujo',
+        'dir.doc.flux_patent': 'Patente: Condensador de Flujo',
+        'dir.doc.dna_report': 'Reporte de Lab: Análisis de ADN',
+        'dir.doc.comms_log': 'Comunicaciones Encriptadas',
+        'dir.doc.interrogation': 'Registro de Interrogatorio',
+        'dir.doc.baron_dossier': 'Dossier Objetivo: El Barón',
+        'dir.doc.passport': 'Pasaporte',
+        'dir.doc.berlin_map': 'Mapa Táctico: Berlín',
+        'dir.doc.access_card': 'Tarjeta de Acceso Nivel 5',
+        'dir.doc.evidence_knife': 'Evidencia #492',
+        'dir.doc.audit_log': 'Auditoría Financiera 2025',
+        'dir.doc.patient_zero': 'Reporte Médico: Paciente Cero',
     }
 };

@@ -402,7 +402,7 @@ Missions and Profiles can contain `documents`. These are rendered procedurally b
 ```typescript
 {
     title: "List Display Name",
-    type: "identity" | "newspaper" | "mission" | "certificate" | "intel" | "transcript",
+    type: "identity" | "newspaper" | "mission" | "certificate" | "intel" | "transcript" | "blueprint" | "medical_report" | "email_thread" | "dossier" | "passport" | "map" | "credential" | "evidence" | "lab_report" | "space_memo" | "patent" | "finance_report",
     meta: { ... }, // Metadata (dates, sources, stamps)
     data: { ... }  // Content (text, images, stats)
 }
@@ -476,4 +476,203 @@ Used for chat logs, interrogations, or audio transcriptions.
         ]
     }
 }
+```
+
+### 6. Blueprint (`blueprint`)
+Used for technical schematics, floor plans, or device engineering.
+```json
+{
+    "type": "blueprint",
+    "meta": { "projectCode": "OMEGA", "revision": "v2.1", "date": "2025" },
+    "data": {
+        "title": "Orbital Laser",
+        "description": "Schematic for high-energy beam emitter.",
+        "specs": { "Output": "50MW", "Range": "2000km" }
+    }
+}
+```
+
+### 7. Medical Report (`medical_report`)
+Used for patient records, autopsies, or virus analysis.
+```json
+{
+    "type": "medical_report",
+    "meta": { "hospital": "St. Mary's", "date": "2025-12-01", "doctor": "Dr. House" },
+    "data": {
+        "patientName": "Jane Doe", "dob": "1985-05-05", "bloodType": "O+",
+        "status": "CRITICAL",
+        "diagnosis": "Unknown Pathogen",
+        "treatment": "Quarantine immediate."
+    }
+}
+```
+
+### 8. Email Thread (`email_thread`)
+Used for intercepted communications or corporate leaks.
+```json
+{
+    "type": "email_thread",
+    "meta": { "date": "2025-11-20" },
+    "data": {
+        "subject": "Project X Update",
+        "from": "boss@corp.com", "to": "minion@corp.com",
+        "emails": [
+            { "from": "Boss", "date": "10:00 AM", "body": "Is it done?" },
+            { "from": "Minion", "date": "10:05 AM", "body": "Almost." }
+        ]
+    }
+}
+```
+
+### 9. Dossier (`dossier`)
+Used for detailed personnel files or target profiles.
+```json
+{
+    "type": "dossier",
+    "meta": { "fileId": "X-99", "status": "WANTED" },
+    "data": {
+        "name": "Cipher", "alias": "The Ghost",
+        "dob": "Unknown", "nationality": "Unknown",
+        "affiliation": "Black Hat",
+        "photoUrl": "...",
+        "summary": "Highly dangerous hacker.",
+        "associates": ["Zero", "Crash"]
+    }
+}
+```
+
+### 10. Passport (`passport`)
+Used for travel documents and identity verification.
+```json
+{
+    "type": "passport",
+    "meta": { "country": "UNITED KINGDOM", "passportNumber": "123456789" },
+    "data": {
+        "surname": "Bond", "givenNames": "James",
+        "nationality": "GBR", "dob": "1968-04-13",
+        "sex": "M", "expiryDate": "2030-01-01",
+        "photoUrl": "..."
+    }
+}
+```
+
+### 11. Map (`map`)
+Used for tactical locations, treasure maps, or area layouts.
+```json
+{
+    "type": "map",
+    "meta": { "scale": "1:50000" },
+    "data": {
+        "locationName": "Sector 7",
+        "coordinates": "51.5074° N, 0.1278° W",
+        "mapImageUrl": "...",
+        "notes": "Enemy presence confirmed.",
+        "markers": [
+            { "x": "50%", "y": "50%", "label": "Target" }
+        ]
+    }
+}
+```
+
+### 12. Credential (`credential`)
+Used for keycards, badges, and access passes.
+```json
+{
+    "type": "credential",
+    "meta": { "agency": "NSA", "clearanceLevel": "LEVEL 5" },
+    "data": {
+        "name": "Edward S.", "department": "Signals Intelligence",
+        "idNumber": "NSA-9921",
+        "photoUrl": "..."
+    }
+}
+```
+
+### 13. Evidence Report (`evidence`)
+Used for forensic analysis and crime scene items.
+```json
+{
+    "type": "evidence",
+    "meta": { "date": "2025-02-14" },
+    "data": {
+        "caseNumber": "C-2025-001",
+        "exhibitId": "A",
+        "description": "Bloody Knife",
+        "recoveredFrom": "Scene",
+        "analysis": "DNA match found.",
+        "imageUrl": "...",
+        "chainOfCustody": [
+            { "timestamp": "12:00", "releasedBy": "Officer A", "receivedBy": "Lab", "purpose": "Analysis" }
+        ]
+    }
+}
+```
+
+### 14. Laboratory Report (`lab_report`)
+Used for scientific data, chemical analysis, and experiments.
+```json
+{
+    "type": "lab_report",
+    "meta": { "reportId": "LAB-001", "date": "2025", "researcher": "Dr. Wu", "clearance": "SECRET" },
+    "data": {
+        "title": "Compound V Analysis",
+        "subject": "Sample 42",
+        "abstract": "Highly unstable.",
+        "methodology": "Spectroscopy...",
+        "results": "Explosive reaction.",
+        "chemicalStructure": "..."
+    }
+}
+```
+
+### 15. Space Memo (`space_memo`)
+Used for sci-fi transmissions and ship logs.
+```json
+{
+    "type": "space_memo",
+    "meta": { "transmissionId": "TX-99", "stardate": "4523.1", "origin": "USS Enterprise", "destination": "Starfleet", "priority": "ALPHA" },
+    "data": {
+        "missionName": "Deep Space 9",
+        "content": "We have engaged the Borg.",
+        "telemetry": { "velocity": "Warp 9", "fuel": "80%", "hull": "100%" }
+    }
+}
+```
+
+### 16. Patent (`patent`)
+Used for invention details and intellectual property.
+```json
+{
+    "type": "patent",
+    "meta": { "patentNumber": "US-999999", "date": "2025", "filedDate": "2024" },
+    "data": {
+        "inventionName": "Flux Capacitor",
+        "inventor": "Dr. E. Brown",
+        "assignee": "Future Corp",
+        "abstract": "Time travel device.",
+        "description": "It works...",
+        "drawingUrl": "..."
+    }
+}
+```
+
+### 17. Finance Report (`finance_report`)
+Used for corporate earnings, bank statements, and fraud investigation.
+```json
+{
+    "type": "finance_report",
+    "meta": { "period": "Q4 2025", "fiscalYear": "2025" },
+    "data": {
+        "companyName": "Enron 2.0",
+        "revenue": "$1B",
+        "grossProfit": "$500M",
+        "expenses": "$600M",
+        "netIncome": "-$100M",
+        "summary": "We are broke.",
+        "assets": [
+            { "name": "Cash", "value": "$10", "change": "-99%" }
+        ]
+    }
+}
+```
 ```

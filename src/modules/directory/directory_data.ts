@@ -64,6 +64,24 @@ export const getDirectoryData = (t: (key: string) => string) => [
                     ],
                     "intel_photo": "https://placehold.co/200x200/555/fff?text=TARGET+BLDG"
                 }
+            },
+            {
+                "title": t('dir.doc.baron_dossier'),
+                "type": "dossier",
+                "meta": {
+                    "fileId": "X-RED-SYNDICATE",
+                    "status": "WANTED"
+                },
+                "data": {
+                    "name": "Victor Doom",
+                    "alias": "The Baron",
+                    "dob": "1979-05-15",
+                    "nationality": "Latverian",
+                    "affiliation": "Red Syndicate",
+                    "photoUrl": "https://randomuser.me/api/portraits/men/22.jpg",
+                    "summary": "International arms dealer. Extremely dangerous.",
+                    "associates": ["Viper", "Jackal"]
+                }
             }
         ]
     },
@@ -89,7 +107,24 @@ export const getDirectoryData = (t: (key: string) => string) => [
             "notes": "Last seen in sector 7. Presumed compromised.",
             "knownAssociates": ["Viper"]
         },
-        "documents": []
+        "documents": [
+            {
+                "title": t('dir.doc.comms_log'),
+                "type": "email_thread",
+                "meta": {
+                    "date": "2025-10-20"
+                },
+                "data": {
+                    "subject": "Operation Blackout",
+                    "from": "agent004@cyber-int.gov",
+                    "to": "handler@cyber-int.gov",
+                    "emails": [
+                        { "from": "Agent 004", "date": "09:00 AM", "body": "Sector 7 is compromised. I'm going dark." },
+                        { "from": "Handler", "date": "09:05 AM", "body": "Copy. Initiate protocol GHOST." }
+                    ]
+                }
+            }
+        ]
     },
     {
         "id": "AGT-007",
@@ -113,7 +148,22 @@ export const getDirectoryData = (t: (key: string) => string) => [
             "notes": "Highly classified profile.",
             "knownAssociates": []
         },
-        "documents": []
+        "documents": [
+            {
+                "title": t('dir.doc.access_card'),
+                "type": "credential",
+                "meta": {
+                    "agency": "CYBER-INT",
+                    "clearanceLevel": "LEVEL 5"
+                },
+                "data": {
+                    "name": "Spectre",
+                    "department": "Special Ops",
+                    "idNumber": "007-X",
+                    "photoUrl": "https://randomuser.me/api/portraits/men/85.jpg"
+                }
+            }
+        ]
     },
     {
         "id": "AGT-012",
@@ -137,7 +187,25 @@ export const getDirectoryData = (t: (key: string) => string) => [
             "notes": "Expert in urban warfare.",
             "knownAssociates": []
         },
-        "documents": []
+        "documents": [
+            {
+                "title": t('dir.doc.berlin_map'),
+                "type": "map",
+                "meta": {
+                    "scale": "1:10000"
+                },
+                "data": {
+                    "locationName": "Berlin Safehouse",
+                    "coordinates": "52.5200° N, 13.4050° E",
+                    "mapImageUrl": "https://placehold.co/600x400/222/fff?text=BERLIN+MAP",
+                    "notes": "Safehouse located in abandoned metro station.",
+                    "markers": [
+                        { "x": "45%", "y": "30%", "label": "Entry" },
+                        { "x": "60%", "y": "70%", "label": "Exit" }
+                    ]
+                }
+            }
+        ]
     },
 
     // --- CRIMINALS ---
@@ -214,7 +282,26 @@ export const getDirectoryData = (t: (key: string) => string) => [
             "notes": "Wanted for multiple high-profile assassinations.",
             "knownAssociates": ["The Baron"]
         },
-        "documents": []
+        "documents": [
+            {
+                "title": t('dir.doc.evidence_knife'),
+                "type": "evidence",
+                "meta": {
+                    "date": "2024-11-01"
+                },
+                "data": {
+                    "caseNumber": "C-24-992",
+                    "exhibitId": "E-492",
+                    "description": "Sniper Rifle ( disassembled )",
+                    "recoveredFrom": "Hotel Room 404",
+                    "analysis": "Ballistics match the assassination.",
+                    "imageUrl": "https://placehold.co/400x300/111/fff?text=RIFLE",
+                    "chainOfCustody": [
+                        { "timestamp": "14:00", "releasedBy": "Det. Smith", "receivedBy": "Forensics", "purpose": "Analysis" }
+                    ]
+                }
+            }
+        ]
     },
     {
         "id": "CRM-204",
@@ -238,7 +325,24 @@ export const getDirectoryData = (t: (key: string) => string) => [
             "notes": "Serving 25 years for cyber-terrorism.",
             "knownAssociates": []
         },
-        "documents": []
+        "documents": [
+            {
+                "title": t('dir.doc.interrogation'),
+                "type": "transcript",
+                "meta": {
+                    "caseId": "INT-204",
+                    "date": "2025-01-05",
+                    "participants": "Interrogator, Cipher"
+                },
+                "data": {
+                    "lines": [
+                        { "speaker": "Interrogator", "text": "Where is the server?", "timestamp": "10:00:00" },
+                        { "speaker": "Cipher", "text": "I'll never tell you.", "timestamp": "10:00:05" },
+                        { "speaker": "Interrogator", "text": "We have your logs.", "timestamp": "10:00:15" }
+                    ]
+                }
+            }
+        ]
     },
     {
         "id": "CRM-305",
@@ -328,7 +432,40 @@ export const getDirectoryData = (t: (key: string) => string) => [
             "notes": "Working on flux capacitor technology.",
             "knownAssociates": ["Marty M."]
         },
-        "documents": []
+        "documents": [
+            {
+                "title": t('dir.doc.flux_blueprint'),
+                "type": "blueprint",
+                "meta": {
+                    "projectCode": "FLUX",
+                    "revision": "v1.0",
+                    "date": "1955"
+                },
+                "data": {
+                    "title": "Flux Capacitor",
+                    "description": "Device to enable time travel.",
+                    "specs": { "Power": "1.21 GW", "Speed": "88 MPH" },
+                    "drawingUrl": "https://images.squarespace-cdn.com/content/v1/545f5b33e4b0719cb5aee3a5/1579899941158-MU7IPR63Y8UXXOX52GOK/Screen+Shot+2020-01-24+at+21.05.09.png"
+                }
+            },
+            {
+                "title": t('dir.doc.flux_patent'),
+                "type": "patent",
+                "meta": {
+                    "patentNumber": "US-1985-001",
+                    "date": "1985",
+                    "filedDate": "1955"
+                },
+                "data": {
+                    "inventionName": "Flux Capacitor",
+                    "inventor": "Dr. Emmett Brown",
+                    "assignee": "Self",
+                    "abstract": "A device for modulating the temporal displacement field.",
+                    "description": "Requires plutonium.",
+                    "drawingUrl": "https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/flux-capacitor-patent-denny-h.jpg"
+                }
+            }
+        ]
     },
     {
         "id": "SCI-101",
@@ -376,7 +513,26 @@ export const getDirectoryData = (t: (key: string) => string) => [
             "notes": "Expert in DNA sequencing.",
             "knownAssociates": []
         },
-        "documents": []
+        "documents": [
+            {
+                "title": t('dir.doc.dna_report'),
+                "type": "lab_report",
+                "meta": {
+                    "reportId": "LAB-DNA-51",
+                    "date": "1953",
+                    "researcher": "R. Franklin",
+                    "clearance": "RESTRICTED"
+                },
+                "data": {
+                    "title": "Photo 51 Analysis",
+                    "subject": "DNA Structure",
+                    "abstract": "X-ray diffraction image of DNA.",
+                    "methodology": "X-ray crystallography",
+                    "results": "Double helix structure confirmed.",
+                    "chemicalStructure": "https://placehold.co/300x300/000/fff?text=HELIX"
+                }
+            }
+        ]
     },
 
     // --- CITIZENS ---
@@ -402,7 +558,27 @@ export const getDirectoryData = (t: (key: string) => string) => [
             "notes": "Average citizen.",
             "knownAssociates": []
         },
-        "documents": []
+        "documents": [
+            {
+                "title": t('dir.doc.audit_log'),
+                "type": "finance_report",
+                "meta": {
+                    "period": "Q4 2024",
+                    "fiscalYear": "2024"
+                },
+                "data": {
+                    "companyName": "Doe Consulting",
+                    "revenue": "$50,000",
+                    "grossProfit": "$45,000",
+                    "expenses": "$5,000",
+                    "netIncome": "$40,000",
+                    "summary": "Steady growth.",
+                    "assets": [
+                        { "name": "Laptop", "value": "$2,000", "change": "-10%" }
+                    ]
+                }
+            }
+        ]
     },
     {
         "id": "CTZ-002",
@@ -546,7 +722,25 @@ export const getDirectoryData = (t: (key: string) => string) => [
             "notes": "Designed several modern buildings.",
             "knownAssociates": []
         },
-        "documents": []
+        "documents": [
+            {
+                "title": t('dir.doc.passport'),
+                "type": "passport",
+                "meta": {
+                    "country": "DENMARK",
+                    "passportNumber": "DK-992100"
+                },
+                "data": {
+                    "surname": "Jensen",
+                    "givenNames": "Lars",
+                    "nationality": "DNK",
+                    "dob": "1987-07-07",
+                    "sex": "M",
+                    "expiryDate": "2035-07-07",
+                    "photoUrl": "https://randomuser.me/api/portraits/men/7.jpg"
+                }
+            }
+        ]
     },
     {
         "id": "CTZ-008",
@@ -570,6 +764,24 @@ export const getDirectoryData = (t: (key: string) => string) => [
             "notes": "Works at the city hospital.",
             "knownAssociates": []
         },
-        "documents": []
+        "documents": [
+            {
+                "title": t('dir.doc.patient_zero'),
+                "type": "medical_report",
+                "meta": {
+                    "hospital": "Barcelona General",
+                    "date": "2025-02-20",
+                    "doctor": "Dr. Garcia"
+                },
+                "data": {
+                    "patientName": "Unknown Male",
+                    "dob": "Unknown",
+                    "bloodType": "AB-",
+                    "status": "QUARANTINED",
+                    "diagnosis": "Novel Virus",
+                    "treatment": "Isolation and observation."
+                }
+            }
+        ]
     }
 ];
