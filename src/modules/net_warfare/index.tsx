@@ -1,7 +1,7 @@
 import { Wifi } from 'lucide-react';
 import { Plugin } from '../../core/types';
 import NetWar from './NetWar';
-import { useLanguage } from '../../core/registry';
+
 
 export const NetWarfarePlugin: Plugin = {
     id: 'net_warfare',
