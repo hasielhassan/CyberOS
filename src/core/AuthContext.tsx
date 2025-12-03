@@ -4,6 +4,8 @@ interface User {
     name: string;
     id: string;
     clearance: string;
+    level: number;
+    xp: number;
 }
 
 interface AuthContextType {
@@ -26,7 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const login = (name: string, id: string) => {
-        const newUser = { name, id, clearance: 'LEVEL 5' };
+        const newUser = { name, id, clearance: 'LEVEL 5', level: 1, xp: 0 };
         setUser(newUser);
         localStorage.setItem('cyber_user', JSON.stringify(newUser));
     };

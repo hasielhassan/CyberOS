@@ -9,6 +9,11 @@ export const es: Language = {
         'Geo_Tracker': 'Rastreo_Geo',
         'Sat_Uplink': 'Enlace_Sat',
         'Net_Warfare': 'Guerra_Red',
+        // AgentProfileCard
+        'agent.profile': 'Perfil de Agente',
+        'agent.level': 'Nivel',
+        'agent.btc_earned': 'BTC Ganados',
+        'agent.xp_progress': 'Progreso XP',
         // SysOverview
         'sys.resources': 'RECURSOS DEL SISTEMA',
         'sys.cpu': 'CARGA CPU',
