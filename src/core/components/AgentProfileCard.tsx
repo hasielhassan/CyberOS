@@ -4,7 +4,7 @@ import { useMissions } from '../../modules/missions/MissionsContext';
 import { useLanguage } from '../registry';
 
 export const AgentProfileCard = () => {
-    const { user } = useAuth();
+    const { user, addXp } = useAuth();
     const { completedMissionIds, missions } = useMissions();
     const { t } = useLanguage();
 
@@ -27,9 +27,13 @@ export const AgentProfileCard = () => {
 
     const totalBTC = calculateTotalBTC();
     const level = user?.level || 1;
-    const xp = user?.xp || 450; // Current XP
-    const maxXP = 1000; // XP needed for next level
-    const progressPercentage = (xp / maxXP) * 100;
+    const xp = user?.xp || 0; // Current XP
+    // Calculate progress within current level
+    // Level 1: 0-49 XP (Progress: XP % 50)
+    // Level 2: 50-99 XP (Progress: XP % 50)
+    const currentLevelXP = xp % 50;
+    const maxXP = 50; // XP needed for next level
+    const progressPercentage = (currentLevelXP / maxXP) * 100;
 
     if (!user) return null;
 
@@ -80,7 +84,7 @@ export const AgentProfileCard = () => {
                 <div className="space-y-1">
                     <div className="flex justify-between items-center">
                         <div className="text-[9px] text-green-700 uppercase tracking-wider">{t('agent.xp_progress')}</div>
-                        <div className="text-[9px] text-green-600 font-mono">{xp}/{maxXP}</div>
+                        <div className="text-[9px] text-green-600 font-mono">{currentLevelXP}/{maxXP}</div>
                     </div>
                     <div className="h-1.5 bg-black/70 border border-green-900/40 rounded-full overflow-hidden">
                         <div
