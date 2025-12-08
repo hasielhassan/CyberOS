@@ -19,11 +19,13 @@ const MissionsContext = createContext<MissionsContextType | undefined>(undefined
 const STORAGE_KEY = 'cyberos_mission_progress';
 
 import { useLanguage } from '../../core/registry';
+import { useAuth } from '../../core/AuthContext';
 
 // ... imports
 
 export const MissionsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { language } = useLanguage();
+    const { addXp } = useAuth();
 
     // Load missions dynamically
     const tsModules = import.meta.glob('./data/*/index.ts', { eager: true });
@@ -74,6 +76,7 @@ export const MissionsProvider: React.FC<{ children: ReactNode }> = ({ children }
     const completeMission = (id: string) => {
         if (!completedMissionIds.includes(id)) {
             setCompletedMissionIds(prev => [...prev, id]);
+            addXp(10); // Award 10 XP per mission
         }
         if (activeMissionId === id) {
             setActiveMissionId(null);

@@ -4,11 +4,12 @@ import { Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { usePlugins, useLanguage } from './registry';
 import { useAuth } from './AuthContext';
 import { LanguageSelector } from './components/LanguageSelector';
+import { AgentProfileCard } from './components/AgentProfileCard';
 
 export const Layout = () => {
     const { plugins } = usePlugins();
     const { t } = useLanguage();
-    const { user, logout } = useAuth();
+    const { logout } = useAuth();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
@@ -32,11 +33,7 @@ export const Layout = () => {
                     <div className="text-red-500 font-bold border border-red-900 px-2 py-1 bg-red-900/10 text-xs md:text-sm">DEFCON 3</div>
                     <div className="flex items-center gap-2 border-l border-green-900 pl-4">
                         <LanguageSelector />
-                        <div className="text-right hidden sm:block border-l border-green-900 pl-4 ml-2">
-                            <div className="text-xs text-white">{user?.name}</div>
-                            <div className="text-[10px] text-green-600">{user?.id}</div>
-                        </div>
-                        <button onClick={logout} className="p-1 hover:text-red-500 transition-colors" title="Logout">
+                        <button onClick={logout} className="p-1 hover:text-red-500 transition-colors ml-2" title="Logout">
                             <LogOut size={16} />
                         </button>
                     </div>
@@ -49,8 +46,9 @@ export const Layout = () => {
           absolute md:relative z-10 h-full w-64 bg-black/95 md:bg-black/40 border-r border-green-900 
           transition-transform duration-300 ease-in-out
           ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-          flex flex-col p-2 gap-1 overflow-y-auto custom-scrollbar
+          flex flex-col pt-2 gap-1 overflow-y-auto custom-scrollbar
         `}>
+                    <AgentProfileCard />
                     {plugins.map(plugin => (
                         <NavLink
                             key={plugin.id}

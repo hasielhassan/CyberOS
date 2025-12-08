@@ -10,6 +10,11 @@ export const en: Language = {
         'Sat_Uplink': 'Sat_Uplink',
         'Net_Warfare': 'Net_Warfare',
         'Decryption': 'Decryption',
+        // AgentProfileCard
+        'agent.profile': 'Agent Profile',
+        'agent.level': 'Level',
+        'agent.btc_earned': 'BTC Earned',
+        'agent.xp_progress': 'XP Progress',
         // SysOverview
         'sys.resources': 'SYSTEM RESOURCES',
         'sys.cpu': 'CPU LOAD',
