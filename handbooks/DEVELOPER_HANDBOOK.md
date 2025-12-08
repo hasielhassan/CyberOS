@@ -342,8 +342,12 @@ Want to add a "Drone Control" module? Follow these steps:
 
 1.  **Create Directory**: `src/modules/drone_control/`
 2.  **Create Main Component**: `DroneControl.tsx`
-3.  **Register Route**: Add it to the router in `App.tsx` (or wherever routes are defined).
-4.  **Add to Sidebar**: Update `src/layout/Sidebar.tsx` with a new icon and link.
+3.  **Create a registry**: `index.tsx`, and incluide:
+    * **id** : The identification name for your module
+    * **name**: The ui name for your module (key to map in locales)
+    * **icon**: The icon to show in the sidebar menu
+    * **component**: The main plugin component to load in the main layout
+3.  **Register Route**: Add it to the router in `/src/main.tsx`.
 5.  **Integrate Events**:
     *   Import `missionEventBus`.
     *   Emit events when cool stuff happens: `missionEventBus.emit('DRONE_LAUNCH', { id: droneId })`.

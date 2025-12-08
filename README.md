@@ -79,7 +79,7 @@ A simulation of biological threat monitoring.
 CyberOS features a robust, **Event-Driven Mission System**. Missions are defined in TypeScript (for full i18n support) and interact with the console's modules via a global event bus.
 
 > 📘 **Want to build your own missions?**
-> Check out the complete [Mission Architect Handbook](./MISSION_ARCHITECT_HANDBOOK.md) for documentation on:
+> Check out the complete [Mission Architect Handbook](./handbooks/MISSION_ARCHITECT_HANDBOOK.md) for documentation on:
 > *   **Event Triggers** (`TERMINAL_TRACE`, `SAT_JAM`, etc.)
 > *   **Objective Logic** & Dependencies
 > *   **Data Injection** for Terminal, GeoMap, and Satellites
@@ -105,7 +105,7 @@ Built with modern web technologies for speed and scalability:
 ### 🌐 Internationalization (i18n)
 CyberOS supports multiple languages (currently English and Spanish) via a custom lightweight i18n system.
 - **Locale Files**: `src/locales/en.ts` & `src/locales/es.ts`
-- **Guide**: See [TRANSLATION_GUIDE.md](./TRANSLATION_GUIDE.md) for instructions on adding new translations and handling dynamic data.
+- **Guide**: See [TRANSLATION_GUIDE.md](./handbooks/TRANSLATION_GUIDE.md) for instructions on adding new translations and handling dynamic data.
 
 ---
 
@@ -167,7 +167,7 @@ npm run deploy
 We welcome fellow hackers! Whether you're a code wizard or a design guru, your help is appreciated.
 
 > 🛠️ **Technical Documentation**
-> Before diving into the code, please read the [Developer Contributor Handbook](./DEVELOPER_HANDBOOK.md). It explains the system architecture, event bus, and module structure in detail.
+> Before diving into the code, please read the [Developer Contributor Handbook](./handbooks/DEVELOPER_HANDBOOK.md). It explains the system architecture, event bus, and module structure in detail.
 
 1.  Fork the repo.
 2.  Create a feature branch (`git checkout -b feature/AmazingFeature`).
